@@ -1,9 +1,9 @@
 package enshud.s0.trial;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class Trial {
 
@@ -35,18 +35,8 @@ public class Trial {
 
 		// TODO
 		try {
-			File f = new File(inputFileName);
-			BufferedReader br = new BufferedReader(new FileReader(f));
-			
-			int count = 0;
-			String line = br.readLine();
-			
-			while (line != null) {
-				line = br.readLine();
-				count = count + 1;
-			}
-			br.close();
-			return String.valueOf(count);
+			final List<String> buffer = Files.readAllLines(Paths.get(inputFileName));
+			return Integer.toString(buffer.size());
 			
 		} catch (IOException ex) {
 			return "File not found"; 

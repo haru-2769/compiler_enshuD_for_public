@@ -1,5 +1,12 @@
 package enshud.s1.lexer;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Lexer {
 
 	/**
@@ -30,7 +37,26 @@ public class Lexer {
 	public String run(final String inputFileName, final String outputFileName) {
 
 		// TODO
-		return "";
+		try {
+			File f1 = new File(inputFileName);
+			File f2 = new File(outputFileName);
+			BufferedReader br = new BufferedReader(new FileReader(f1));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(f2));
+			
+			int count = 0;
+			String line = br.readLine();
+			
+			while (line != null) {
+				count = count + 1;
+				
+				line = br.readLine();
+			}
+			br.close();
+			bw.close();
+			return "OK";
+		} catch(IOException ex) {
+			return "file not found";
+		}
 
 	}
 }
