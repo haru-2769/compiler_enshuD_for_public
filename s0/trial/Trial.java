@@ -1,5 +1,10 @@
 package enshud.s0.trial;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class Trial {
 
 	/**
@@ -29,7 +34,23 @@ public class Trial {
 	public String run(final String inputFileName) {
 
 		// TODO
-		return "";
+		try {
+			File f = new File(inputFileName);
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			
+			int count = 0;
+			String line = br.readLine();
+			
+			while (line != null) {
+				line = br.readLine();
+				count = count + 1;
+			}
+			br.close();
+			return String.valueOf(count);
+			
+		} catch (IOException ex) {
+			return "File not found"; 
+		}
 
 	}
 }
