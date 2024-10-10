@@ -1,11 +1,10 @@
 package enshud.s1.lexer;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class Lexer {
 
@@ -15,9 +14,7 @@ public class Lexer {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Lexer().run("data/pas/normal01.pas", "tmp/out1.ts"));
-		System.out.println(new Lexer().run("data/pas/normal02.pas", "tmp/out2.ts"));
-		System.out.println(new Lexer().run("data/pas/normal03.pas", "tmp/out3.ts"));
+		System.out.println(new Lexer().run("data/pas/normal12.pas", "tmp/out1S2.ts"));
 	}
 
 	/**
@@ -35,28 +32,25 @@ public class Lexer {
 	 * @param outputFileName 出力tsファイル名
 	 */
 	public String run(final String inputFileName, final String outputFileName) {
-
-		// TODO
-		try {
-			File f1 = new File(inputFileName);
-			File f2 = new File(outputFileName);
-			BufferedReader br = new BufferedReader(new FileReader(f1));
-			BufferedWriter bw = new BufferedWriter(new FileWriter(f2));
-			
-			int count = 0;
-			String line = br.readLine();
-			
-			while (line != null) {
-				count = count + 1;
-				
-				line = br.readLine();
+		
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(outputFileName))){
+			Automaton autoMaton = new Automaton();
+			final List<String> buffer = Files.readAllLines(Paths.get(inputFileName));
+			int i = 1, state = 0;
+			for (String line : buffer) {
+				final List<String> results = autoMaton.getResult(line+"\n", state);
+		        for (String result : results) {
+		        	writer.write(result + Integer.toString(i));
+	                writer.newLine();
+		        }
+		        i++;
 			}
-			br.close();
-			bw.close();
 			return "OK";
-		} catch(IOException ex) {
-			return "file not found";
+		} catch (IOException ex) {
+			return "File not found"; 
 		}
-
+		
 	}
+	
+	
 }
