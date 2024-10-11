@@ -4,98 +4,115 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Automaton {
-	private List<String> results = new ArrayList<>();
+	private enum State {
+		START,
+		IDENTIFIER,
+		CONSTANT,
+		ANNOTATION,
+		TEXT,
+		SIGN;
+	}
 	
-    public List<String> getResult(String s, int currentState) {
-    	results.clear();
-    	Tokenmap tokenMap = new Tokenmap(); 
-    	StringBuilder tokenBuilder = new StringBuilder();
+	private State state;
+	private int lineCount;
+	private StringBuilder tokenBuilder;
+	private List<String> results;
+	
+	Automaton() {
+		this.state = State.START;
+		this.lineCount = 1;
+		this.tokenBuilder = new StringBuilder();
+		this.results = new ArrayList<>();
+	}
+	
+    public boolean transitionState(String s) {
+    	Tokenmap tokenMap = new Tokenmap();
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-	    	switch (currentState) {
-	    		case 0:
+	    	switch (this.state) {
+	    		case State.START:
 	    			if (Character.isAlphabetic(c)) {
 	    				tokenBuilder.append(c);
-	    				currentState = 1;
+	    				state = State.IDENTIFIER;
 	    			} else if (Character.isDigit(c)) {
 	    				tokenBuilder.append(c);
-	    				currentState = 2;
+	    				state = State.CONSTANT;
 	    			} else if (c == '{') {
-	    				currentState = 3;
+	    				state = State.ANNOTATION;
 	    			} else if (c == '\'') {
 	    				tokenBuilder.append(c);
-	    				currentState = 4;
+	    				state = State.TEXT;
 	    			} else if (String.valueOf(c).matches("[=<>\\+\\-\\*()\\[\\];:.,/]")) {
 	    				tokenBuilder.append(c);
 	    				i--;
-	    				currentState = 5;
+	    				state = State.SIGN;
 	    			}
 	    			break;
-	    		case 1:
+	    		case State.IDENTIFIER:
 	    			if (Character.isAlphabetic(c) || Character.isDigit(c)) {
 	    				tokenBuilder.append(c);
-	    				currentState = 1;
+	    				state = State.IDENTIFIER;
 	    			} else {
 	    				if (tokenMap.getToken(tokenBuilder.toString()) == null) {
-	    					results.add(tokenBuilder.toString() + "\tSIDENTIFIER\t43\t");
+	    					results.add(tokenBuilder.toString() + "\tSIDENTIFIER\t43\t" + Integer.toString(lineCount));
 	    				} else {
-	    					results.add(tokenBuilder.toString() + tokenMap.getToken(tokenBuilder.toString()));
+	    					results.add(tokenBuilder.toString() + tokenMap.getToken(tokenBuilder.toString()) + Integer.toString(lineCount));
 	    				}
                         tokenBuilder.setLength(0);
                         if (c == '{') {
-    	    				currentState = 3;
+    	    				state = State.ANNOTATION;
     	    			} else if (c == '\'') {
     	    				tokenBuilder.append(c);
-    	    				currentState = 4;
+    	    				state = State.TEXT;
     	    			} else if (String.valueOf(c).matches("[=<>\\+\\-\\*()\\[\\];:.,/]")) {
     	    				tokenBuilder.append(c);
     	    				i--;
-    	    				currentState = 5;
+    	    				state = State.SIGN;
     	    			} else {
-    	    				currentState = 0;
+    	    				state = State.START;
     	    			}
 	    			}
 	    			break;
-	    		case 2:
+	    		case State.CONSTANT:
 	    			if (Character.isDigit(c)) {
 	    				tokenBuilder.append(c);
-	    				currentState = 2;
+	    				state = State.CONSTANT;
 	    			} else {
-	    				results.add(tokenBuilder.toString() + "\tSCONSTANT\t44\t");
+	    				results.add(tokenBuilder.toString() + "\tSCONSTANT\t44\t" + Integer.toString(lineCount));
 	    				tokenBuilder.setLength(0);
                         if (c == '{') {
-    	    				currentState = 3;
+    	    				state = State.ANNOTATION;
     	    			} else if (c == '\'') {
     	    				tokenBuilder.append(c);
-    	    				currentState = 4;
+    	    				state = State.TEXT;
     	    			} else if (String.valueOf(c).matches("[=<>\\+\\-\\*()\\[\\];:.,/]")) {
     	    				tokenBuilder.append(c);
     	    				i--;
-    	    				currentState = 5;
+    	    				state = State.SIGN;
     	    			} else {
-    	    				currentState = 0;
+    	    				state = State.START;
     	    			}
 	    			}
 	    			break;
-	    		case 3:
+	    		case State.ANNOTATION:
 	    			if (c == '}') {
-	    				currentState = 0;
+	    				state = State.START;
 	    			} else {
-	    				currentState = 3;
+	    				state = State.ANNOTATION;
 	    			}
 	    			break;
-	    		case 4:
+	    		case State.TEXT:
 	    			if (c == '\'') {
 	    				tokenBuilder.append(c);
-	    				results.add(tokenBuilder.toString() + "\tSSTRING\t45\t");
+	    				results.add(tokenBuilder.toString() + "\tSSTRING\t45\t" + Integer.toString(lineCount));
 	    				tokenBuilder.setLength(0);
-	    				currentState = 0;
+	    				state = State.START;
 	    			} else {
 	    				tokenBuilder.append(c);
-	    				currentState = 4;
+	    				state = State.TEXT;
 	    			}
 	    			break;
-	    		case 5:
+	    		case State.SIGN:
 	    			if (i < s.length() - 1) {
 		    			if (c == '<') {
 		    				if (s.charAt(i + 1) == '>' || s.charAt(i + 1) == '=') {
@@ -119,17 +136,22 @@ public class Automaton {
 		    				}
 		    			}
 	    			}
-	    			results.add(tokenBuilder.toString() + tokenMap.getToken(tokenBuilder.toString()));
+	    			results.add(tokenBuilder.toString() + tokenMap.getToken(tokenBuilder.toString()) + Integer.toString(lineCount));
 	    			tokenBuilder.setLength(0);
-    				currentState = 0;
+    				state = State.START;
 	    			break;
 	    		default:
 	    			break;
 	    	}
 	    	if (c == '\\') {
-	    		System.out.println(currentState);
+	    		System.out.println(state);
 	    	}
         }
-        return results;
+        this.lineCount++;
+        return true;
+    }
+    
+    public List<String> getResult() {
+    	return results;
     }
 }

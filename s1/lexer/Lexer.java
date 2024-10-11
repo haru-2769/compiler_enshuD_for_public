@@ -1,6 +1,5 @@
 package enshud.s1.lexer;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,7 +13,7 @@ public class Lexer {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Lexer().run("data/pas/normal12.pas", "tmp/out1S2.ts"));
+		System.out.println(new Lexer().run("data/pas/normal01.pas", "tmp/out.ts"));
 	}
 
 	/**
@@ -33,22 +32,27 @@ public class Lexer {
 	 */
 	public String run(final String inputFileName, final String outputFileName) {
 		
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(outputFileName))){
-			Automaton autoMaton = new Automaton();
-			final List<String> buffer = Files.readAllLines(Paths.get(inputFileName));
-			int i = 1, state = 0;
-			for (String line : buffer) {
-				final List<String> results = autoMaton.getResult(line+"\n", state);
-		        for (String result : results) {
-		        	writer.write(result + Integer.toString(i));
-	                writer.newLine();
-		        }
-		        i++;
-			}
-			return "OK";
+		final List<String> buffer;
+		try {
+			buffer = Files.readAllLines(Paths.get(inputFileName));
 		} catch (IOException ex) {
 			return "File not found"; 
 		}
+		
+		Automaton autoMaton = new Automaton();
+		for (String line : buffer) {
+			if (!autoMaton.transitionState((line+"\n"))) {
+				return "NG";
+			}
+		}
+		final List<String> results = autoMaton.getResult();
+		try {
+			System.out.println(results);
+			Files.write(Paths.get(outputFileName), results);
+		} catch (IOException ex) {
+			return "File not found";
+		}
+		return "OK";
 		
 	}
 	
