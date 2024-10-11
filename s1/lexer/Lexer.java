@@ -13,7 +13,7 @@ public class Lexer {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Lexer().run("data/pas/normal01.pas", "tmp/out.ts"));
+		System.out.println(new Lexer().run("data/pas/normal12.pas", "tmp/out.ts"));
 	}
 
 	/**
@@ -47,7 +47,6 @@ public class Lexer {
 		}
 		final List<String> results = autoMaton.getResult();
 		try {
-			System.out.println(results);
 			Files.write(Paths.get(outputFileName), results);
 		} catch (IOException ex) {
 			return "File not found";

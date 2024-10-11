@@ -46,6 +46,8 @@ public class Automaton {
 	    				tokenBuilder.append(c);
 	    				i--;
 	    				state = State.SIGN;
+	    			} else if (c == '\s' || c == '\t' ||  c == '\n') {
+	    				state = State.START;
 	    			}
 	    			break;
 	    		case State.IDENTIFIER:
@@ -56,7 +58,7 @@ public class Automaton {
 	    				if (tokenMap.getToken(tokenBuilder.toString()) == null) {
 	    					results.add(tokenBuilder.toString() + "\tSIDENTIFIER\t43\t" + Integer.toString(lineCount));
 	    				} else {
-	    					results.add(tokenBuilder.toString() + tokenMap.getToken(tokenBuilder.toString()) + Integer.toString(lineCount));
+	    					results.add(tokenBuilder.toString() + "\t" + tokenMap.getToken(tokenBuilder.toString()).get(0) +"\t"+ tokenMap.getToken(tokenBuilder.toString()).get(1) + "\t" + Integer.toString(lineCount));
 	    				}
                         tokenBuilder.setLength(0);
                         if (c == '{') {
@@ -68,7 +70,7 @@ public class Automaton {
     	    				tokenBuilder.append(c);
     	    				i--;
     	    				state = State.SIGN;
-    	    			} else {
+    	    			} else if (c == '\s' || c == '\t' ||  c == '\n') {
     	    				state = State.START;
     	    			}
 	    			}
@@ -80,7 +82,9 @@ public class Automaton {
 	    			} else {
 	    				results.add(tokenBuilder.toString() + "\tSCONSTANT\t44\t" + Integer.toString(lineCount));
 	    				tokenBuilder.setLength(0);
-                        if (c == '{') {
+	    				if (Character.isAlphabetic(c)) {
+                        	return false;
+                        } else if (c == '{') {
     	    				state = State.ANNOTATION;
     	    			} else if (c == '\'') {
     	    				tokenBuilder.append(c);
@@ -89,7 +93,7 @@ public class Automaton {
     	    				tokenBuilder.append(c);
     	    				i--;
     	    				state = State.SIGN;
-    	    			} else {
+    	    			} else if (c == '\s' || c == '\t' ||  c == '\n') {
     	    				state = State.START;
     	    			}
 	    			}
@@ -136,16 +140,17 @@ public class Automaton {
 		    				}
 		    			}
 	    			}
-	    			results.add(tokenBuilder.toString() + tokenMap.getToken(tokenBuilder.toString()) + Integer.toString(lineCount));
-	    			tokenBuilder.setLength(0);
+    				if (tokenMap.getToken(tokenBuilder.toString()) == null) {
+    					System.out.println(tokenBuilder.toString());
+    				} else {
+    					results.add(tokenBuilder.toString() + "\t" + tokenMap.getToken(tokenBuilder.toString()).get(0) +"\t"+ tokenMap.getToken(tokenBuilder.toString()).get(1) + "\t" + Integer.toString(lineCount));
+    				}
+    				tokenBuilder.setLength(0);
     				state = State.START;
 	    			break;
 	    		default:
 	    			break;
-	    	}
-	    	if (c == '\\') {
-	    		System.out.println(state);
-	    	}
+	    	 }
         }
         this.lineCount++;
         return true;
