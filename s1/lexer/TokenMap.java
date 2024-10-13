@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Tokenmap {
+public class TokenMap {
     private HashMap<String, ArrayList<String>> map;
 
-    public Tokenmap() {
+    public TokenMap() {
         this.map = new HashMap<String, ArrayList<String>>();
 //        this.map.put("and", "\tSAND\t0\t");
 //        this.map.put("array", "\tSARRAY\t1\t");

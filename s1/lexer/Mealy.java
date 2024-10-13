@@ -9,7 +9,7 @@ public class Mealy {
 		IDENTIFIER,
 		CONSTANT,
 		ANNOTATION,
-		TEXT,
+		STRING,
 		SIGN;
 	}
 	
@@ -26,7 +26,7 @@ public class Mealy {
 	}
 	
     public boolean transitionState(String s) {
-    	Tokenmap tokenMap = new Tokenmap();
+    	TokenMap tokenMap = new TokenMap();
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
 	    	switch (this.state) {
@@ -41,7 +41,7 @@ public class Mealy {
 	    				state = State.ANNOTATION;
 	    			} else if (c == '\'') {
 	    				tokenBuilder.append(c);
-	    				state = State.TEXT;
+	    				state = State.STRING;
 	    			} else if (String.valueOf(c).matches("[=<>\\+\\-\\*()\\[\\];:.,/]")) {
 	    				tokenBuilder.append(c);
 	    				i--;
@@ -67,7 +67,7 @@ public class Mealy {
     	    				state = State.ANNOTATION;
     	    			} else if (c == '\'') {
     	    				tokenBuilder.append(c);
-    	    				state = State.TEXT;
+    	    				state = State.STRING;
     	    			} else if (String.valueOf(c).matches("[=<>\\+\\-\\*()\\[\\];:.,/]")) {
     	    				tokenBuilder.append(c);
     	    				i--;
@@ -92,7 +92,7 @@ public class Mealy {
     	    				state = State.ANNOTATION;
     	    			} else if (c == '\'') {
     	    				tokenBuilder.append(c);
-    	    				state = State.TEXT;
+    	    				state = State.STRING;
     	    			} else if (String.valueOf(c).matches("[=<>\\+\\-\\*()\\[\\];:.,/]")) {
     	    				tokenBuilder.append(c);
     	    				i--;
@@ -111,15 +111,19 @@ public class Mealy {
 	    				state = State.ANNOTATION;
 	    			}
 	    			break;
-	    		case State.TEXT:
+	    		case State.STRING:
+
+    				System.out.println(c);
 	    			if (c == '\'') {
 	    				tokenBuilder.append(c);
 	    				results.add(tokenBuilder.toString() + "\tSSTRING\t45\t" + Integer.toString(lineCount));
 	    				tokenBuilder.setLength(0);
 	    				state = State.START;
-	    			} else {
+	    			} else if (c == '\n') {
+	    				return false;
+	    			}else {
 	    				tokenBuilder.append(c);
-	    				state = State.TEXT;
+	    				state = State.STRING;
 	    			}
 	    			break;
 	    		case State.SIGN:
