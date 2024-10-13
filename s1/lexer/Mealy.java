@@ -3,7 +3,7 @@ package enshud.s1.lexer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Automaton {
+public class Mealy {
 	private enum State {
 		START,
 		IDENTIFIER,
@@ -18,7 +18,7 @@ public class Automaton {
 	private StringBuilder tokenBuilder;
 	private List<String> results;
 	
-	Automaton() {
+	Mealy() {
 		this.state = State.START;
 		this.lineCount = 1;
 		this.tokenBuilder = new StringBuilder();

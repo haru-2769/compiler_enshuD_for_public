@@ -39,13 +39,13 @@ public class Lexer {
 			return "File not found"; 
 		}
 		
-		Automaton autoMaton = new Automaton();
+		Mealy mealy = new Mealy();
 		for (String line : buffer) {
-			if (!autoMaton.transitionState((line+"\n"))) {
+			if (!mealy.transitionState((line+"\n"))) {
 				return "NG";
 			}
 		}
-		final List<String> results = autoMaton.getResult();
+		final List<String> results = mealy.getResult();
 		try {
 			Files.write(Paths.get(outputFileName), results);
 		} catch (IOException ex) {
