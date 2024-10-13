@@ -48,6 +48,8 @@ public class Automaton {
 	    				state = State.SIGN;
 	    			} else if (c == '\s' || c == '\t' ||  c == '\n') {
 	    				state = State.START;
+	    			} else {
+	    				return false;
 	    			}
 	    			break;
 	    		case State.IDENTIFIER:
@@ -72,6 +74,8 @@ public class Automaton {
     	    				state = State.SIGN;
     	    			} else if (c == '\s' || c == '\t' ||  c == '\n') {
     	    				state = State.START;
+    	    			} else {
+    	    				return false;
     	    			}
 	    			}
 	    			break;
@@ -95,6 +99,8 @@ public class Automaton {
     	    				state = State.SIGN;
     	    			} else if (c == '\s' || c == '\t' ||  c == '\n') {
     	    				state = State.START;
+    	    			} else {
+    	    				return false;
     	    			}
 	    			}
 	    			break;
@@ -140,11 +146,7 @@ public class Automaton {
 		    				}
 		    			}
 	    			}
-    				if (tokenMap.getToken(tokenBuilder.toString()) == null) {
-    					System.out.println(tokenBuilder.toString());
-    				} else {
-    					results.add(tokenBuilder.toString() + "\t" + tokenMap.getToken(tokenBuilder.toString()).get(0) +"\t"+ tokenMap.getToken(tokenBuilder.toString()).get(1) + "\t" + Integer.toString(lineCount));
-    				}
+    				results.add(tokenBuilder.toString() + "\t" + tokenMap.getToken(tokenBuilder.toString()).get(0) +"\t"+ tokenMap.getToken(tokenBuilder.toString()).get(1) + "\t" + Integer.toString(lineCount));
     				tokenBuilder.setLength(0);
     				state = State.START;
 	    			break;
