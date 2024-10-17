@@ -112,8 +112,6 @@ public class Mealy {
 	    			}
 	    			break;
 	    		case State.STRING:
-
-    				System.out.println(c);
 	    			if (c == '\'') {
 	    				tokenBuilder.append(c);
 	    				results.add(tokenBuilder.toString() + "\tSSTRING\t45\t" + Integer.toString(lineCount));
