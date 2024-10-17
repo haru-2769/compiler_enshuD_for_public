@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class TokenMap {
     private HashMap<String, ArrayList<String>> map;
 
-    public TokenMap() {
+    TokenMap() {
         this.map = new HashMap<String, ArrayList<String>>();
         this.map.put("and", new ArrayList<String>(Arrays.asList("SAND", "0")));
         this.map.put("array", new ArrayList<String>(Arrays.asList("SARRAY", "1")));
