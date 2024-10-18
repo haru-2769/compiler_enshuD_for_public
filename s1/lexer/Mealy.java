@@ -135,9 +135,7 @@ public class Mealy {
 	    			} else {
 	    				this.results.add(this.tokenBuilder.toString() + "\tSCONSTANT\t44\t" + Integer.toString(this.lineCount));
 	    				this.tokenBuilder.setLength(0);
-	    				if (Character.isAlphabetic(this.c)) {
-                        	return false;
-                        } else if (this.c == '{') {
+	    				if (this.c == '{') {
                         	this.state = State.ANNOTATION;
     	    			} else if (this.c == '\'') {
     	    				this.tokenBuilder.append(this.c);
