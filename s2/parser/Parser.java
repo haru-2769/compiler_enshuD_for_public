@@ -48,7 +48,7 @@ public class Parser {
 		}
 		
 		try {
-			AstNode rootNode = parseProgram();
+			parseProgram();
 //			final AstPrint astPrint = new AstPrint();
 //			rootNode.accept(astPrint);
 		} catch (final SyntaxException ex) {
@@ -86,7 +86,7 @@ public class Parser {
 	
 	// プログラム名
 	private AstNode parseProgram() throws SyntaxException {
-		NonTerminalNode programNode = new NonTerminalNode();
+		final NonTerminalNode programNode = new NonTerminalNode();
 		programNode.addChild(new TerminalNode(checkTerminalSymbol("SPROGRAM")));
 		programNode.addChild(parseProgramName());
 		programNode.addChild(new TerminalNode(checkTerminalSymbol("SSEMICOLON")));
@@ -106,7 +106,7 @@ public class Parser {
 
 	// ブロック
 	private AstNode parseBlock() throws SyntaxException {
-		NonTerminalNode blockNode = new NonTerminalNode();
+		final NonTerminalNode blockNode = new NonTerminalNode();
 		blockNode.addChild(parseVariableDeclaration());
 		blockNode.addChild(parseSubprogramDeclarationSequence());
 		return blockNode;
@@ -114,7 +114,7 @@ public class Parser {
 
 	// 変数宣言
 	private AstNode parseVariableDeclaration() throws SyntaxException {
-		NonTerminalNode variableDeclarationNode = new NonTerminalNode();
+		final NonTerminalNode variableDeclarationNode = new NonTerminalNode();
 		if (equalsAny(0, "SVAR")) {
 			variableDeclarationNode.addChild(new TerminalNode(checkTerminalSymbol("SVAR")));
 			variableDeclarationNode.addChild(parseVariableDeclarationSequence());
@@ -124,7 +124,7 @@ public class Parser {
 
 	// 変数宣言の並び
 	private AstNode parseVariableDeclarationSequence() throws SyntaxException {
-		NonTerminalNode variableDeclarationSequenceNode = new NonTerminalNode();
+		final NonTerminalNode variableDeclarationSequenceNode = new NonTerminalNode();
 		do {
 			variableDeclarationSequenceNode.addChild(parseVariableNameSequence());
 			variableDeclarationSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOLON")));
@@ -136,7 +136,7 @@ public class Parser {
 
 	// 変数名の並び
 	private AstNode parseVariableNameSequence() throws SyntaxException {
-		NonTerminalNode variableNameSequenceNode = new NonTerminalNode();
+		final NonTerminalNode variableNameSequenceNode = new NonTerminalNode();
 		variableNameSequenceNode.addChild(parseVariableName());
 		while (equalsAny(0, "SCOMMA")) {
 			variableNameSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOMMA")));
@@ -152,7 +152,7 @@ public class Parser {
 
 	// 型
 	private AstNode parseType() throws SyntaxException { 	
-		NonTerminalNode typeNode = new NonTerminalNode();
+		final NonTerminalNode typeNode = new NonTerminalNode();
 		if (equalsAny(0, "SINTEGER", "SCHAR", "SBOOLEAN")) {
 			typeNode.addChild(parseStandardType());
 		} else if (equalsAny(0, "SARRAY")) {
@@ -170,7 +170,7 @@ public class Parser {
 
 	// 配列型
 	private AstNode parseArrayType() throws SyntaxException {
-		NonTerminalNode arrayTypeNode = new NonTerminalNode();
+		final NonTerminalNode arrayTypeNode = new NonTerminalNode();
 		arrayTypeNode.addChild(new TerminalNode(checkTerminalSymbol("SARRAY")));
 		arrayTypeNode.addChild(new TerminalNode(checkTerminalSymbol("SLBRACKET")));
 		arrayTypeNode.addChild(parseIndexMinValue());
@@ -184,21 +184,21 @@ public class Parser {
 
 	// 添え字の最小値
 	private AstNode parseIndexMinValue() throws SyntaxException {
-		NonTerminalNode indexMinValueNode = new NonTerminalNode();
+		final NonTerminalNode indexMinValueNode = new NonTerminalNode();
 		indexMinValueNode.addChild(parseInteger());
 		return indexMinValueNode;
 	}
 
 	// 添え字の最大値
 	private AstNode parseIndexMaxValue() throws SyntaxException {
-		NonTerminalNode indexMaxValueNode = new NonTerminalNode();
+		final NonTerminalNode indexMaxValueNode = new NonTerminalNode();
 		indexMaxValueNode.addChild(parseInteger());
 		return indexMaxValueNode;
 	}
 
 	// 整数
 	private AstNode parseInteger() throws SyntaxException { 
-		NonTerminalNode integerNode = new NonTerminalNode();	
+		final NonTerminalNode integerNode = new NonTerminalNode();	
 		if (equalsAny(0, "SPLUS", "SMINUS")) {
 			integerNode.addChild(parseSign());
 		}
@@ -213,7 +213,7 @@ public class Parser {
 
 	// 副プログラム宣言群
 	private AstNode parseSubprogramDeclarationSequence() throws SyntaxException { 
-		NonTerminalNode subprogramDeclarationSequenceNode = new NonTerminalNode();	
+		final NonTerminalNode subprogramDeclarationSequenceNode = new NonTerminalNode();	
 		while (equalsAny(0, "SPROCEDURE")) {
 			subprogramDeclarationSequenceNode.addChild(parseSubprogramDeclaration());
 			subprogramDeclarationSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SSEMICOLON")));
@@ -223,7 +223,7 @@ public class Parser {
 
 	// 副プログラム宣言
 	private AstNode parseSubprogramDeclaration() throws SyntaxException {
-		NonTerminalNode subprogramDeclarationNode = new NonTerminalNode(); 	 
+		final NonTerminalNode subprogramDeclarationNode = new NonTerminalNode(); 	 
 		subprogramDeclarationNode.addChild(parseSubprogramHead());
 		subprogramDeclarationNode.addChild(parseVariableDeclaration());
 		subprogramDeclarationNode.addChild(parseCompoundStatement());
@@ -232,7 +232,7 @@ public class Parser {
 
 	// 副プログラム頭部
 	private AstNode parseSubprogramHead() throws SyntaxException {
-		NonTerminalNode subprogramHeadNode = new NonTerminalNode(); 
+		final NonTerminalNode subprogramHeadNode = new NonTerminalNode(); 
 		subprogramHeadNode.addChild(new TerminalNode(checkTerminalSymbol("SPROCEDURE")));
 		subprogramHeadNode.addChild(parseProcedureName());
 		subprogramHeadNode.addChild(parseFormalParameter());
@@ -247,7 +247,7 @@ public class Parser {
 
 	// 仮パラメータ
 	private AstNode parseFormalParameter() throws SyntaxException { 
-		NonTerminalNode formalParameterNode = new NonTerminalNode();
+		final NonTerminalNode formalParameterNode = new NonTerminalNode();
 		if (equalsAny(0, "SLPAREN")) {
 			formalParameterNode.addChild(new TerminalNode(checkTerminalSymbol("SLPAREN")));
 			formalParameterNode.addChild(parseFormalParameterSequence());
@@ -258,7 +258,7 @@ public class Parser {
 
 	// 仮パラメータの並び
 	private AstNode parseFormalParameterSequence() throws SyntaxException {
-		NonTerminalNode formalParameterSequenceNode = new NonTerminalNode();	 
+		final NonTerminalNode formalParameterSequenceNode = new NonTerminalNode();	 
 		formalParameterSequenceNode.addChild(parseFormalParameterNameSequence());
 		formalParameterSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOLON")));
 		formalParameterSequenceNode.addChild(parseStandardType());
@@ -273,7 +273,7 @@ public class Parser {
 
 	// 仮パラメータ名の並び
 	private AstNode parseFormalParameterNameSequence() throws SyntaxException {
-		NonTerminalNode formalParameterNameSequenceNode = new NonTerminalNode();	
+		final NonTerminalNode formalParameterNameSequenceNode = new NonTerminalNode();	
 		formalParameterNameSequenceNode.addChild(parseFormalParameterName());
 		while (equalsAny(0, "SCOMMA")) {
 			formalParameterNameSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOMMA")));
@@ -289,7 +289,7 @@ public class Parser {
 
 	// 複合文
 	private AstNode parseCompoundStatement() throws SyntaxException {
-		NonTerminalNode compoundStatementNode = new NonTerminalNode(); 	
+		final NonTerminalNode compoundStatementNode = new NonTerminalNode(); 	
 		compoundStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SBEGIN")));
 		compoundStatementNode.addChild(parseStatementSequence());
 		compoundStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SEND"))); 
@@ -298,7 +298,7 @@ public class Parser {
 
 	// 文の並び
 	private AstNode parseStatementSequence() throws SyntaxException {
-		NonTerminalNode statementSequenceNode = new NonTerminalNode(); 
+		final NonTerminalNode statementSequenceNode = new NonTerminalNode(); 
 		do {
 			statementSequenceNode.addChild(parseStatement());
 			statementSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SSEMICOLON")));
@@ -308,7 +308,7 @@ public class Parser {
 
 	// 文
 	private AstNode parseStatement() throws SyntaxException {
-		NonTerminalNode statementNode = new NonTerminalNode();
+		final NonTerminalNode statementNode = new NonTerminalNode();
 		if (equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN")) {
 			statementNode.addChild(parseBasicStatement());
 		} else if (equalsAny(0, "SIF")) {
@@ -333,7 +333,7 @@ public class Parser {
 
 	// 基本文
 	private AstNode parseBasicStatement() throws SyntaxException { 	
-		NonTerminalNode basicStatementNode = new NonTerminalNode(); 
+		final NonTerminalNode basicStatementNode = new NonTerminalNode(); 
 		if (equalsAny(0, "SIDENTIFIER")) {
 			if (equalsAny(1, "SASSIGN", "SLBRACKET")) {
 				basicStatementNode.addChild(parseAssignmentStatement());
@@ -352,7 +352,7 @@ public class Parser {
 
 	// 代入文
 	private AstNode parseAssignmentStatement() throws SyntaxException {
-		NonTerminalNode assignmentStatementNode = new NonTerminalNode();
+		final NonTerminalNode assignmentStatementNode = new NonTerminalNode();
 		assignmentStatementNode.addChild(parseLeftHandSide());
 		assignmentStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SASSIGN")));
 		assignmentStatementNode.addChild(parseExpression());
@@ -361,14 +361,14 @@ public class Parser {
 
 	// 左辺
 	private AstNode parseLeftHandSide() throws SyntaxException { 	
-		NonTerminalNode leftHandSideNode = new NonTerminalNode(); 
+		final NonTerminalNode leftHandSideNode = new NonTerminalNode(); 
 		leftHandSideNode.addChild(parseVariable());
 		return leftHandSideNode;
 	}
 
 	// 変数
 	private AstNode parseVariable() throws SyntaxException {
-		NonTerminalNode variableNode = new NonTerminalNode(); 	
+		final NonTerminalNode variableNode = new NonTerminalNode(); 	
 		if (equalsAny(0, "SIDENTIFIER")) {
 			if (equalsAny(1, "SLBRACKET")) {
 				variableNode.addChild(parseIndexedVariable());
@@ -383,14 +383,14 @@ public class Parser {
 
 	// 純変数
 	private AstNode parsePureVariable() throws SyntaxException { 
-		NonTerminalNode pureVariableNode = new NonTerminalNode();	
+		final NonTerminalNode pureVariableNode = new NonTerminalNode();	
 		pureVariableNode.addChild(parseVariableName());
 		return pureVariableNode; 
 	}
 
 	// 添え字付き変数
 	private AstNode parseIndexedVariable() throws SyntaxException {
-		NonTerminalNode indexedVariableNode = new NonTerminalNode(); 
+		final NonTerminalNode indexedVariableNode = new NonTerminalNode(); 
 		indexedVariableNode.addChild(parseVariableName());
 		indexedVariableNode.addChild(new TerminalNode(checkTerminalSymbol("SLBRACKET")));
 		indexedVariableNode.addChild(parseIndex());
@@ -400,14 +400,14 @@ public class Parser {
 
 	// 添え字
 	private AstNode parseIndex() throws SyntaxException {
-		NonTerminalNode indexNode = new NonTerminalNode(); 
+		final NonTerminalNode indexNode = new NonTerminalNode(); 
 		indexNode.addChild(parseExpression());	 
 		return indexNode;
 	}
 
 	// 手続き呼出し文
 	private AstNode parseProcedureCallStatement() throws SyntaxException {
-		NonTerminalNode procedureCallStatementNode = new NonTerminalNode(); 
+		final NonTerminalNode procedureCallStatementNode = new NonTerminalNode(); 
 		procedureCallStatementNode.addChild(parseProcedureName()); 
 		if (equalsAny(0, "SLPAREN")) {
 			procedureCallStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SLPAREN")));
@@ -419,7 +419,7 @@ public class Parser {
 
 	// 式の並び
 	private AstNode parseExpressionSequence() throws SyntaxException {
-		NonTerminalNode expressionSequenceNode = new NonTerminalNode();
+		final NonTerminalNode expressionSequenceNode = new NonTerminalNode();
 		expressionSequenceNode.addChild(parseExpression());
 		while (equalsAny(0, "SCOMMA")) {
 			expressionSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOMMA")));
@@ -430,7 +430,7 @@ public class Parser {
 
 	// 式
 	private AstNode parseExpression() throws SyntaxException { 
-		NonTerminalNode expressionNode = new NonTerminalNode();
+		final NonTerminalNode expressionNode = new NonTerminalNode();
 		expressionNode.addChild(parseSimpleExpression());
 		if (equalsAny(0, "SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL")) {
 			expressionNode.addChild(parseRelationalOperator());
@@ -441,7 +441,7 @@ public class Parser {
 
 	// 単純式
 	private AstNode parseSimpleExpression() throws SyntaxException {
-		NonTerminalNode simpleExpressionNode = new NonTerminalNode();
+		final NonTerminalNode simpleExpressionNode = new NonTerminalNode();
 		if (equalsAny(0, "SPLUS", "SMINUS")) {
 			simpleExpressionNode.addChild(parseSign());
 		}
@@ -455,7 +455,7 @@ public class Parser {
 
 	// 項
 	private AstNode parseTerm() throws SyntaxException { 
-		NonTerminalNode termNode = new NonTerminalNode();
+		final NonTerminalNode termNode = new NonTerminalNode();
 		termNode.addChild(parseFactor());
 		while (equalsAny(0, "SSTAR", "SDIVD", "SMOD", "SAND")) {
 			termNode.addChild(parseMultiplicativeOperator());
@@ -466,7 +466,7 @@ public class Parser {
 
 	// 因子
 	private AstNode parseFactor() throws SyntaxException {
-		NonTerminalNode factorNode = new NonTerminalNode(); 	 
+		final NonTerminalNode factorNode = new NonTerminalNode(); 	 
 		if (equalsAny(0, "SIDENTIFIER")) {
 			factorNode.addChild(parseVariable());
 		} else if (equalsAny(0, "SCONSTANT", "SSTRING", "STRUE", "SFALSE")) {
@@ -501,7 +501,7 @@ public class Parser {
 
 	// 入出力文
 	private AstNode parseInputOutputStatement() throws SyntaxException {
-		NonTerminalNode inputOutputStatementNode = new NonTerminalNode();	 
+		final NonTerminalNode inputOutputStatementNode = new NonTerminalNode();	 
 		if (equalsAny(0, "SREADLN")) {
 			inputOutputStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SREADLN")));
 			if (equalsAny(0, "SLPAREN")) {
@@ -524,7 +524,7 @@ public class Parser {
 
 	// 変数の並び
 	private AstNode parseVariableSequence() throws SyntaxException {
-		NonTerminalNode variableSequenceNode = new NonTerminalNode();
+		final NonTerminalNode variableSequenceNode = new NonTerminalNode();
 		variableSequenceNode.addChild(parseVariable());
 		while (equalsAny(0, "SCOMMA")) {
 			variableSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOMMA")));
