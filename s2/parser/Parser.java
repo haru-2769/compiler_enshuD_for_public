@@ -69,20 +69,13 @@ public class Parser {
 		}
 		throw new SyntaxException(token);
 	}
-	
-	// private Token first(int offset) throws SyntaxException {
-	// 	if (this.index > this.tokenList.size() - 1) {
-	// 		throw new SyntaxException(this.tokenList.get(this.tokenList.size() - 1)); 
-	// 	}
-	// 	return this.tokenList.get(this.index + offset);
-	// }
 
-	private boolean equalsAny(String... terminalSymbols) throws SyntaxException {
+	private boolean equalsAny(int offset, String... terminalSymbols) throws SyntaxException {
 		for (String symbol : terminalSymbols) {
-			if (this.index > this.tokenList.size() - 1) {
+			if (this.index + offset > this.tokenList.size() - 1) {
 				throw new SyntaxException(this.tokenList.get(this.tokenList.size() - 1));
 			}
-			if (this.tokenList.get(this.index).getTokenName().equals(symbol)) {
+			if (this.tokenList.get(this.index + offset).getTokenName().equals(symbol)) {
 				return true;
 			}
 		}
@@ -115,20 +108,29 @@ public class Parser {
 
 	// 変数宣言
 	private void parseVariableDeclaration() throws SyntaxException {
-		if (equalsAny("SVAR")) {
+		if (equalsAny(0, "SVAR")) {
 			checkTerminalSymbol("SVAR");
 			parseVariableDeclarationSequence();
 		} 
 	}
 
 	// 変数宣言の並び
-	private void parseVariableDeclarationSequence() throws SyntaxException { 	  
-		//TODO
+	private void parseVariableDeclarationSequence() throws SyntaxException {
+		do {
+			parseVariableNameSequence();
+			checkTerminalSymbol("SCOLON");
+			parseType();
+			checkTerminalSymbol("SSEMICOLON");
+		} while (equalsAny(0, "SIDENTIFIER"));	
 	}
 
 	// 変数名の並び
 	private void parseVariableNameSequence() throws SyntaxException {
-		//TODO
+		parseVariableName();
+		while (equalsAny(0, "SCOMMA")) {
+			checkTerminalSymbol("SCOMMA");
+			parseVariableName();
+		}
 	}
 
 	// 変数名
@@ -137,8 +139,14 @@ public class Parser {
 	}
 
 	// 型
-	private void parseType() throws SyntaxException { 	 
-		//TODO
+	private void parseType() throws SyntaxException { 	
+		if (equalsAny(0, "SINTEGER", "SCHAR", "SBOOLEAN")) {
+			parseStandardType();
+		} else if (equalsAny(0, "SARRAY")) {
+			parseArrayType();
+		} else {
+			throw new SyntaxException(this.tokenList.get(this.index));
+		}
 	}
 
 	// 標準型
@@ -170,7 +178,7 @@ public class Parser {
 
 	// 整数
 	private void parseInteger() throws SyntaxException { 	
-		if (equalsAny("SPLUS", "SMINUS")) {
+		if (equalsAny(0, "SPLUS", "SMINUS")) {
 			parseSign();
 		}
 		checkTerminalSymbol("SCONSTANT");
@@ -183,7 +191,10 @@ public class Parser {
 
 	// 副プログラム宣言群
 	private void parseSubprogramDeclarationSequence() throws SyntaxException { 	
-		//TODO
+		while (equalsAny(0, "SPROCEDURE")) {
+			parseSubprogramDeclaration();
+			checkTerminalSymbol("SSEMICOLON");
+		}
 	}
 
 	// 副プログラム宣言
@@ -208,7 +219,7 @@ public class Parser {
 
 	// 仮パラメータ
 	private void parseFormalParameter() throws SyntaxException { 
-		if (equalsAny("SLPAREN")) {
+		if (equalsAny(0, "SLPAREN")) {
 			checkTerminalSymbol("SLPAREN");
 			parseFormalParameterSequence();
 			checkTerminalSymbol("SRPAREN");
@@ -217,12 +228,24 @@ public class Parser {
 
 	// 仮パラメータの並び
 	private void parseFormalParameterSequence() throws SyntaxException { 	 
-		//TODO
+		parseFormalParameterNameSequence();
+		checkTerminalSymbol("SCOLON");
+		parseStandardType();
+		while (equalsAny(0, "SCOMMA")) {
+			checkTerminalSymbol("SCOMMA");
+			parseFormalParameterNameSequence();
+			checkTerminalSymbol("SCOLON");
+			parseStandardType();
+		}
 	}
 
 	// 仮パラメータ名の並び
 	private void parseFormalParameterNameSequence() throws SyntaxException { 	
-		//TODO 
+		parseFormalParameterName();
+		while (equalsAny(0, "SCOMMA")) {
+			checkTerminalSymbol("SCOMMA");
+			parseFormalParameterName();
+		} 
 	}
 
 	// 仮パラメータ名
@@ -239,17 +262,46 @@ public class Parser {
 
 	// 文の並び
 	private void parseStatementSequence() throws SyntaxException { 	 
-		//TODO
+		do {
+			parseStatement();
+			checkTerminalSymbol("SSEMICOLON");
+		} while (equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN", "SIF", "SWHILE"));
 	}
 
 	// 文
 	private void parseStatement() throws SyntaxException { 	
-		//TODO 
+		if (equalsAny(0, "IDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN")) {
+			parseBasicStatement();
+		} else if (equalsAny(0, "SIF")) {
+			checkTerminalSymbol("SIF");
+			parseExpression();
+			checkTerminalSymbol("STHEN");
+			parseCompoundStatement();
+			if (equalsAny(0, "SELSE")) {
+				checkTerminalSymbol("SELSE");
+				parseCompoundStatement();
+			}
+		} else if (equalsAny(0, "SWHILE")) {
+			checkTerminalSymbol("SWHILE");
+			parseExpression();
+			checkTerminalSymbol("SDO");
+			parseCompoundStatement();
+		} else {
+			throw new SyntaxException(this.tokenList.get(this.index));
+		}
 	}
 
 	// 基本文
 	private void parseBasicStatement() throws SyntaxException { 	 
-		//TODO 
+		if (equalsAny(0, "SIDENTIFIER")) {
+			//TODO
+		} else if (equalsAny(0, "SREADLN", "SWRITELN")) {
+			parseInputOutputStatement();
+		} else if (equalsAny(0, "SBEGIN")) {
+			parseCompoundStatement();
+		} else {
+			throw new SyntaxException(this.tokenList.get(this.index));
+		}
 	}
 
 	// 代入文
@@ -266,7 +318,15 @@ public class Parser {
 
 	// 変数
 	private void parseVariable() throws SyntaxException { 	
-		//TODO 
+		if (equalsAny(0, "SIDENTIFIER")) {
+			if (equalsAny(1, "SLBRACKET")) {
+				parseIndexedVariable();
+			} else {
+				parsePureVariable();
+			}
+		} else {
+			throw new SyntaxException(this.tokenList.get(this.index));
+		}
 	}
 
 	// 純変数
@@ -290,7 +350,7 @@ public class Parser {
 	// 手続き呼出し文
 	private void parseProcedureCallStatement() throws SyntaxException { 
 		parseProcedureName(); 
-		if (equalsAny("SLPAREN")) {
+		if (equalsAny(0, "SLPAREN")) {
 			checkTerminalSymbol("SLPAREN");
 			parseExpressionSequence();
 			checkTerminalSymbol("SRPAREN");
@@ -299,21 +359,29 @@ public class Parser {
 
 	// 式の並び
 	private void parseExpressionSequence() throws SyntaxException { 
-		//TODO 
+		parseExpression();
+		while (equalsAny(0, "SCOMMA")) {
+			checkTerminalSymbol("SCOMMA");
+			parseExpression();
+		}
 	}
 
 	// 式
 	private void parseExpression() throws SyntaxException { 
-		//TODO	 
+		parseSimpleExpression();
+		if (equalsAny(0, "SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL")) {
+			parseRelationalOperator();
+			parseSimpleExpression();
+		}
 	}
 
 	// 単純式
 	private void parseSimpleExpression() throws SyntaxException {
-		if (equalsAny("SPLUS", "SMINUS")) {
+		if (equalsAny(0, "SPLUS", "SMINUS")) {
 			parseSign();
 		}
 		parseTerm();
-		while (equalsAny("SPLUS", "SMINUS", "SOR")) {
+		while (equalsAny(0, "SPLUS", "SMINUS", "SOR")) {
 			parseAdditiveOperator();
 			parseTerm();
 		}
@@ -322,7 +390,7 @@ public class Parser {
 	// 項
 	private void parseTerm() throws SyntaxException { 
 		parseFactor();
-		while (equalsAny("SSTAR", "SDIVD", "SMOD", "SAND")) {
+		while (equalsAny(0, "SSTAR", "SDIVD", "SMOD", "SAND")) {
 			parseMultiplicativeOperator();
 			parseFactor();
 		}	 
@@ -330,7 +398,20 @@ public class Parser {
 
 	// 因子
 	private void parseFactor() throws SyntaxException { 	 
-		//TODO
+		if (equalsAny(0, "SIDENTIFIER")) {
+			parseVariable();
+		} else if (equalsAny(0, "SCONSTANT", "SSTRING", "STRUE", "SFALSE")) {
+			parseConstant();
+		} else if (equalsAny(0, "SLPAREN")) {
+			checkTerminalSymbol("SLPAREN");
+			parseExpression();
+			checkTerminalSymbol("SRPAREN");
+		} else if (equalsAny(0, "SNOT")) {
+			checkTerminalSymbol("SNOT");
+			parseFactor();
+		} else {
+			throw new SyntaxException(this.tokenList.get(this.index));
+		}
 	}
 
 	// 関係演算子
@@ -350,13 +431,29 @@ public class Parser {
 
 	// 入出力文
 	private void parseInputOutputStatement() throws SyntaxException { 	 
-		//TODO
+		if (equalsAny(0, "SREADLN")) {
+			checkTerminalSymbol("SREADLN");
+			if (equalsAny(0, "SLPAREN")) {
+				checkTerminalSymbol("SLPAREN");
+				parseVariableSequence();
+				checkTerminalSymbol("SRPAREN");
+			}
+		} else if (equalsAny(0, "SWRITELN")) {
+			checkTerminalSymbol("SWRITELN");
+			if (equalsAny(0, "SLPAREN")) {
+				checkTerminalSymbol("SLPAREN");
+				parseExpressionSequence();
+				checkTerminalSymbol("SRPAREN");
+			}
+		} else {
+			throw new SyntaxException(this.tokenList.get(this.index));
+		}
 	}
 
 	// 変数の並び
 	private void parseVariableSequence() throws SyntaxException { 
 		parseVariable();
-		while (equalsAny("SCOMMA")) {
+		while (equalsAny(0, "SCOMMA")) {
 			checkTerminalSymbol("SCOMMA");
 			parseVariable();
 		}	 
@@ -364,7 +461,7 @@ public class Parser {
 
 	// 定数
 	private void parseConstant() throws SyntaxException { 	
-		//TODO 
+		checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE");
 	}
 
 }
