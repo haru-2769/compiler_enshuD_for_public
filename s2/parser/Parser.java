@@ -294,7 +294,11 @@ public class Parser {
 	// 基本文
 	private void parseBasicStatement() throws SyntaxException { 	 
 		if (equalsAny(0, "SIDENTIFIER")) {
-			//TODO
+			if (equalsAny(1, "SASSIGN", "SLBRACKET")) {
+				parseAssignmentStatement();
+			} else {
+				parseProcedureCallStatement();
+			}
 		} else if (equalsAny(0, "SREADLN", "SWRITELN")) {
 			parseInputOutputStatement();
 		} else if (equalsAny(0, "SBEGIN")) {
