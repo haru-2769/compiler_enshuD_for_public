@@ -12,7 +12,7 @@ public class AstPrint implements Visitor {
  @Override
  public void visit(NonTerminalNode nonTerminalNode) {
      printIndent(level);
-     System.out.println("NonTerminalNode");
+     System.out.println("NonTerminalNode(" + nonTerminalNode.getType() + ")");
      level++;
      for (AstNode child : nonTerminalNode.getChildren()) {
          child.accept(this);

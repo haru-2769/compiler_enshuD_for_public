@@ -8,7 +8,7 @@ public class TerminalNode implements AstNode {
  }
 
  public Token getToken() {
-     return token;
+     return this.token;
  }
 
  @Override
