@@ -15,7 +15,7 @@ public class Parser {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Parser().run("data/ts/normal01.ts"));
+		System.out.println(new Parser().run("data/ts/normal02.ts"));
 	}
 
 	/**
@@ -50,6 +50,7 @@ public class Parser {
 		try {
 			parseProgram();
 		} catch (final SyntaxException ex) {
+			//System.out.println(ex.getStackTrace()[0]);
 			return ex.getError();
 		}
 		
@@ -270,7 +271,7 @@ public class Parser {
 
 	// 文
 	private void parseStatement() throws SyntaxException { 	
-		if (equalsAny(0, "IDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN")) {
+		if (equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN")) {
 			parseBasicStatement();
 		} else if (equalsAny(0, "SIF")) {
 			checkTerminalSymbol("SIF");
