@@ -1,6 +1,6 @@
-package enshud.s2.parser;
+package enshud.s3.checker;
 
-public class AstPrint implements Visitor {
+public class AstChecker implements Visitor {
  private int level = 0;
 
  @Override

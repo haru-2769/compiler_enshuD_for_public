@@ -1,4 +1,4 @@
-package enshud.s2.parser;
+package enshud.s3.checker;
 
 public class SyntaxException extends Exception {
 	private final String error;
