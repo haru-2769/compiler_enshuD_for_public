@@ -102,9 +102,7 @@ public class Parser {
 
 	// プログラム名
 	private AstNode parseProgramName() throws SyntaxException {
-		NonTerminalNode programNameNode = new NonTerminalNode();
-		programNameNode.addChild(new TerminalNode(checkTerminalSymbol("SIDENTIFIER")));
-		return programNameNode;
+		return new TerminalNode(checkTerminalSymbol("SIDENTIFIER"));
 	}
 
 	// ブロック
@@ -150,9 +148,7 @@ public class Parser {
 
 	// 変数名
 	private AstNode parseVariableName() throws SyntaxException { 
-		NonTerminalNode variableNameNode = new NonTerminalNode();
-		variableNameNode.addChild(new TerminalNode(checkTerminalSymbol("SIDENTIFIER")));
-		return variableNameNode;
+		return new TerminalNode(checkTerminalSymbol("SIDENTIFIER"));
 	}
 
 	// 型
@@ -170,9 +166,7 @@ public class Parser {
 
 	// 標準型
 	private AstNode parseStandardType() throws SyntaxException {
-		NonTerminalNode standardTypeNode = new NonTerminalNode();
-		standardTypeNode.addChild(new TerminalNode(checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN"))); 
-		return standardTypeNode;
+		return new TerminalNode(checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN"));
 	}
 
 	// 配列型
@@ -215,9 +209,7 @@ public class Parser {
 
 	// 符号
 	private AstNode parseSign() throws SyntaxException {
-		NonTerminalNode signNode = new NonTerminalNode();
-		signNode.addChild(new TerminalNode(checkTerminalSymbol("SPLUS", "SMINUS")));
-		return signNode;
+		return new TerminalNode(checkTerminalSymbol("SPLUS", "SMINUS"));
 	}
 
 	// 副プログラム宣言群
@@ -251,9 +243,7 @@ public class Parser {
 
 	// 手続き名
 	private AstNode parseProcedureName() throws SyntaxException { 
-		NonTerminalNode procedureNameNode = new NonTerminalNode();	 
-		procedureNameNode.addChild(new TerminalNode(checkTerminalSymbol("SIDENTIFIER")));
-		return procedureNameNode;
+		return new TerminalNode(checkTerminalSymbol("SIDENTIFIER"));
 	}
 
 	// 仮パラメータ
@@ -295,9 +285,7 @@ public class Parser {
 
 	// 仮パラメータ名
 	private AstNode parseFormalParameterName() throws SyntaxException {
-		NonTerminalNode formalParameterNameNode = new NonTerminalNode(); 	
-		formalParameterNameNode.addChild(new TerminalNode(checkTerminalSymbol("SIDENTIFIER")));
-		return formalParameterNameNode; 
+		return new TerminalNode(checkTerminalSymbol("SIDENTIFIER"));
 	}
 
 	// 複合文
@@ -499,23 +487,17 @@ public class Parser {
 
 	// 関係演算子
 	private AstNode parseRelationalOperator() throws SyntaxException {
-		NonTerminalNode relationalOperatorNode = new NonTerminalNode();
-		relationalOperatorNode.addChild(new TerminalNode(checkTerminalSymbol("SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL")));
-		return relationalOperatorNode; 	 
+		return new TerminalNode(checkTerminalSymbol("SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL"));
 	}
 
 	// 加法演算子
 	private AstNode parseAdditiveOperator() throws SyntaxException {
-		NonTerminalNode additiveOperatorNode = new NonTerminalNode();
-		additiveOperatorNode.addChild(new TerminalNode(checkTerminalSymbol("SPLUS", "SMINUS", "SOR")));
-		return additiveOperatorNode; 
+		return new TerminalNode(checkTerminalSymbol("SPLUS", "SMINUS", "SOR"));
 	}
 
 	// 乗法演算子
 	private AstNode parseMultiplicativeOperator() throws SyntaxException {
-		NonTerminalNode multiplicativeOperatorNode = new NonTerminalNode();
-		multiplicativeOperatorNode.addChild(new TerminalNode(checkTerminalSymbol("SSTAR", "SDIVD", "SMOD", "SAND")));
-		return multiplicativeOperatorNode; 	 
+		return new TerminalNode(checkTerminalSymbol("SSTAR", "SDIVD", "SMOD", "SAND"));
 	}
 
 	// 入出力文
@@ -554,9 +536,7 @@ public class Parser {
 
 	// 定数
 	private AstNode parseConstant() throws SyntaxException { 
-		NonTerminalNode constantNode = new NonTerminalNode();	
-		constantNode.addChild(new TerminalNode(checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE")));
-		return constantNode;
+		return new TerminalNode(checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE"));
 	}
 
 }
