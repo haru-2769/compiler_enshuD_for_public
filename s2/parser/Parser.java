@@ -49,8 +49,8 @@ public class Parser {
 		
 		try {
 			final AstNode rootNode = parseProgram();
-			AstPrint astPrint = new AstPrint();
-			rootNode.accept(astPrint);
+//			AstPrint astPrint = new AstPrint();
+//			rootNode.accept(astPrint);
 		} catch (final SyntaxException ex) {
 			//System.out.println(ex.getStackTrace()[0]);
 			return ex.getError();
