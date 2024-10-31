@@ -15,7 +15,7 @@ public class Parser {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Parser().run("data/ts/normal02.ts"));
+		System.out.println(new Parser().run("data/ts/normal01.ts"));
 	}
 
 	/**
@@ -49,6 +49,8 @@ public class Parser {
 		
 		try {
 			final AstNode rootNode = parseProgram();
+			AstPrint astPrint = new AstPrint();
+			rootNode.accept(astPrint);
 		} catch (final SyntaxException ex) {
 			//System.out.println(ex.getStackTrace()[0]);
 			return ex.getError();
