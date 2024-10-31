@@ -48,7 +48,7 @@ public class Parser {
 		}
 		
 		try {
-			parseProgram();
+			final AstNode rootNode = parseProgram();
 		} catch (final SyntaxException ex) {
 			//System.out.println(ex.getStackTrace()[0]);
 			return ex.getError();
@@ -57,7 +57,7 @@ public class Parser {
 		return "OK";
 	}
 	
-	private void checkTerminalSymbol(String... terminalSymbols) throws SyntaxException {
+	private Token checkTerminalSymbol(String... terminalSymbols) throws SyntaxException {
 		if (this.index > this.tokenList.size() - 1) {
 			throw new SyntaxException(this.tokenList.get(this.tokenList.size() - 1)); 
 		}
@@ -65,7 +65,7 @@ public class Parser {
 		
 		for (String symbol: terminalSymbols) {
 			if (token.getTokenName().equals(symbol)) {
-				return;
+				return token;
 			}
 		}
 		throw new SyntaxException(token);
@@ -84,389 +84,477 @@ public class Parser {
 	}
 	
 	// プログラム名
-	private void parseProgram() throws SyntaxException {
-		checkTerminalSymbol("SPROGRAM");
-		parseProgramName();
-		checkTerminalSymbol("SSEMICOLON");
-		parseBlock();
-		parseCompoundStatement();
-		checkTerminalSymbol("SDOT");
+	private AstNode parseProgram() throws SyntaxException {
+		NonTerminalNode programNode = new NonTerminalNode();
+		programNode.addChild(new TerminalNode(checkTerminalSymbol("SPROGRAM")));
+		programNode.addChild(parseProgramName());
+		programNode.addChild(new TerminalNode(checkTerminalSymbol("SSEMICOLON")));
+		programNode.addChild(parseBlock());
+		programNode.addChild(parseCompoundStatement());
+		programNode.addChild(new TerminalNode(checkTerminalSymbol("SDOT")));
 		if (this.index != this.tokenList.size()) {
 			throw new SyntaxException(this.tokenList.get(this.index-1));
 		}
+		return programNode;
 	}
 
 	// プログラム名
-	private void parseProgramName() throws SyntaxException {
-		checkTerminalSymbol("SIDENTIFIER");
+	private AstNode parseProgramName() throws SyntaxException {
+		NonTerminalNode programNameNode = new NonTerminalNode();
+		programNameNode.addChild(new TerminalNode(checkTerminalSymbol("SIDENTIFIER")));
+		return programNameNode;
 	}
 
 	// ブロック
-	private void parseBlock() throws SyntaxException { 	 
-		parseVariableDeclaration();
-		parseSubprogramDeclarationSequence();
+	private AstNode parseBlock() throws SyntaxException {
+		NonTerminalNode blockNode = new NonTerminalNode();
+		blockNode.addChild(parseVariableDeclaration());
+		blockNode.addChild(parseSubprogramDeclarationSequence());
+		return blockNode;
 	}
 
 	// 変数宣言
-	private void parseVariableDeclaration() throws SyntaxException {
+	private AstNode parseVariableDeclaration() throws SyntaxException {
+		NonTerminalNode variableDeclarationNode = new NonTerminalNode();
 		if (equalsAny(0, "SVAR")) {
-			checkTerminalSymbol("SVAR");
-			parseVariableDeclarationSequence();
+			variableDeclarationNode.addChild(new TerminalNode(checkTerminalSymbol("SVAR")));
+			variableDeclarationNode.addChild(parseVariableDeclarationSequence());
 		} 
+		return variableDeclarationNode;
 	}
 
 	// 変数宣言の並び
-	private void parseVariableDeclarationSequence() throws SyntaxException {
+	private AstNode parseVariableDeclarationSequence() throws SyntaxException {
+		NonTerminalNode variableDeclarationSequenceNode = new NonTerminalNode();
 		do {
-			parseVariableNameSequence();
-			checkTerminalSymbol("SCOLON");
-			parseType();
-			checkTerminalSymbol("SSEMICOLON");
+			variableDeclarationSequenceNode.addChild(parseVariableNameSequence());
+			variableDeclarationSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOLON")));
+			variableDeclarationSequenceNode.addChild(parseType());
+			variableDeclarationSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SSEMICOLON")));
 		} while (equalsAny(0, "SIDENTIFIER"));	
+		return variableDeclarationSequenceNode;
 	}
 
 	// 変数名の並び
-	private void parseVariableNameSequence() throws SyntaxException {
-		parseVariableName();
+	private AstNode parseVariableNameSequence() throws SyntaxException {
+		NonTerminalNode variableNameSequenceNode = new NonTerminalNode();
+		variableNameSequenceNode.addChild(parseVariableName());
 		while (equalsAny(0, "SCOMMA")) {
-			checkTerminalSymbol("SCOMMA");
-			parseVariableName();
+			variableNameSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOMMA")));
+			variableNameSequenceNode.addChild(parseVariableName());
 		}
+		return variableNameSequenceNode;
 	}
 
 	// 変数名
-	private void parseVariableName() throws SyntaxException { 	 
-		checkTerminalSymbol("SIDENTIFIER");
+	private AstNode parseVariableName() throws SyntaxException { 
+		NonTerminalNode variableNameNode = new NonTerminalNode();
+		variableNameNode.addChild(new TerminalNode(checkTerminalSymbol("SIDENTIFIER")));
+		return variableNameNode;
 	}
 
 	// 型
-	private void parseType() throws SyntaxException { 	
+	private AstNode parseType() throws SyntaxException { 	
+		NonTerminalNode typeNode = new NonTerminalNode();
 		if (equalsAny(0, "SINTEGER", "SCHAR", "SBOOLEAN")) {
-			parseStandardType();
+			typeNode.addChild(parseStandardType());
 		} else if (equalsAny(0, "SARRAY")) {
-			parseArrayType();
+			typeNode.addChild(parseArrayType());
 		} else {
 			throw new SyntaxException(this.tokenList.get(this.index));
 		}
+		return typeNode;
 	}
 
 	// 標準型
-	private void parseStandardType() throws SyntaxException { 	
-		checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN"); 
+	private AstNode parseStandardType() throws SyntaxException {
+		NonTerminalNode standardTypeNode = new NonTerminalNode();
+		standardTypeNode.addChild(new TerminalNode(checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN"))); 
+		return standardTypeNode;
 	}
 
 	// 配列型
-	private void parseArrayType() throws SyntaxException { 	 
-		checkTerminalSymbol("SARRAY");
-		checkTerminalSymbol("SLBRACKET");
-		parseIndexMinValue();
-		checkTerminalSymbol("SRANGE");
-		parseIndexMaxValue();
-		checkTerminalSymbol("SRBRACKET");
-		checkTerminalSymbol("SOF");
-		parseStandardType();
+	private AstNode parseArrayType() throws SyntaxException {
+		NonTerminalNode arrayTypeNode = new NonTerminalNode();
+		arrayTypeNode.addChild(new TerminalNode(checkTerminalSymbol("SARRAY")));
+		arrayTypeNode.addChild(new TerminalNode(checkTerminalSymbol("SLBRACKET")));
+		arrayTypeNode.addChild(parseIndexMinValue());
+		arrayTypeNode.addChild(new TerminalNode(checkTerminalSymbol("SRANGE")));
+		arrayTypeNode.addChild(parseIndexMaxValue());
+		arrayTypeNode.addChild(new TerminalNode(checkTerminalSymbol("SRBRACKET")));
+		arrayTypeNode.addChild(new TerminalNode(checkTerminalSymbol("SOF")));
+		arrayTypeNode.addChild(parseStandardType());
+		return arrayTypeNode;
 	}
 
 	// 添え字の最小値
-	private void parseIndexMinValue() throws SyntaxException {
-		parseInteger();
+	private AstNode parseIndexMinValue() throws SyntaxException {
+		NonTerminalNode indexMinValueNode = new NonTerminalNode();
+		indexMinValueNode.addChild(parseInteger());
+		return indexMinValueNode;
 	}
 
 	// 添え字の最大値
-	private void parseIndexMaxValue() throws SyntaxException {
-		parseInteger();
+	private AstNode parseIndexMaxValue() throws SyntaxException {
+		NonTerminalNode indexMaxValueNode = new NonTerminalNode();
+		indexMaxValueNode.addChild(parseInteger());
+		return indexMaxValueNode;
 	}
 
 	// 整数
-	private void parseInteger() throws SyntaxException { 	
+	private AstNode parseInteger() throws SyntaxException { 
+		NonTerminalNode integerNode = new NonTerminalNode();	
 		if (equalsAny(0, "SPLUS", "SMINUS")) {
-			parseSign();
+			integerNode.addChild(parseSign());
 		}
-		checkTerminalSymbol("SCONSTANT");
+		integerNode.addChild(new TerminalNode(checkTerminalSymbol("SCONSTANT")));
+		return integerNode;
 	}
 
 	// 符号
-	private void parseSign() throws SyntaxException {
-		checkTerminalSymbol("SPLUS", "SMINUS");
+	private AstNode parseSign() throws SyntaxException {
+		NonTerminalNode signNode = new NonTerminalNode();
+		signNode.addChild(new TerminalNode(checkTerminalSymbol("SPLUS", "SMINUS")));
+		return signNode;
 	}
 
 	// 副プログラム宣言群
-	private void parseSubprogramDeclarationSequence() throws SyntaxException { 	
+	private AstNode parseSubprogramDeclarationSequence() throws SyntaxException { 
+		NonTerminalNode subprogramDeclarationSequenceNode = new NonTerminalNode();	
 		while (equalsAny(0, "SPROCEDURE")) {
-			parseSubprogramDeclaration();
-			checkTerminalSymbol("SSEMICOLON");
+			subprogramDeclarationSequenceNode.addChild(parseSubprogramDeclaration());
+			subprogramDeclarationSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SSEMICOLON")));
 		}
+		return subprogramDeclarationSequenceNode;
 	}
 
 	// 副プログラム宣言
-	private void parseSubprogramDeclaration() throws SyntaxException { 	 
-		parseSubprogramHead();
-		parseVariableDeclaration();
-		parseCompoundStatement();
+	private AstNode parseSubprogramDeclaration() throws SyntaxException {
+		NonTerminalNode subprogramDeclarationNode = new NonTerminalNode(); 	 
+		subprogramDeclarationNode.addChild(parseSubprogramHead());
+		subprogramDeclarationNode.addChild(parseVariableDeclaration());
+		subprogramDeclarationNode.addChild(parseCompoundStatement());
+		return subprogramDeclarationNode;
 	}
 
 	// 副プログラム頭部
-	private void parseSubprogramHead() throws SyntaxException { 
-		checkTerminalSymbol("SPROCEDURE");
-		parseProcedureName();
-		parseFormalParameter();
-		checkTerminalSymbol("SSEMICOLON");
+	private AstNode parseSubprogramHead() throws SyntaxException {
+		NonTerminalNode subprogramHeadNode = new NonTerminalNode(); 
+		subprogramHeadNode.addChild(new TerminalNode(checkTerminalSymbol("SPROCEDURE")));
+		subprogramHeadNode.addChild(parseProcedureName());
+		subprogramHeadNode.addChild(parseFormalParameter());
+		subprogramHeadNode.addChild(new TerminalNode(checkTerminalSymbol("SSEMICOLON")));
+		return subprogramHeadNode;
 	}
 
 	// 手続き名
-	private void parseProcedureName() throws SyntaxException { 	 
-		checkTerminalSymbol("SIDENTIFIER");
+	private AstNode parseProcedureName() throws SyntaxException { 
+		NonTerminalNode procedureNameNode = new NonTerminalNode();	 
+		procedureNameNode.addChild(new TerminalNode(checkTerminalSymbol("SIDENTIFIER")));
+		return procedureNameNode;
 	}
 
 	// 仮パラメータ
-	private void parseFormalParameter() throws SyntaxException { 
+	private AstNode parseFormalParameter() throws SyntaxException { 
+		NonTerminalNode formalParameterNode = new NonTerminalNode();
 		if (equalsAny(0, "SLPAREN")) {
-			checkTerminalSymbol("SLPAREN");
-			parseFormalParameterSequence();
-			checkTerminalSymbol("SRPAREN");
+			formalParameterNode.addChild(new TerminalNode(checkTerminalSymbol("SLPAREN")));
+			formalParameterNode.addChild(parseFormalParameterSequence());
+			formalParameterNode.addChild(new TerminalNode(checkTerminalSymbol("SRPAREN")));
 		}
+		return formalParameterNode;
 	}
 
 	// 仮パラメータの並び
-	private void parseFormalParameterSequence() throws SyntaxException { 	 
-		parseFormalParameterNameSequence();
-		checkTerminalSymbol("SCOLON");
-		parseStandardType();
+	private AstNode parseFormalParameterSequence() throws SyntaxException {
+		NonTerminalNode formalParameterSequenceNode = new NonTerminalNode();	 
+		formalParameterSequenceNode.addChild(parseFormalParameterNameSequence());
+		formalParameterSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOLON")));
+		formalParameterSequenceNode.addChild(parseStandardType());
 		while (equalsAny(0, "SCOMMA")) {
-			checkTerminalSymbol("SCOMMA");
-			parseFormalParameterNameSequence();
-			checkTerminalSymbol("SCOLON");
-			parseStandardType();
+			formalParameterSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOMMA")));
+			formalParameterSequenceNode.addChild(parseFormalParameterNameSequence());
+			formalParameterSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOLON")));
+			formalParameterSequenceNode.addChild(parseStandardType());
 		}
+		return formalParameterSequenceNode;
 	}
 
 	// 仮パラメータ名の並び
-	private void parseFormalParameterNameSequence() throws SyntaxException { 	
-		parseFormalParameterName();
+	private AstNode parseFormalParameterNameSequence() throws SyntaxException {
+		NonTerminalNode formalParameterNameSequenceNode = new NonTerminalNode();	
+		formalParameterNameSequenceNode.addChild(parseFormalParameterName());
 		while (equalsAny(0, "SCOMMA")) {
-			checkTerminalSymbol("SCOMMA");
-			parseFormalParameterName();
+			formalParameterNameSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOMMA")));
+			formalParameterNameSequenceNode.addChild(parseFormalParameterName());
 		} 
+		return formalParameterNameSequenceNode;
 	}
 
 	// 仮パラメータ名
-	private void parseFormalParameterName() throws SyntaxException { 	
-		checkTerminalSymbol("SIDENTIFIER"); 
+	private AstNode parseFormalParameterName() throws SyntaxException {
+		NonTerminalNode formalParameterNameNode = new NonTerminalNode(); 	
+		formalParameterNameNode.addChild(new TerminalNode(checkTerminalSymbol("SIDENTIFIER")));
+		return formalParameterNameNode; 
 	}
 
 	// 複合文
-	private void parseCompoundStatement() throws SyntaxException { 	
-		checkTerminalSymbol("SBEGIN");
-		parseStatementSequence();
-		checkTerminalSymbol("SEND"); 
+	private AstNode parseCompoundStatement() throws SyntaxException {
+		NonTerminalNode compoundStatementNode = new NonTerminalNode(); 	
+		compoundStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SBEGIN")));
+		compoundStatementNode.addChild(parseStatementSequence());
+		compoundStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SEND"))); 
+		return compoundStatementNode;
 	}
 
 	// 文の並び
-	private void parseStatementSequence() throws SyntaxException { 	 
+	private AstNode parseStatementSequence() throws SyntaxException {
+		NonTerminalNode statementSequenceNode = new NonTerminalNode(); 
 		do {
-			parseStatement();
-			checkTerminalSymbol("SSEMICOLON");
+			statementSequenceNode.addChild(parseStatement());
+			statementSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SSEMICOLON")));
 		} while (equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN", "SIF", "SWHILE"));
+		return statementSequenceNode;
 	}
 
 	// 文
-	private void parseStatement() throws SyntaxException { 	
+	private AstNode parseStatement() throws SyntaxException {
+		NonTerminalNode statementNode = new NonTerminalNode();
 		if (equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN")) {
-			parseBasicStatement();
+			statementNode.addChild(parseBasicStatement());
 		} else if (equalsAny(0, "SIF")) {
-			checkTerminalSymbol("SIF");
-			parseExpression();
-			checkTerminalSymbol("STHEN");
-			parseCompoundStatement();
+			statementNode.addChild(new TerminalNode(checkTerminalSymbol("SIF")));
+			statementNode.addChild(parseExpression());
+			statementNode.addChild(new TerminalNode(checkTerminalSymbol("STHEN")));
+			statementNode.addChild(parseCompoundStatement());
 			if (equalsAny(0, "SELSE")) {
-				checkTerminalSymbol("SELSE");
-				parseCompoundStatement();
+				statementNode.addChild(new TerminalNode(checkTerminalSymbol("SELSE")));
+				statementNode.addChild(parseCompoundStatement());
 			}
 		} else if (equalsAny(0, "SWHILE")) {
-			checkTerminalSymbol("SWHILE");
-			parseExpression();
-			checkTerminalSymbol("SDO");
-			parseCompoundStatement();
+			statementNode.addChild(new TerminalNode(checkTerminalSymbol("SWHILE")));
+			statementNode.addChild(parseExpression());
+			statementNode.addChild(new TerminalNode(checkTerminalSymbol("SDO")));
+			statementNode.addChild(parseCompoundStatement());
 		} else {
 			throw new SyntaxException(this.tokenList.get(this.index));
 		}
+		return statementNode;
 	}
 
 	// 基本文
-	private void parseBasicStatement() throws SyntaxException { 	 
+	private AstNode parseBasicStatement() throws SyntaxException { 	
+		NonTerminalNode basicStatementNode = new NonTerminalNode(); 
 		if (equalsAny(0, "SIDENTIFIER")) {
 			if (equalsAny(1, "SASSIGN", "SLBRACKET")) {
-				parseAssignmentStatement();
+				basicStatementNode.addChild(parseAssignmentStatement());
 			} else {
-				parseProcedureCallStatement();
+				basicStatementNode.addChild(parseProcedureCallStatement());
 			}
 		} else if (equalsAny(0, "SREADLN", "SWRITELN")) {
-			parseInputOutputStatement();
+			basicStatementNode.addChild(parseInputOutputStatement());
 		} else if (equalsAny(0, "SBEGIN")) {
-			parseCompoundStatement();
+			basicStatementNode.addChild(parseCompoundStatement());
 		} else {
 			throw new SyntaxException(this.tokenList.get(this.index));
 		}
+		return basicStatementNode;
 	}
 
 	// 代入文
-	private void parseAssignmentStatement() throws SyntaxException {
-		parseLeftHandSide();
-		checkTerminalSymbol("SASSIGN");
-		parseExpression();
+	private AstNode parseAssignmentStatement() throws SyntaxException {
+		NonTerminalNode assignmentStatementNode = new NonTerminalNode();
+		assignmentStatementNode.addChild(parseLeftHandSide());
+		assignmentStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SASSIGN")));
+		assignmentStatementNode.addChild(parseExpression());
+		return assignmentStatementNode;
 	}
 
 	// 左辺
-	private void parseLeftHandSide() throws SyntaxException { 	 
-		parseVariable();
+	private AstNode parseLeftHandSide() throws SyntaxException { 	
+		NonTerminalNode leftHandSideNode = new NonTerminalNode(); 
+		leftHandSideNode.addChild(parseVariable());
+		return leftHandSideNode;
 	}
 
 	// 変数
-	private void parseVariable() throws SyntaxException { 	
+	private AstNode parseVariable() throws SyntaxException {
+		NonTerminalNode variableNode = new NonTerminalNode(); 	
 		if (equalsAny(0, "SIDENTIFIER")) {
 			if (equalsAny(1, "SLBRACKET")) {
-				parseIndexedVariable();
+				variableNode.addChild(parseIndexedVariable());
 			} else {
-				parsePureVariable();
+				variableNode.addChild(parsePureVariable());
 			}
 		} else {
 			throw new SyntaxException(this.tokenList.get(this.index));
 		}
+		return variableNode;
 	}
 
 	// 純変数
-	private void parsePureVariable() throws SyntaxException { 	
-		parseVariableName(); 
+	private AstNode parsePureVariable() throws SyntaxException { 
+		NonTerminalNode pureVariableNode = new NonTerminalNode();	
+		pureVariableNode.addChild(parseVariableName());
+		return pureVariableNode; 
 	}
 
 	// 添え字付き変数
-	private void parseIndexedVariable() throws SyntaxException { 
-		parseVariableName();
-		checkTerminalSymbol("SLBRACKET");
-		parseIndex();
-		checkTerminalSymbol("SRBRACKET");	 
+	private AstNode parseIndexedVariable() throws SyntaxException {
+		NonTerminalNode indexedVariableNode = new NonTerminalNode(); 
+		indexedVariableNode.addChild(parseVariableName());
+		indexedVariableNode.addChild(new TerminalNode(checkTerminalSymbol("SLBRACKET")));
+		indexedVariableNode.addChild(parseIndex());
+		indexedVariableNode.addChild(new TerminalNode(checkTerminalSymbol("SRBRACKET")));	
+		return indexedVariableNode; 
 	}
 
 	// 添え字
-	private void parseIndex() throws SyntaxException { 
-		parseExpression();	 
+	private AstNode parseIndex() throws SyntaxException {
+		NonTerminalNode indexNode = new NonTerminalNode(); 
+		indexNode.addChild(parseExpression());	 
+		return indexNode;
 	}
 
 	// 手続き呼出し文
-	private void parseProcedureCallStatement() throws SyntaxException { 
-		parseProcedureName(); 
+	private AstNode parseProcedureCallStatement() throws SyntaxException {
+		NonTerminalNode procedureCallStatementNode = new NonTerminalNode(); 
+		procedureCallStatementNode.addChild(parseProcedureName()); 
 		if (equalsAny(0, "SLPAREN")) {
-			checkTerminalSymbol("SLPAREN");
-			parseExpressionSequence();
-			checkTerminalSymbol("SRPAREN");
+			procedureCallStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SLPAREN")));
+			procedureCallStatementNode.addChild(parseExpressionSequence());
+			procedureCallStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SRPAREN")));
 		}
+		return procedureCallStatementNode;
 	}
 
 	// 式の並び
-	private void parseExpressionSequence() throws SyntaxException { 
-		parseExpression();
+	private AstNode parseExpressionSequence() throws SyntaxException {
+		NonTerminalNode expressionSequenceNode = new NonTerminalNode();
+		expressionSequenceNode.addChild(parseExpression());
 		while (equalsAny(0, "SCOMMA")) {
-			checkTerminalSymbol("SCOMMA");
-			parseExpression();
+			expressionSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOMMA")));
+			expressionSequenceNode.addChild(parseExpression());
 		}
+		return expressionSequenceNode;
 	}
 
 	// 式
-	private void parseExpression() throws SyntaxException { 
-		parseSimpleExpression();
+	private AstNode parseExpression() throws SyntaxException { 
+		NonTerminalNode expressionNode = new NonTerminalNode();
+		expressionNode.addChild(parseSimpleExpression());
 		if (equalsAny(0, "SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL")) {
-			parseRelationalOperator();
-			parseSimpleExpression();
+			expressionNode.addChild(parseRelationalOperator());
+			expressionNode.addChild(parseSimpleExpression());
 		}
+		return expressionNode;
 	}
 
 	// 単純式
-	private void parseSimpleExpression() throws SyntaxException {
+	private AstNode parseSimpleExpression() throws SyntaxException {
+		NonTerminalNode simpleExpressionNode = new NonTerminalNode();
 		if (equalsAny(0, "SPLUS", "SMINUS")) {
-			parseSign();
+			simpleExpressionNode.addChild(parseSign());
 		}
-		parseTerm();
+		simpleExpressionNode.addChild(parseTerm());
 		while (equalsAny(0, "SPLUS", "SMINUS", "SOR")) {
-			parseAdditiveOperator();
-			parseTerm();
+			simpleExpressionNode.addChild(parseAdditiveOperator());
+			simpleExpressionNode.addChild(parseTerm());
 		}
+		return simpleExpressionNode;
 	}
 
 	// 項
-	private void parseTerm() throws SyntaxException { 
-		parseFactor();
+	private AstNode parseTerm() throws SyntaxException { 
+		NonTerminalNode termNode = new NonTerminalNode();
+		termNode.addChild(parseFactor());
 		while (equalsAny(0, "SSTAR", "SDIVD", "SMOD", "SAND")) {
-			parseMultiplicativeOperator();
-			parseFactor();
-		}	 
+			termNode.addChild(parseMultiplicativeOperator());
+			termNode.addChild(parseFactor());
+		}
+		return termNode;
 	}
 
 	// 因子
-	private void parseFactor() throws SyntaxException { 	 
+	private AstNode parseFactor() throws SyntaxException {
+		NonTerminalNode factorNode = new NonTerminalNode(); 	 
 		if (equalsAny(0, "SIDENTIFIER")) {
-			parseVariable();
+			factorNode.addChild(parseVariable());
 		} else if (equalsAny(0, "SCONSTANT", "SSTRING", "STRUE", "SFALSE")) {
-			parseConstant();
+			factorNode.addChild(parseConstant());
 		} else if (equalsAny(0, "SLPAREN")) {
-			checkTerminalSymbol("SLPAREN");
-			parseExpression();
-			checkTerminalSymbol("SRPAREN");
+			factorNode.addChild(new TerminalNode(checkTerminalSymbol("SLPAREN")));
+			factorNode.addChild(parseExpression());
+			factorNode.addChild(new TerminalNode(checkTerminalSymbol("SRPAREN")));
 		} else if (equalsAny(0, "SNOT")) {
-			checkTerminalSymbol("SNOT");
-			parseFactor();
+			factorNode.addChild(new TerminalNode(checkTerminalSymbol("SNOT")));
+			factorNode.addChild(parseFactor());
 		} else {
 			throw new SyntaxException(this.tokenList.get(this.index));
 		}
+		return factorNode;
 	}
 
 	// 関係演算子
-	private void parseRelationalOperator() throws SyntaxException {
-		checkTerminalSymbol("SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL"); 	 
+	private AstNode parseRelationalOperator() throws SyntaxException {
+		NonTerminalNode relationalOperatorNode = new NonTerminalNode();
+		relationalOperatorNode.addChild(new TerminalNode(checkTerminalSymbol("SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL")));
+		return relationalOperatorNode; 	 
 	}
 
 	// 加法演算子
-	private void parseAdditiveOperator() throws SyntaxException {
-		checkTerminalSymbol("SPLUS", "SMINUS", "SOR"); 
+	private AstNode parseAdditiveOperator() throws SyntaxException {
+		NonTerminalNode additiveOperatorNode = new NonTerminalNode();
+		additiveOperatorNode.addChild(new TerminalNode(checkTerminalSymbol("SPLUS", "SMINUS", "SOR")));
+		return additiveOperatorNode; 
 	}
 
 	// 乗法演算子
-	private void parseMultiplicativeOperator() throws SyntaxException {
-		checkTerminalSymbol("SSTAR", "SDIVD", "SMOD", "SAND"); 	 
+	private AstNode parseMultiplicativeOperator() throws SyntaxException {
+		NonTerminalNode multiplicativeOperatorNode = new NonTerminalNode();
+		multiplicativeOperatorNode.addChild(new TerminalNode(checkTerminalSymbol("SSTAR", "SDIVD", "SMOD", "SAND")));
+		return multiplicativeOperatorNode; 	 
 	}
 
 	// 入出力文
-	private void parseInputOutputStatement() throws SyntaxException { 	 
+	private AstNode parseInputOutputStatement() throws SyntaxException {
+		NonTerminalNode inputOutputStatementNode = new NonTerminalNode();	 
 		if (equalsAny(0, "SREADLN")) {
-			checkTerminalSymbol("SREADLN");
+			inputOutputStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SREADLN")));
 			if (equalsAny(0, "SLPAREN")) {
-				checkTerminalSymbol("SLPAREN");
-				parseVariableSequence();
-				checkTerminalSymbol("SRPAREN");
+				inputOutputStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SLPAREN")));
+				inputOutputStatementNode.addChild(parseVariableSequence());
+				inputOutputStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SRPAREN")));
 			}
 		} else if (equalsAny(0, "SWRITELN")) {
-			checkTerminalSymbol("SWRITELN");
+			inputOutputStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SWRITELN")));
 			if (equalsAny(0, "SLPAREN")) {
-				checkTerminalSymbol("SLPAREN");
-				parseExpressionSequence();
-				checkTerminalSymbol("SRPAREN");
+				inputOutputStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SLPAREN")));
+				inputOutputStatementNode.addChild(parseExpressionSequence());
+				inputOutputStatementNode.addChild(new TerminalNode(checkTerminalSymbol("SRPAREN")));
 			}
 		} else {
 			throw new SyntaxException(this.tokenList.get(this.index));
 		}
+		return inputOutputStatementNode;
 	}
 
 	// 変数の並び
-	private void parseVariableSequence() throws SyntaxException { 
-		parseVariable();
+	private AstNode parseVariableSequence() throws SyntaxException {
+		NonTerminalNode variableSequenceNode = new NonTerminalNode();
+		variableSequenceNode.addChild(parseVariable());
 		while (equalsAny(0, "SCOMMA")) {
-			checkTerminalSymbol("SCOMMA");
-			parseVariable();
+			variableSequenceNode.addChild(new TerminalNode(checkTerminalSymbol("SCOMMA")));
+			variableSequenceNode.addChild(parseVariable());
 		}	 
+		return variableSequenceNode;
 	}
 
 	// 定数
-	private void parseConstant() throws SyntaxException { 	
-		checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE");
+	private AstNode parseConstant() throws SyntaxException { 
+		NonTerminalNode constantNode = new NonTerminalNode();	
+		constantNode.addChild(new TerminalNode(checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE")));
+		return constantNode;
 	}
 
 }
