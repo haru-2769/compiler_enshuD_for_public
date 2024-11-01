@@ -42,8 +42,8 @@ public class Parser {
 			for(String line: buffer) {
 				tokenList.add(new Token(line));
 			}
-			ProgramNode rootNode = new ProgramNode();
-			rootNode.parse(new Context(tokenList));
+			ProgramNode programNode = new ProgramNode();
+			programNode.parse(new Context(tokenList));
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {

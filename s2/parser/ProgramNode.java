@@ -1,5 +1,5 @@
 package enshud.s2.parser;
-//プログラム
+
 public class ProgramNode extends NonTerminalNode {
     public void parse(Context context) throws SyntaxException {
     	addChild(new TerminalNode(context.checkTerminalSymbol("SPROGRAM")));
