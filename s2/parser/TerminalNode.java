@@ -11,7 +11,7 @@ public class TerminalNode implements AstNode {
         return token;
     }
 
-    @Override
+    
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
