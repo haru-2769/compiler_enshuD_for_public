@@ -11,7 +11,7 @@ public class AstChecker extends Visitor {
 
     public void visit(TerminalNode terminalNode) throws SemanticException {
         printIndent();
-        System.out.println("TerminalNode: " + terminalNode.getToken().getLexical());
+        System.out.println(terminalNode.getToken().getLexical());
     }
     
     public void visit(ProgramNode programNode) throws SemanticException {

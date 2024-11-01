@@ -6,11 +6,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import enshud.s2.parser.Context;
-import enshud.s2.parser.ProgramNode;
-import enshud.s2.parser.SyntaxException;
-import enshud.s2.parser.Token;
-
 public class Checker {
 	private List<Token> tokenList;
 	/**
@@ -19,7 +14,7 @@ public class Checker {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Checker().run("data/ts/normal02.ts"));
+		System.out.println(new Checker().run("data/ts/normal01.ts"));
 	}
 
 	/**
@@ -48,9 +43,12 @@ public class Checker {
 			}
 			ProgramNode programNode = new ProgramNode();
 			programNode.parse(new Context(tokenList));
+			programNode.accept(new AstChecker());
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {
+			return ex.getError();
+		} catch (final SemanticException ex) {
 			return ex.getError();
 		}
 		
