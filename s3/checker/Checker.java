@@ -36,6 +36,7 @@ public class Checker {
 	public String run(final String inputFileName) {
 		// TODO
 		final List<String> buffer;
+		AstNode rootNode;
 		try {
 			buffer = Files.readAllLines(Paths.get(inputFileName));
 		} catch (IOException ex) {
@@ -48,11 +49,13 @@ public class Checker {
 		}
 		
 		try {
-			final AstNode rootNode = parseProgram();
+			rootNode = parseProgram();
 			final AstChecker astChecker = new AstChecker();
 			rootNode.accept(astChecker);
 		} catch (final SyntaxException ex) {
 			return ex.getError();
+		} catch (final SemanticException e) {
+			return e.getError();
 		}
 		
 		return "OK";

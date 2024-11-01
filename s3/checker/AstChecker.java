@@ -9,7 +9,7 @@ public class AstChecker implements Visitor {
  }
 
  @Override
- public void visit(NonTerminalNode nonTerminalNode) {
+ public void visit(NonTerminalNode nonTerminalNode) throws SemanticException {
 
 	 
  }
