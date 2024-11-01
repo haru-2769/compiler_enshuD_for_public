@@ -11,7 +11,6 @@ public class TerminalNode implements AstNode {
      return this.token;
  }
 
- @Override
  public void accept(Visitor visitor) throws SemanticException {
      visitor.visit(this);
  }

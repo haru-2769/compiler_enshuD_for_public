@@ -1,6 +1,6 @@
 package enshud.s2.parser;
  
-public interface Visitor {
-    void visit(TerminalNode terminalNode);
-    void visit(NonTerminalNode nonTerminalNode);
+public abstract class Visitor {
+    public abstract void visit(TerminalNode terminalNode);
+    public abstract void visit(NonTerminalNode nonTerminalNode);
 }
