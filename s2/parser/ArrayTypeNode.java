@@ -17,8 +17,4 @@ public class ArrayTypeNode extends NonTerminalNode {
         addChild(standardTypeNode);
         standardTypeNode.parse(context);
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }

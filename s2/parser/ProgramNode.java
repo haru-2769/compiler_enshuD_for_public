@@ -18,9 +18,4 @@ public class ProgramNode extends NonTerminalNode {
             throw new SyntaxException(context.getTokenList().get(context.getIndex()-1));
         }
     };
-
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

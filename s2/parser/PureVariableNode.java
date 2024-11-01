@@ -6,8 +6,4 @@ public class PureVariableNode extends NonTerminalNode{
         addChild(variableNameNode);
         variableNameNode.parse(context);
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }

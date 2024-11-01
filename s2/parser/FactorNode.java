@@ -23,9 +23,4 @@ public class FactorNode extends NonTerminalNode{
             factorNode.parse(context);
         }
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

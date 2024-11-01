@@ -6,8 +6,4 @@ public class IndexMaxValueNode extends NonTerminalNode {
         addChild(integerNode);
         integerNode.parse(context);
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }

@@ -11,9 +11,4 @@ public class IndexedVariableNode extends NonTerminalNode {
         indexNode.parse(context);
         addChild(new TerminalNode(context.checkTerminalSymbol("SRBRACKET")));
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

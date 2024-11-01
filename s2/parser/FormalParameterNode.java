@@ -10,8 +10,4 @@ public class FormalParameterNode extends NonTerminalNode {
             addChild(new TerminalNode(context.checkTerminalSymbol("SRPAREN")));
         }
     }
-
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }

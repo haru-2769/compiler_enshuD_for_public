@@ -12,9 +12,4 @@ public class SubprogramDeclarationNode extends NonTerminalNode {
         addChild(compoundStatementNode);
         compoundStatementNode.parse(context);
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

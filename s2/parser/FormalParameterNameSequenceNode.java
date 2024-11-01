@@ -12,8 +12,4 @@ public class FormalParameterNameSequenceNode extends NonTerminalNode{
 			addChild(formalParameterNameNode1);
 		}
 	}
-
-	public void accept(Visitor visitor) {
-		visitor.visit(this);
-	}
 }

@@ -6,9 +6,4 @@ public class LeftHandSideNode extends NonTerminalNode {
         addChild(variableNode);
         variableNode.parse(context);
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

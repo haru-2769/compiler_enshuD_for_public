@@ -12,9 +12,4 @@ public class ExpressionSequenceNode extends NonTerminalNode {
             expressionNode1.parse(context);
         }
     }
-
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

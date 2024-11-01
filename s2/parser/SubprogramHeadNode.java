@@ -11,9 +11,4 @@ public class SubprogramHeadNode extends NonTerminalNode {
         formalParameterNode.parse(context);
         addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

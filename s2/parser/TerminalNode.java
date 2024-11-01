@@ -10,10 +10,5 @@ public class TerminalNode implements AstNode {
     public Token getToken() {
         return token;
     }
-
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }
 

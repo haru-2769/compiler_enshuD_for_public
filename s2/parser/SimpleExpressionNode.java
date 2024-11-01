@@ -19,9 +19,4 @@ public class SimpleExpressionNode extends NonTerminalNode {
             termNode1.parse(context);
         }
     }
-
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

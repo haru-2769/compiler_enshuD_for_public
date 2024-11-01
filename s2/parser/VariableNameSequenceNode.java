@@ -12,8 +12,4 @@ public class VariableNameSequenceNode extends NonTerminalNode {
             variableNameNode1.parse(context);
         }
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }

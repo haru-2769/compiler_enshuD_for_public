@@ -9,9 +9,4 @@ public class SubprogramDeclarationSequenceNode extends NonTerminalNode {
             addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
         }
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

@@ -14,5 +14,6 @@ public abstract class NonTerminalNode implements AstNode {
     public List<AstNode> getChildren() {
         return this.children;
     }
+    
     public abstract void parse(Context context) throws SyntaxException;
 }

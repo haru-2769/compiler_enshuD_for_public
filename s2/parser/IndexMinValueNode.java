@@ -6,9 +6,4 @@ public class IndexMinValueNode extends NonTerminalNode {
         addChild(integerNode);
         integerNode.parse(context);
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

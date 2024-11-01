@@ -14,9 +14,4 @@ public class TypeNode extends NonTerminalNode {
             throw new SyntaxException(context.getTokenList().get(context.getIndex()));
         }
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

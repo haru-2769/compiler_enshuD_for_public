@@ -12,9 +12,4 @@ public class VariableNode extends NonTerminalNode {
             pureVariableNode.parse(context);
         }
     }
-
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

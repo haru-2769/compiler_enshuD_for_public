@@ -6,9 +6,4 @@ public class IndexNode extends NonTerminalNode {
         addChild(expressionNode);
         expressionNode.parse(context);
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

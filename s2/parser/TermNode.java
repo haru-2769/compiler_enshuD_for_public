@@ -14,9 +14,4 @@ public class TermNode extends NonTerminalNode {
             factorNode1.parse(context);
         }
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

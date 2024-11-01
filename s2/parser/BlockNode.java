@@ -9,8 +9,4 @@ public class BlockNode extends NonTerminalNode {
         addChild(subprogramDeclarationSequenceNode);
         subprogramDeclarationSequenceNode.parse(context);
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }

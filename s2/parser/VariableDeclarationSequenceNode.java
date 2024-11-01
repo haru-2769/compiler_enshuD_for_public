@@ -13,9 +13,4 @@ public class VariableDeclarationSequenceNode extends NonTerminalNode {
             addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
         } while (context.equalsAny(0, "SIDENTIFIER"));
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

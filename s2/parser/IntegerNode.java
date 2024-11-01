@@ -9,9 +9,4 @@ public class IntegerNode extends NonTerminalNode {
         }
     	addChild(new TerminalNode(context.checkTerminalSymbol("SCONSTANT")));
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

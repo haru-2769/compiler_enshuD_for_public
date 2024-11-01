@@ -9,8 +9,4 @@ public class StatementSequenceNode extends NonTerminalNode{
             addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
         } while (context.equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN", "SIF", "SWHILE"));
     }
-
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }

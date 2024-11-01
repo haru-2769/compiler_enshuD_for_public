@@ -22,9 +22,4 @@ public class BasicStatementNode extends NonTerminalNode {
             compoundStatementNode.parse(context);
         }
     }
-
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
 }

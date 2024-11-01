@@ -8,8 +8,4 @@ public class CompoundStatementNode extends NonTerminalNode {
         statementSequenceNode.parse(context);
         addChild(new TerminalNode(context.checkTerminalSymbol("SEND")));
     }
-
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }

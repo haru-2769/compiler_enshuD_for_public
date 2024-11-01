@@ -19,8 +19,4 @@ public class FormalParameterSequenceNode extends NonTerminalNode{
             standardTypeNode1.parse(context);
         }
     }
-
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }

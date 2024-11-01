@@ -9,8 +9,4 @@ public class VariableDeclarationNode extends NonTerminalNode {
             variableDeclarationSequenceNode.parse(context);
     	} 
     }
-    
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
 }
