@@ -4,21 +4,24 @@ public class BlockNode extends AstNode {
     private VariableDeclarationNode variableDeclarationNode;
     private SubprogramDeclarationSequenceNode subprogramDeclarationSequenceNode;
 
-    public BlockNode(Context context) throws SyntaxException {
-        parse(context);
+    public BlockNode() throws SyntaxException {
+        this.variableDeclarationNode = null;
+        this.subprogramDeclarationSequenceNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        variableDeclarationNode = new VariableDeclarationNode(context);
-        subprogramDeclarationSequenceNode = new SubprogramDeclarationSequenceNode(context);
+        this.variableDeclarationNode = new VariableDeclarationNode();
+        this.variableDeclarationNode.parse(context);
+        this.subprogramDeclarationSequenceNode = new SubprogramDeclarationSequenceNode();
+        this.subprogramDeclarationSequenceNode.parse(context);
     }
 
     public VariableDeclarationNode getVariableDeclarationNode() {
-        return variableDeclarationNode;
+        return this.variableDeclarationNode;
     }
 
     public SubprogramDeclarationSequenceNode getSubprogramDeclarationSequenceNode() {
-        return subprogramDeclarationSequenceNode;
+        return this.subprogramDeclarationSequenceNode;
     }
     
     public void accept(Visitor visitor) throws SemanticException {

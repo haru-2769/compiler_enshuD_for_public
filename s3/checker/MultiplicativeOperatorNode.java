@@ -1,12 +1,18 @@
 package enshud.s3.checker;
 
-public class MultiplicativeOperatorNode extends NonTerminalNode {
-    public MultiplicativeOperatorNode(Context context) throws SyntaxException {
-        parse(context);
+public class MultiplicativeOperatorNode extends AstNode {
+    private Token token;
+    
+    public MultiplicativeOperatorNode() throws SyntaxException {
+        this.token = null;
     }
     
     protected void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SSTAR", "SDIVD", "SMOD", "SAND")));
+        this.token = context.checkTerminalSymbol("SSTAR", "SDIVD", "SMOD", "SAND");
+    }
+
+    public Token getToken() {
+        return this.token;
     }
 
     public void accept(Visitor visitor) throws SemanticException {

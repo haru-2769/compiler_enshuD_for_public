@@ -1,17 +1,40 @@
 package enshud.s3.checker;
 
-public class VariableDeclarationSequenceNode extends NonTerminalNode {
-    public VariableDeclarationSequenceNode(Context context) throws SyntaxException {
-        parse(context);
+import java.util.List;
+import java.util.ArrayList;
+
+public class VariableDeclarationSequenceNode extends AstNode {
+    private VariableNameSequenceNode variableNameSequenceNode;
+    private TypeNode typeNode;
+    private List<VariableNameSequenceNode> variableNameSequenceNodes;
+    private List<TypeNode> typeNodes;
+
+    public VariableDeclarationSequenceNode() throws SyntaxException {
+        this.variableNameSequenceNode = null;
+        this.typeNode = null;
+        this.variableNameSequenceNodes = new ArrayList<>();
+        this.typeNodes = new ArrayList<>();
     }
 
     protected void parse(Context context) throws SyntaxException {
         do {
-            addChild(new VariableNameSequenceNode(context));
+            this.variableNameSequenceNode = new VariableNameSequenceNode();
+            this.variableNameSequenceNodes.add(this.variableNameSequenceNode);
+            this.variableNameSequenceNode.parse(context);
             context.checkTerminalSymbol("SCOLON");
-            addChild(new TypeNode(context));
+            this.typeNode = new TypeNode();
+            this.typeNodes.add(this.typeNode);
+            this.typeNode.parse(context);
             context.checkTerminalSymbol("SSEMICOLON");
         } while (context.equalsAny(0, "SIDENTIFIER"));
+    }
+
+    public List<VariableNameSequenceNode> getVariableNameSequenceNodes() {
+        return this.variableNameSequenceNodes;
+    }
+
+    public List<TypeNode> getTypeNodes() {
+        return this.typeNodes;
     }
     
     public void accept(Visitor visitor) throws SemanticException {

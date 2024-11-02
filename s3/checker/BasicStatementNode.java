@@ -6,38 +6,45 @@ public class BasicStatementNode extends AstNode {
     private InputOutputStatementNode inputOutputStatementNode;
     private CompoundStatementNode compoundStatementNode;
     
-    public BasicStatementNode(Context context) throws SyntaxException {
-        parse(context);
+    public BasicStatementNode() throws SyntaxException {
+        this.assignmentStatementNode = null;
+        this.procedureCallStatementNode = null;
+        this.inputOutputStatementNode = null;
+        this.compoundStatementNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SIDENTIFIER")) {
             if (context.equalsAny(1, "SASSIGN", "SLBRACKET")) {
-                assignmentStatementNode = new AssignmentStatementNode(context);
+                this.assignmentStatementNode = new AssignmentStatementNode();
+                this.assignmentStatementNode.parse(context);
             } else {
-                procedureCallStatementNode = new ProcedureCallStatementNode(context);
+                this.procedureCallStatementNode = new ProcedureCallStatementNode();
+                this.procedureCallStatementNode.parse(context);
             }
         } else if (context.equalsAny(0, "SREADLN", "SWRITELN")) {
-            inputOutputStatementNode = new InputOutputStatementNode(context);
+            this.inputOutputStatementNode = new InputOutputStatementNode();
+            this.inputOutputStatementNode.parse(context);
         } else {
-            compoundStatementNode = new CompoundStatementNode(context);
+            this.compoundStatementNode = new CompoundStatementNode();
+            this.compoundStatementNode.parse(context);
         }
     }
 
     public AssignmentStatementNode getAssignmentStatementNode() {
-        return assignmentStatementNode;
+        return this.assignmentStatementNode;
     }
 
     public ProcedureCallStatementNode getProcedureCallStatementNode() {
-        return procedureCallStatementNode;
+        return this.procedureCallStatementNode;
     }
 
     public InputOutputStatementNode getInputOutputStatementNode() {
-        return inputOutputStatementNode;
+        return this.inputOutputStatementNode;
     }
 
     public CompoundStatementNode getCompoundStatementNode() {
-        return compoundStatementNode;
+        return this.compoundStatementNode;
     }
 
     public void accept(Visitor visitor) throws SemanticException {

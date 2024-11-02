@@ -1,14 +1,20 @@
 package enshud.s3.checker;
 
-public class ProgramNameNode extends NonTerminalNode {
-    public ProgramNameNode(Context context) throws SyntaxException {
-        parse(context);
+public class ProgramNameNode extends AstNode {
+    private Token token;
+    
+    public ProgramNameNode() throws SyntaxException {
+        this.token = null;
     }
     
     protected void parse(Context context) throws SyntaxException {
-    	addChild(new TerminalNode(context.checkTerminalSymbol("SIDENTIFIER")));
-    };
-    
+    	this.token = context.checkTerminalSymbol("SIDENTIFIER");
+    }
+
+    public Token getToken() {
+        return this.token;
+    }
+
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

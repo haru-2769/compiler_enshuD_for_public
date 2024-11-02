@@ -4,22 +4,25 @@ public class AssignmentStatementNode extends AstNode {
     private LeftHandSideNode leftHandSideNode;
     private ExpressionNode expressionNode;
 
-    public AssignmentStatementNode(Context context) throws SyntaxException {
-        parse(context);
+    public AssignmentStatementNode() throws SyntaxException {
+        this.leftHandSideNode = null;
+        this.expressionNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        leftHandSideNode = new LeftHandSideNode(context);
+        this.leftHandSideNode = new LeftHandSideNode();
+        this.leftHandSideNode.parse(context);
         context.checkTerminalSymbol("SASSIGN");
-        expressionNode = new ExpressionNode(context);
+        this.expressionNode = new ExpressionNode();
+        this.expressionNode.parse(context);
     }
 
     public LeftHandSideNode getLeftHandSideNode() {
-        return leftHandSideNode;
+        return this.leftHandSideNode;
     }
 
     public ExpressionNode getExpressionNode() {
-        return expressionNode;
+        return this.expressionNode;
     }
 
     public void accept(Visitor visitor) throws SemanticException {

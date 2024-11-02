@@ -5,31 +5,36 @@ public class ArrayTypeNode extends AstNode {
     private IndexMaxValueNode indexMaxValueNode;
     private StandardTypeNode standardTypeNode;
 
-    public ArrayTypeNode(Context context) throws SyntaxException {
-        parse(context);
+    public ArrayTypeNode() throws SyntaxException {
+        this.indexMinValueNode = null;
+        this.indexMaxValueNode = null;
+        this.standardTypeNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
         context.checkTerminalSymbol("SARRAY");
         context.checkTerminalSymbol("SLBRACKET");
-        indexMinValueNode = new IndexMinValueNode(context);
+        this.indexMinValueNode = new IndexMinValueNode();
+        this.indexMinValueNode.parse(context);
         context.checkTerminalSymbol("SRANGE");
-        indexMaxValueNode = new IndexMaxValueNode(context);
+        this.indexMaxValueNode = new IndexMaxValueNode();
+        this.indexMaxValueNode.parse(context);
         context.checkTerminalSymbol("SRBRACKET");
         context.checkTerminalSymbol("SOF");
-        standardTypeNode = new StandardTypeNode(context);
+        this.standardTypeNode = new StandardTypeNode();
+        this.standardTypeNode.parse(context);
     }
 
     public IndexMinValueNode getIndexMinValueNode() {
-        return indexMinValueNode;
+        return this.indexMinValueNode;
     }
 
     public IndexMaxValueNode getIndexMaxValueNode() {
-        return indexMaxValueNode;
+        return this.indexMaxValueNode;
     }
 
     public StandardTypeNode getStandardTypeNode() {
-        return standardTypeNode;
+        return this.standardTypeNode;
     }
     
     public void accept(Visitor visitor) throws SemanticException {

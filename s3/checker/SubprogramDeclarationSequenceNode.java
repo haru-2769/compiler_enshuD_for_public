@@ -1,15 +1,28 @@
 package enshud.s3.checker;
 
-public class SubprogramDeclarationSequenceNode extends NonTerminalNode {
-    public SubprogramDeclarationSequenceNode(Context context) throws SyntaxException {
-        parse(context);
+import java.util.List;
+import java.util.ArrayList;
+
+public class SubprogramDeclarationSequenceNode extends AstNode {
+    private SubprogramDeclarationNode subprogramDeclarationNode;
+    private List<SubprogramDeclarationNode> subprogramDeclarationNodes;
+
+    public SubprogramDeclarationSequenceNode() throws SyntaxException {
+        this.subprogramDeclarationNode = null;
+        this.subprogramDeclarationNodes = new ArrayList<>();
     }
 
     protected void parse(Context context) throws SyntaxException {
         while (context.equalsAny(0, "SPROCEDURE")) {
-            addChild(new SubprogramDeclarationNode(context));
+            this.subprogramDeclarationNode = new SubprogramDeclarationNode();
+            this.subprogramDeclarationNodes.add(this.subprogramDeclarationNode);
+            this.subprogramDeclarationNode.parse(context);
             context.checkTerminalSymbol("SSEMICOLON");
         }
+    }
+
+    public List<SubprogramDeclarationNode> getSubprogramDeclarationNodes() {
+        return this.subprogramDeclarationNodes;
     }
     
     public void accept(Visitor visitor) throws SemanticException {
