@@ -6,17 +6,13 @@ public class FormalParameterSequenceNode extends NonTerminalNode{
         addChild(formalParameterNameSequenceNode);
         formalParameterNameSequenceNode.parse(context);
         addChild(new TerminalNode(context.checkTerminalSymbol("SCOLON")));
-        StandardTypeNode standardTypeNode = new StandardTypeNode();
-        addChild(standardTypeNode);
-        standardTypeNode.parse(context);
+        addChild(new StandardTypeNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
         while (context.equalsAny(0, "SCOMMA")) {
             FormalParameterNameSequenceNode formalParameterNameSequenceNode1 = new FormalParameterNameSequenceNode();
             addChild(formalParameterNameSequenceNode1);
             formalParameterNameSequenceNode1.parse(context);
             addChild(new TerminalNode(context.checkTerminalSymbol("SCOLON")));
-            StandardTypeNode standardTypeNode1 = new StandardTypeNode();
-            addChild(standardTypeNode1);
-            standardTypeNode1.parse(context);
+            addChild(new StandardTypeNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
         }
     }
 

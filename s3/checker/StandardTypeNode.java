@@ -1,8 +1,8 @@
 package enshud.s3.checker;
 
-public class StandardTypeNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
+public class StandardTypeNode extends TerminalNode {
+    public StandardTypeNode(Token token) {
+        super(token);
     }
     
     public void accept(Visitor visitor) throws SemanticException {

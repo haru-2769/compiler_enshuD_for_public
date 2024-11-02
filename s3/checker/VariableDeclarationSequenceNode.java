@@ -6,11 +6,10 @@ public class VariableDeclarationSequenceNode extends NonTerminalNode {
             VariableNameSequenceNode variableNameSequenceNode = new VariableNameSequenceNode();
             addChild(variableNameSequenceNode);
             variableNameSequenceNode.parse(context);
-            addChild(new TerminalNode(context.checkTerminalSymbol("SCOLON")));
-            TypeNode typeNode = new TypeNode();
+            context.checkTerminalSymbol("SCOLON");
+            TypeNode typeNode = new TypeNode(context);
             addChild(typeNode);
-            typeNode.parse(context);
-            addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
+            context.checkTerminalSymbol("SSEMICOLON");
         } while (context.equalsAny(0, "SIDENTIFIER"));
     }
     

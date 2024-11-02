@@ -7,12 +7,6 @@ public class AstChecker extends Visitor {
     private int level = 0; 
     private Set<String> declaredProcedureNames = new HashSet<>();
 
-    //             if (child instanceof VariableNameNode) {
-    //     VariableNameNode varNode = (VariableNameNode) child;
-    //     String varName = varNode.getName(); // 仮定: VariableNameNode には変数名を取得するメソッド getName() がある
-    //     declareVariable(varName); // 変数宣言を登録して重複をチェック
-    // 
-
     private void printIndent() {
         for (int i = 0; i < level; i++) {
             System.out.print("  ");
@@ -92,12 +86,7 @@ public class AstChecker extends Visitor {
 	
 	public void visit(VariableNameNode variableNameNode) throws SemanticException {
         printIndent();
-        System.out.println("VariableNameNode: ");
-        level++;
-        for (AstNode child : variableNameNode.getChildren()) {
-            child.accept(this);
-        }
-        level--;
+        System.out.println(variableNameNode.getToken().getLexical());
 	}
 
     
@@ -113,13 +102,9 @@ public class AstChecker extends Visitor {
 
 	
 	public void visit(StandardTypeNode standardTypeNode) throws SemanticException {
-        printIndent();
-        System.out.println("StandardTypeNode: ");
-        level++;
-        for (AstNode child : standardTypeNode.getChildren()) {
-            child.accept(this);
+        for (int i = 0; i < level; i++) {
+            System.out.print("  ");
         }
-        level--;
 	}
 
     
@@ -467,13 +452,9 @@ public class AstChecker extends Visitor {
 
 	
 	public void visit(AdditiveOperatorNode additiveOperatorNode) throws SemanticException {
-        printIndent();
-        System.out.println("AdditiveOperatorNode: ");
-        level++;
-        for (AstNode child : additiveOperatorNode.getChildren()) {
-            child.accept(this);
+        for (int i = 0; i < level; i++) {
+            System.out.print("  ");
         }
-        level--;
 	}
 
 	

@@ -13,9 +13,7 @@ public class ArrayTypeNode extends NonTerminalNode {
         indexMaxValueNode.parse(context);
         addChild(new TerminalNode(context.checkTerminalSymbol("SRBRACKET")));
         addChild(new TerminalNode(context.checkTerminalSymbol("SOF")));
-        StandardTypeNode standardTypeNode = new StandardTypeNode();
-        addChild(standardTypeNode);
-        standardTypeNode.parse(context);
+        addChild(new StandardTypeNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
     }
     
     public void accept(Visitor visitor) throws SemanticException {
