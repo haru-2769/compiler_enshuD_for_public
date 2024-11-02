@@ -3,9 +3,7 @@ package enshud.s3.checker;
 public class SubprogramHeadNode extends NonTerminalNode {
     public void parse(Context context) throws SyntaxException {
         addChild(new TerminalNode(context.checkTerminalSymbol("SPROCEDURE")));
-        ProcedureNameNode procedureNameNode = new ProcedureNameNode();
-        addChild(procedureNameNode);
-        procedureNameNode.parse(context);
+        addChild(new ProcedureNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
         FormalParameterNode formalParameterNode = new FormalParameterNode();
         addChild(formalParameterNode);
         formalParameterNode.parse(context);

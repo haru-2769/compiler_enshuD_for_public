@@ -199,7 +199,7 @@ public class AstChecker extends Visitor {
         level--;
     }
 
-    
+    //TODO
     public void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException {
         printIndent();
         System.out.println("SubprogramHeadNode: ");
@@ -207,7 +207,7 @@ public class AstChecker extends Visitor {
         for (AstNode child : subprogramHeadNode.getChildren()) {
             if (child instanceof ProcedureNameNode) {
                 ProcedureNameNode procedureNameNode = (ProcedureNameNode) child;
-                Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
+                Token token = procedureNameNode.getToken();
                 String procedureName = token.getLexical();
                 if (!declaredProcedureNames.add(procedureName)) {
                     throw new SemanticException(token);
@@ -222,12 +222,7 @@ public class AstChecker extends Visitor {
 	
 	public void visit(ProcedureNameNode procedureNameNode) throws SemanticException {
         printIndent();
-        System.out.println("ProcedureNameNode: ");
-        level++;
-        for (AstNode child : procedureNameNode.getChildren()) {
-            child.accept(this);
-        }
-        level--;
+        System.out.println(procedureNameNode.getToken().getLexical());
 	}
 
     
@@ -392,7 +387,7 @@ public class AstChecker extends Visitor {
         for (AstNode child : procedureCallStatementNode.getChildren()) {
             if (child instanceof ProcedureNameNode) {
                 ProcedureNameNode procedureNameNode = (ProcedureNameNode) child;
-                Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
+                Token token = procedureNameNode.getToken();
                 String procedureName = token.getLexical();
                 if (declaredProcedureNames.add(procedureName)) {
                     throw new SemanticException(token);
