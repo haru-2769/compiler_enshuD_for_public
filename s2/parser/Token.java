@@ -1,5 +1,4 @@
 package enshud.s2.parser;
-
 public class Token {
 	private String[] elements;
 	

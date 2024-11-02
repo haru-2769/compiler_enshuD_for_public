@@ -1,11 +1,13 @@
 package enshud.s2.parser;
 
 public class CompoundStatementNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SBEGIN")));
-        StatementSequenceNode statementSequenceNode = new StatementSequenceNode();
-        addChild(statementSequenceNode);
-        statementSequenceNode.parse(context);
-        addChild(new TerminalNode(context.checkTerminalSymbol("SEND")));
+    public CompoundStatementNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
+        context.checkTerminalSymbol("SBEGIN");
+        addChild(new StatementSequenceNode(context));
+        context.checkTerminalSymbol("SEND");
     }
 }

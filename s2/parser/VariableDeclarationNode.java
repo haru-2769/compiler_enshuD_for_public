@@ -1,12 +1,14 @@
 package enshud.s2.parser;
-//変数宣言
+
 public class VariableDeclarationNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public VariableDeclarationNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
     	if (context.equalsAny(0, "SVAR")) {
-    		addChild(new TerminalNode(context.checkTerminalSymbol("SVAR")));
-            VariableDeclarationSequenceNode variableDeclarationSequenceNode = new VariableDeclarationSequenceNode();
-    		addChild(variableDeclarationSequenceNode);
-            variableDeclarationSequenceNode.parse(context);
+    		context.checkTerminalSymbol("SVAR");
+            addChild(new VariableDeclarationSequenceNode(context));
     	} 
     }
 }

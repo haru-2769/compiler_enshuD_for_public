@@ -1,20 +1,18 @@
 package enshud.s2.parser;
 
 public class ArrayTypeNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SARRAY")));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SLBRACKET")));
-        IndexMinValueNode indexMinValueNode = new IndexMinValueNode();
-        addChild(indexMinValueNode);
-        indexMinValueNode.parse(context);
-        addChild(new TerminalNode(context.checkTerminalSymbol("SRANGE")));
-        IndexMaxValueNode indexMaxValueNode = new IndexMaxValueNode();
-        addChild(indexMaxValueNode);
-        indexMaxValueNode.parse(context);
-        addChild(new TerminalNode(context.checkTerminalSymbol("SRBRACKET")));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SOF")));
-        StandardTypeNode standardTypeNode = new StandardTypeNode();
-        addChild(standardTypeNode);
-        standardTypeNode.parse(context);
+    public ArrayTypeNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
+        context.checkTerminalSymbol("SARRAY");
+        context.checkTerminalSymbol("SLBRACKET");
+        addChild(new IndexMinValueNode(context));
+        context.checkTerminalSymbol("SRANGE");
+        addChild(new IndexMaxValueNode(context));
+        context.checkTerminalSymbol("SRBRACKET");
+        context.checkTerminalSymbol("SOF");
+        addChild(new StandardTypeNode(context));
     }
 }

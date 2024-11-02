@@ -1,14 +1,14 @@
 package enshud.s2.parser;
 
 public class SubprogramHeadNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SPROCEDURE")));
-        ProcedureNameNode procedureNameNode = new ProcedureNameNode();
-        addChild(procedureNameNode);
-        procedureNameNode.parse(context);
-        FormalParameterNode formalParameterNode = new FormalParameterNode();
-        addChild(formalParameterNode);
-        formalParameterNode.parse(context);
-        addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
+    public SubprogramHeadNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
+        context.checkTerminalSymbol("SPROCEDURE");
+        addChild(new ProcedureNameNode(context));
+        addChild(new FormalParameterNode(context));
+        context.checkTerminalSymbol("SSEMICOLON");
     }
 }

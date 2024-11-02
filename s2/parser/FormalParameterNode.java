@@ -1,13 +1,15 @@
 package enshud.s2.parser;
 
 public class FormalParameterNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public FormalParameterNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SLPAREN")) {
-            addChild(new TerminalNode(context.checkTerminalSymbol("SLPAREN")));
-            FormalParameterSequenceNode formalParameterSequenceNode = new FormalParameterSequenceNode();
-            addChild(formalParameterSequenceNode);
-            formalParameterSequenceNode.parse(context);
-            addChild(new TerminalNode(context.checkTerminalSymbol("SRPAREN")));
+            context.checkTerminalSymbol("SLPAREN");
+            addChild(new FormalParameterSequenceNode(context));
+            context.checkTerminalSymbol("SRPAREN");
         }
     }
 }

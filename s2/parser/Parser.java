@@ -34,22 +34,19 @@ public class Parser {
 	 * @param inputFileName 入力tsファイル名
 	 */
 	public String run(final String inputFileName) {
-		// TODO
-		final List<String> buffer;
 		try {
+			final List<String> buffer;
 			buffer = Files.readAllLines(Paths.get(inputFileName));
 			this.tokenList = new ArrayList<>();
 			for(String line: buffer) {
 				tokenList.add(new Token(line));
 			}
-			ProgramNode programNode = new ProgramNode();
-			programNode.parse(new Context(tokenList));
+			new ProgramNode(new Context(tokenList));
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {
 			return ex.getError();
 		}
-		
 		return "OK";
 	}
 }

@@ -1,15 +1,13 @@
 package enshud.s2.parser;
 
 public class SubprogramDeclarationNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
-        SubprogramHeadNode subprogramHeadNode = new SubprogramHeadNode();
-        addChild(subprogramHeadNode);
-        subprogramHeadNode.parse(context);
-        VariableDeclarationNode variableDeclarationNode = new VariableDeclarationNode();
-        addChild(variableDeclarationNode);
-        variableDeclarationNode.parse(context);
-        CompoundStatementNode compoundStatementNode = new CompoundStatementNode();
-        addChild(compoundStatementNode);
-        compoundStatementNode.parse(context);
+    public SubprogramDeclarationNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
+        addChild(new SubprogramHeadNode(context));
+        addChild(new VariableDeclarationNode(context));
+        addChild(new CompoundStatementNode(context));
     }
 }
