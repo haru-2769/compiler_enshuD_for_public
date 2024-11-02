@@ -1,7 +1,17 @@
 package enshud.s3.checker;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class AstChecker extends Visitor {
-    private int level = 0; // ネストのレベルを管理
+    private int level = 0; 
+    private Set<String> declaredProcedureNames = new HashSet<>();
+
+    //             if (child instanceof VariableNameNode) {
+    //     VariableNameNode varNode = (VariableNameNode) child;
+    //     String varName = varNode.getName(); // 仮定: VariableNameNode には変数名を取得するメソッド getName() がある
+    //     declareVariable(varName); // 変数宣言を登録して重複をチェック
+    // 
 
     private void printIndent() {
         for (int i = 0; i < level; i++) {
@@ -195,13 +205,22 @@ public class AstChecker extends Visitor {
         System.out.println("SubprogramHeadNode: ");
         level++;
         for (AstNode child : subprogramHeadNode.getChildren()) {
-            child.accept(this);
+            if (child instanceof ProcedureNameNode) {
+                ProcedureNameNode procedureNameNode = (ProcedureNameNode) child;
+                Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
+                String procedureName = token.getLexical();
+                if (!declaredProcedureNames.add(procedureName)) {
+                    throw new SemanticException(token);
+                }
+            } else {
+                child.accept(this);
+            }   
         }
         level--;
     }
 
 	
-	public void visit(ProcedureNameNode procedureNameNode) throws SemanticException {
+	public Token visit(ProcedureNameNode procedureNameNode) throws SemanticException {
         printIndent();
         System.out.println("ProcedureNameNode: ");
         level++;
@@ -209,6 +228,8 @@ public class AstChecker extends Visitor {
             child.accept(this);
         }
         level--;
+        Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
+        return token;
 	}
 
     
@@ -371,7 +392,16 @@ public class AstChecker extends Visitor {
         System.out.println("ProcedureCallStatementNode: ");
         level++;
         for (AstNode child : procedureCallStatementNode.getChildren()) {
-            child.accept(this);
+            if (child instanceof ProcedureNameNode) {
+                ProcedureNameNode procedureNameNode = (ProcedureNameNode) child;
+                Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
+                String procedureName = token.getLexical();
+                if (declaredProcedureNames.add(procedureName)) {
+                    throw new SemanticException(token);
+                }
+            } else {
+                child.accept(this);
+            } 
         }
         level--;
     }
