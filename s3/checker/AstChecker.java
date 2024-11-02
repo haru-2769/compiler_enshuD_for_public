@@ -29,20 +29,20 @@ public class AstChecker extends Visitor {
         System.out.println("ProgramNode: ");
         level++;
         for (AstNode child : programNode.getChildren()) {
-            child.accept(this);
+            if (child instanceof ProgramNameNode) {
+                //TODO
+            } else {
+                child.accept(this);
+            }
         }
         level--;
     }
 
 	
 	public void visit(ProgramNameNode programNameNode) throws SemanticException {
-        printIndent();
-        System.out.println("ProgramNameNode: ");
-        level++;
-        for (AstNode child : programNameNode.getChildren()) {
-            child.accept(this);
+        for (int i = 0; i < level; i++) {
+            System.out.print("  ");
         }
-        level--;	
 	}
 
     
