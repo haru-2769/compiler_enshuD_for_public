@@ -1,17 +1,15 @@
 package enshud.s3.checker;
 
 public class TermNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
-        FactorNode factorNode = new FactorNode();
-        addChild(factorNode);
-        factorNode.parse(context);
+    public TermNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
+        addChild(new FactorNode(context));
         while (context.equalsAny(0, "SSTAR", "SDIVD", "SMOD", "SAND")) {
-            MultiplicativeOperatorNode multiplicativeOperatorNode = new MultiplicativeOperatorNode();
-            addChild(multiplicativeOperatorNode);
-            multiplicativeOperatorNode.parse(context);
-            FactorNode factorNode1 = new FactorNode();
-            addChild(factorNode1);
-            factorNode1.parse(context);
+            addChild(new MultiplicativeOperatorNode(context));
+            addChild(new FactorNode(context));
         }
     }
     

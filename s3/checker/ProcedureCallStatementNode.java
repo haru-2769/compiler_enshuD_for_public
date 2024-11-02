@@ -1,13 +1,15 @@
 package enshud.s3.checker;
 
 public class ProcedureCallStatementNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public ProcedureCallStatementNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
         addChild(new ProcedureNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
         if (context.equalsAny(0, "SLPAREN")) {
             addChild(new TerminalNode(context.checkTerminalSymbol("SLPAREN")));
-            ExpressionSequenceNode expressionSequenceNode = new ExpressionSequenceNode();
-            addChild(expressionSequenceNode);
-            expressionSequenceNode.parse(context);
+            addChild(new ExpressionSequenceNode(context));
             addChild(new TerminalNode(context.checkTerminalSymbol("SRPAREN")));
         }
     }

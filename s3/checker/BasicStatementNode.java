@@ -1,25 +1,21 @@
 package enshud.s3.checker;
 
 public class BasicStatementNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public BasicStatementNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SIDENTIFIER")) {
             if (context.equalsAny(1, "SASSIGN", "SLBRACKET")) {
-                AssignmentStatementNode assignmentStatementNode = new AssignmentStatementNode();
-                addChild(assignmentStatementNode);
-                assignmentStatementNode.parse(context);
+                addChild(new AssignmentStatementNode(context));
             } else {
-                ProcedureCallStatementNode procedureCallStatementNode = new ProcedureCallStatementNode();
-                addChild(procedureCallStatementNode);
-                procedureCallStatementNode.parse(context);
+                addChild(new ProcedureCallStatementNode(context));
             }
         } else if (context.equalsAny(0, "SREADLN", "SWRITELN")) {
-            InputOutputStatementNode inputOutputStatementNode = new InputOutputStatementNode();
-            addChild(inputOutputStatementNode);
-            inputOutputStatementNode.parse(context);
+            addChild(new InputOutputStatementNode(context));
         } else {
-            CompoundStatementNode compoundStatementNode = new CompoundStatementNode();
-            addChild(compoundStatementNode);
-            compoundStatementNode.parse(context);
+            addChild(new CompoundStatementNode(context));
         }
     }
 

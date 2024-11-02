@@ -1,12 +1,14 @@
 package enshud.s3.checker;
 
 public class IndexedVariableNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public IndexedVariableNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
         addChild(new VariableNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
         addChild(new TerminalNode(context.checkTerminalSymbol("SLBRACKET")));
-        IndexNode indexNode = new IndexNode();
-        addChild(indexNode);
-        indexNode.parse(context);
+        addChild(new IndexNode(context));
         addChild(new TerminalNode(context.checkTerminalSymbol("SRBRACKET")));
     }
     

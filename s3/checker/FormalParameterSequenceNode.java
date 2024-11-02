@@ -1,16 +1,16 @@
 package enshud.s3.checker;
 
 public class FormalParameterSequenceNode extends NonTerminalNode{
-    public void parse(Context context) throws SyntaxException {
-        FormalParameterNameSequenceNode formalParameterNameSequenceNode = new FormalParameterNameSequenceNode();
-        addChild(formalParameterNameSequenceNode);
-        formalParameterNameSequenceNode.parse(context);
+    public FormalParameterSequenceNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
+        addChild(new FormalParameterNameSequenceNode(context));
         addChild(new TerminalNode(context.checkTerminalSymbol("SCOLON")));
         addChild(new StandardTypeNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
         while (context.equalsAny(0, "SCOMMA")) {
-            FormalParameterNameSequenceNode formalParameterNameSequenceNode1 = new FormalParameterNameSequenceNode();
-            addChild(formalParameterNameSequenceNode1);
-            formalParameterNameSequenceNode1.parse(context);
+            addChild(new FormalParameterNameSequenceNode(context));
             addChild(new TerminalNode(context.checkTerminalSymbol("SCOLON")));
             addChild(new StandardTypeNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
         }

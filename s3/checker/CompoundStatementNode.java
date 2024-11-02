@@ -1,11 +1,13 @@
 package enshud.s3.checker;
 
 public class CompoundStatementNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public CompoundStatementNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
         addChild(new TerminalNode(context.checkTerminalSymbol("SBEGIN")));
-        StatementSequenceNode statementSequenceNode = new StatementSequenceNode();
-        addChild(statementSequenceNode);
-        statementSequenceNode.parse(context);
+        addChild(new StatementSequenceNode(context));
         addChild(new TerminalNode(context.checkTerminalSymbol("SEND")));
     }
 

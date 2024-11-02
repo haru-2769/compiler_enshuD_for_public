@@ -1,15 +1,15 @@
 package enshud.s3.checker;
 
 public class VariableNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public VariableNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(1, "SLBRACKET")) {
-            IndexedVariableNode indexedVariableNode = new IndexedVariableNode();
-            addChild(indexedVariableNode);
-            indexedVariableNode.parse(context);
+            addChild(new IndexedVariableNode(context));
         } else {
-            PureVariableNode pureVariableNode = new PureVariableNode();
-            addChild(pureVariableNode);
-            pureVariableNode.parse(context);
+            addChild(new PureVariableNode(context));
         }
     }
 

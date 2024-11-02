@@ -1,14 +1,15 @@
 package enshud.s3.checker;
 
 public class VariableDeclarationSequenceNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public VariableDeclarationSequenceNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
         do {
-            VariableNameSequenceNode variableNameSequenceNode = new VariableNameSequenceNode();
-            addChild(variableNameSequenceNode);
-            variableNameSequenceNode.parse(context);
+            addChild(new VariableNameSequenceNode(context));
             context.checkTerminalSymbol("SCOLON");
-            TypeNode typeNode = new TypeNode(context);
-            addChild(typeNode);
+            addChild(new TypeNode(context));
             context.checkTerminalSymbol("SSEMICOLON");
         } while (context.equalsAny(0, "SIDENTIFIER"));
     }

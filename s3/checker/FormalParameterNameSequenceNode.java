@@ -1,15 +1,15 @@
 package enshud.s3.checker;
 
 public class FormalParameterNameSequenceNode extends NonTerminalNode{
-	public void parse(Context context) throws SyntaxException {
-		FormalParameterNameNode formalParameterNameNode = new FormalParameterNameNode();
-		formalParameterNameNode.parse(context);
-		addChild(formalParameterNameNode);
+	public FormalParameterNameSequenceNode(Context context) throws SyntaxException {
+		parse(context);
+	}
+	
+	protected void parse(Context context) throws SyntaxException {
+		addChild(new FormalParameterNameNode(context));
 		while (context.equalsAny(0, "SCOMMA")) {
 			addChild(new TerminalNode(context.checkTerminalSymbol("SCOMMA")));
-			FormalParameterNameNode formalParameterNameNode1 = new FormalParameterNameNode();
-			formalParameterNameNode1.parse(context);
-			addChild(formalParameterNameNode1);
+			addChild(new FormalParameterNameNode(context));
 		}
 	}
 

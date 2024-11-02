@@ -1,7 +1,11 @@
 package enshud.s3.checker;
 
 public class FormalParameterNameNode extends NonTerminalNode{
-    public void parse(Context context) throws SyntaxException {
+    public FormalParameterNameNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
         addChild(new TerminalNode(context.checkTerminalSymbol("SIDENTIFIER")));
     }
 

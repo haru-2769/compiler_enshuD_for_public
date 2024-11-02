@@ -1,7 +1,11 @@
 package enshud.s3.checker;
 
 public class VariableNameSequenceNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public VariableNameSequenceNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+    
+    protected void parse(Context context) throws SyntaxException {
         addChild(new VariableNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
         while (context.equalsAny(0, "SCOMMA")) {
             context.checkTerminalSymbol("SCOMMA");

@@ -1,11 +1,13 @@
 package enshud.s3.checker;
 
 public class SubprogramDeclarationSequenceNode extends NonTerminalNode {
-    public void parse(Context context) throws SyntaxException {
+    public SubprogramDeclarationSequenceNode(Context context) throws SyntaxException {
+        parse(context);
+    }
+
+    protected void parse(Context context) throws SyntaxException {
         while (context.equalsAny(0, "SPROCEDURE")) {
-            SubprogramDeclarationNode subprogramDeclarationNode = new SubprogramDeclarationNode();
-            addChild(subprogramDeclarationNode);
-            subprogramDeclarationNode.parse(context);
+            addChild(new SubprogramDeclarationNode(context));
             addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
         }
     }
