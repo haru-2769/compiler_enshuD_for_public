@@ -47,6 +47,7 @@ public class Checker {
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {
+			ex.printStackTrace();
 			return ex.getError();
 		} catch (final SemanticException ex) {
 			ex.printStackTrace();
