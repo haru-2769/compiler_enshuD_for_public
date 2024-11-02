@@ -7,11 +7,9 @@ public class TypeNode extends NonTerminalNode {
 
     protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SINTEGER", "SCHAR", "SBOOLEAN")) {
-            addChild(new StandardTypeNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
-        } else if (context.equalsAny(0, "SARRAY")) {
-            addChild(new ArrayTypeNode(context));
+            addChild(new StandardTypeNode(context));
         } else {
-            throw new SyntaxException(context.getTokenList().get(context.getIndex()));
+            addChild(new ArrayTypeNode(context));
         }
     }
     

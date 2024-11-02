@@ -6,10 +6,10 @@ public class SubprogramHeadNode extends NonTerminalNode {
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SPROCEDURE")));
-        addChild(new ProcedureNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
+        context.checkTerminalSymbol("SPROCEDURE");
+        addChild(new ProcedureNameNode(context));
         addChild(new FormalParameterNode(context));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
+        context.checkTerminalSymbol("SSEMICOLON");
     }
     
     public void accept(Visitor visitor) throws SemanticException {

@@ -7,7 +7,7 @@ public class ProgramNode extends NonTerminalNode {
 
     protected void parse(Context context) throws SyntaxException {
     	context.checkTerminalSymbol("SPROGRAM");
-        addChild(new ProgramNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
+        addChild(new ProgramNameNode(context));
     	context.checkTerminalSymbol("SSEMICOLON");
         addChild(new BlockNode(context));;
         addChild(new CompoundStatementNode(context));

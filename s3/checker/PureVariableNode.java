@@ -6,7 +6,7 @@ public class PureVariableNode extends NonTerminalNode{
     }
     
     protected void parse(Context context) throws SyntaxException {
-        addChild(new VariableNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
+        addChild(new VariableNameNode(context));
     }
     
     public void accept(Visitor visitor) throws SemanticException {

@@ -6,11 +6,11 @@ public class ProcedureCallStatementNode extends NonTerminalNode {
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new ProcedureNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
+        addChild(new ProcedureNameNode(context));
         if (context.equalsAny(0, "SLPAREN")) {
-            addChild(new TerminalNode(context.checkTerminalSymbol("SLPAREN")));
+            context.checkTerminalSymbol("SLPAREN");
             addChild(new ExpressionSequenceNode(context));
-            addChild(new TerminalNode(context.checkTerminalSymbol("SRPAREN")));
+            context.checkTerminalSymbol("SRPAREN");
         }
     }
 

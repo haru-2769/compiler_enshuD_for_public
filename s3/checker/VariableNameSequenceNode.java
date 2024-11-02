@@ -6,10 +6,10 @@ public class VariableNameSequenceNode extends NonTerminalNode {
     }
     
     protected void parse(Context context) throws SyntaxException {
-        addChild(new VariableNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
+        addChild(new VariableNameNode(context));
         while (context.equalsAny(0, "SCOMMA")) {
             context.checkTerminalSymbol("SCOMMA");
-            addChild(new VariableNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
+            addChild(new VariableNameNode(context));
         }
     }
     

@@ -8,7 +8,7 @@ public class StatementSequenceNode extends NonTerminalNode{
     protected void parse(Context context) throws SyntaxException {
         do {
             addChild(new StatementNode(context));
-            addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
+            context.checkTerminalSymbol("SSEMICOLON");
         } while (context.equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN", "SIF", "SWHILE"));
     }
 

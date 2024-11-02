@@ -6,10 +6,10 @@ public class IndexedVariableNode extends NonTerminalNode {
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new VariableNameNode(context.checkTerminalSymbol("SIDENTIFIER")));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SLBRACKET")));
+        addChild(new VariableNameNode(context));
+        context.checkTerminalSymbol("SLBRACKET");
         addChild(new IndexNode(context));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SRBRACKET")));
+        context.checkTerminalSymbol("SRBRACKET");
     }
     
     public void accept(Visitor visitor) throws SemanticException {

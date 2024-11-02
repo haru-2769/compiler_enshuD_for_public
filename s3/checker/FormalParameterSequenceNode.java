@@ -7,12 +7,13 @@ public class FormalParameterSequenceNode extends NonTerminalNode{
 
     protected void parse(Context context) throws SyntaxException {
         addChild(new FormalParameterNameSequenceNode(context));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SCOLON")));
-        addChild(new StandardTypeNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
-        while (context.equalsAny(0, "SCOMMA")) {
+        context.checkTerminalSymbol("SCOLON");
+        addChild(new StandardTypeNode(context));
+        while (context.equalsAny(0, "SSEMICOLON")) {
+            context.checkTerminalSymbol("SSEMICOLON");
             addChild(new FormalParameterNameSequenceNode(context));
-            addChild(new TerminalNode(context.checkTerminalSymbol("SCOLON")));
-            addChild(new StandardTypeNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
+            context.checkTerminalSymbol("SCOLON");
+            addChild(new StandardTypeNode(context));
         }
     }
 

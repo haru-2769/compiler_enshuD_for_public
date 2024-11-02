@@ -8,7 +8,7 @@ public class ExpressionSequenceNode extends NonTerminalNode {
     protected void parse(Context context) throws SyntaxException {
         addChild(new ExpressionNode(context));
         while (context.equalsAny(0, "SCOMMA")) {
-            addChild(new TerminalNode(context.checkTerminalSymbol("SCOMMA")));
+            context.checkTerminalSymbol("SCOMMA");
             addChild(new ExpressionNode(context));
         }
     }

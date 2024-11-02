@@ -7,7 +7,7 @@ public class AssignmentStatementNode extends NonTerminalNode {
 
     protected void parse(Context context) throws SyntaxException {
         addChild(new LeftHandSideNode(context));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SASSIGN")));
+        context.checkTerminalSymbol("SASSIGN");
         addChild(new ExpressionNode(context));
     }
 

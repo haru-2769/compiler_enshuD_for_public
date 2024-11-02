@@ -7,9 +7,9 @@ public class FormalParameterNode extends NonTerminalNode {
 
     protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SLPAREN")) {
-            addChild(new TerminalNode(context.checkTerminalSymbol("SLPAREN")));
+            context.checkTerminalSymbol("SLPAREN");
             addChild(new FormalParameterSequenceNode(context));
-            addChild(new TerminalNode(context.checkTerminalSymbol("SRPAREN")));
+            context.checkTerminalSymbol("SRPAREN");
         }
     }
 

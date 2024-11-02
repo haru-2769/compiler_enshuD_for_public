@@ -11,7 +11,7 @@ public class SimpleExpressionNode extends NonTerminalNode {
         }
         addChild(new TermNode(context));
         while (context.equalsAny(0, "SPLUS", "SMINUS", "SOR")) {
-            addChild(new AdditiveOperatorNode(context.checkTerminalSymbol("SPLUS", "SMINUS", "SOR")));
+            addChild(new AdditiveOperatorNode(context));
             addChild(new TermNode(context));
         }
     }

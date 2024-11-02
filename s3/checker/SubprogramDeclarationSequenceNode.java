@@ -8,7 +8,7 @@ public class SubprogramDeclarationSequenceNode extends NonTerminalNode {
     protected void parse(Context context) throws SyntaxException {
         while (context.equalsAny(0, "SPROCEDURE")) {
             addChild(new SubprogramDeclarationNode(context));
-            addChild(new TerminalNode(context.checkTerminalSymbol("SSEMICOLON")));
+            context.checkTerminalSymbol("SSEMICOLON");
         }
     }
     

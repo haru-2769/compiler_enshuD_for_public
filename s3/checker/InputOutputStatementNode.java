@@ -9,16 +9,16 @@ public class InputOutputStatementNode extends NonTerminalNode {
         if (context.equalsAny(0, "SREADLN")) {
             addChild(new TerminalNode(context.checkTerminalSymbol("SREADLN")));
             if (context.equalsAny(0, "SLPAREN")) {
-                addChild(new TerminalNode(context.checkTerminalSymbol("SLPAREN")));
+                context.checkTerminalSymbol("SLPAREN");
                 addChild(new VariableSequenceNode(context));
-                addChild(new TerminalNode(context.checkTerminalSymbol("SRPAREN")));
+                context.checkTerminalSymbol("SRPAREN");
             }
         } else {
             addChild(new TerminalNode(context.checkTerminalSymbol("SWRITELN")));
             if (context.equalsAny(0, "SLPAREN")) {
-                addChild(new TerminalNode(context.checkTerminalSymbol("SLPAREN")));
+                context.checkTerminalSymbol("SLPAREN");
                 addChild(new ExpressionSequenceNode(context));
-                addChild(new TerminalNode(context.checkTerminalSymbol("SRPAREN")));
+                context.checkTerminalSymbol("SRPAREN");
             }
         }
     }

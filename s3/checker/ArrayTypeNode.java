@@ -6,14 +6,14 @@ public class ArrayTypeNode extends NonTerminalNode {
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SARRAY")));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SLBRACKET")));
+        context.checkTerminalSymbol("SARRAY");
+        context.checkTerminalSymbol("SLBRACKET");
         addChild(new IndexMinValueNode(context));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SRANGE")));
+        context.checkTerminalSymbol("SRANGE");
         addChild(new IndexMaxValueNode(context));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SRBRACKET")));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SOF")));
-        addChild(new StandardTypeNode(context.checkTerminalSymbol("SINTEGER", "SCHAR", "SBOOLEAN")));
+        context.checkTerminalSymbol("SRBRACKET");
+        context.checkTerminalSymbol("SOF");
+        addChild(new StandardTypeNode(context));
     }
     
     public void accept(Visitor visitor) throws SemanticException {

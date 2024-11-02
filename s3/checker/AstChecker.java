@@ -1,11 +1,7 @@
 package enshud.s3.checker;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class AstChecker extends Visitor {
-    private int level = 0; 
-    private Set<String> declaredProcedureNames = new HashSet<>();
+    private int level = 0; // ネストのレベルを管理
 
     private void printIndent() {
         for (int i = 0; i < level; i++) {
@@ -23,20 +19,20 @@ public class AstChecker extends Visitor {
         System.out.println("ProgramNode: ");
         level++;
         for (AstNode child : programNode.getChildren()) {
-            if (child instanceof ProgramNameNode) {
-                //TODO
-            } else {
-                child.accept(this);
-            }
+            child.accept(this);
         }
         level--;
     }
 
 	
 	public void visit(ProgramNameNode programNameNode) throws SemanticException {
-        for (int i = 0; i < level; i++) {
-            System.out.print("  ");
+        printIndent();
+        System.out.println("ProgramNameNode: ");
+        level++;
+        for (AstNode child : programNameNode.getChildren()) {
+            child.accept(this);
         }
+        level--;	
 	}
 
     
@@ -86,7 +82,12 @@ public class AstChecker extends Visitor {
 	
 	public void visit(VariableNameNode variableNameNode) throws SemanticException {
         printIndent();
-        System.out.println(variableNameNode.getToken().getLexical());
+        System.out.println("VariableNameNode: ");
+        level++;
+        for (AstNode child : variableNameNode.getChildren()) {
+            child.accept(this);
+        }
+        level--;
 	}
 
     
@@ -102,9 +103,13 @@ public class AstChecker extends Visitor {
 
 	
 	public void visit(StandardTypeNode standardTypeNode) throws SemanticException {
-        for (int i = 0; i < level; i++) {
-            System.out.print("  ");
+        printIndent();
+        System.out.println("StandardTypeNode: ");
+        level++;
+        for (AstNode child : standardTypeNode.getChildren()) {
+            child.accept(this);
         }
+        level--;
 	}
 
     
@@ -184,22 +189,13 @@ public class AstChecker extends Visitor {
         level--;
     }
 
-    //TODO
+    
     public void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException {
         printIndent();
         System.out.println("SubprogramHeadNode: ");
         level++;
         for (AstNode child : subprogramHeadNode.getChildren()) {
-            if (child instanceof ProcedureNameNode) {
-                ProcedureNameNode procedureNameNode = (ProcedureNameNode) child;
-                Token token = procedureNameNode.getToken();
-                String procedureName = token.getLexical();
-                if (!declaredProcedureNames.add(procedureName)) {
-                    throw new SemanticException(token);
-                }
-            } else {
-                child.accept(this);
-            }   
+            child.accept(this);
         }
         level--;
     }
@@ -207,7 +203,12 @@ public class AstChecker extends Visitor {
 	
 	public void visit(ProcedureNameNode procedureNameNode) throws SemanticException {
         printIndent();
-        System.out.println(procedureNameNode.getToken().getLexical());
+        System.out.println("ProcedureNameNode: ");
+        level++;
+        for (AstNode child : procedureNameNode.getChildren()) {
+            child.accept(this);
+        }
+        level--;
 	}
 
     
@@ -370,16 +371,7 @@ public class AstChecker extends Visitor {
         System.out.println("ProcedureCallStatementNode: ");
         level++;
         for (AstNode child : procedureCallStatementNode.getChildren()) {
-            if (child instanceof ProcedureNameNode) {
-                ProcedureNameNode procedureNameNode = (ProcedureNameNode) child;
-                Token token = procedureNameNode.getToken();
-                String procedureName = token.getLexical();
-                if (declaredProcedureNames.add(procedureName)) {
-                    throw new SemanticException(token);
-                }
-            } else {
-                child.accept(this);
-            } 
+            child.accept(this);
         }
         level--;
     }
@@ -452,9 +444,13 @@ public class AstChecker extends Visitor {
 
 	
 	public void visit(AdditiveOperatorNode additiveOperatorNode) throws SemanticException {
-        for (int i = 0; i < level; i++) {
-            System.out.print("  ");
+        printIndent();
+        System.out.println("AdditiveOperatorNode: ");
+        level++;
+        for (AstNode child : additiveOperatorNode.getChildren()) {
+            child.accept(this);
         }
+        level--;
 	}
 
 	

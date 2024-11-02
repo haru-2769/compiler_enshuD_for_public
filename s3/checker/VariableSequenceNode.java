@@ -8,7 +8,7 @@ public class VariableSequenceNode extends NonTerminalNode {
     protected void parse(Context context) throws SyntaxException {
         addChild(new VariableNode(context));
         while (context.equalsAny(0, "SCOMMA")) {
-            addChild(new TerminalNode(context.checkTerminalSymbol("SCOMMA")));
+            context.checkTerminalSymbol("SCOMMA");
             addChild(new VariableNode(context));
         }
     }

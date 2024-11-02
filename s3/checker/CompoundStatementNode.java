@@ -6,9 +6,9 @@ public class CompoundStatementNode extends NonTerminalNode {
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SBEGIN")));
+        context.checkTerminalSymbol("SBEGIN");
         addChild(new StatementSequenceNode(context));
-        addChild(new TerminalNode(context.checkTerminalSymbol("SEND")));
+        context.checkTerminalSymbol("SEND");
     }
 
     public void accept(Visitor visitor) throws SemanticException {
