@@ -220,7 +220,7 @@ public class AstChecker extends Visitor {
     }
 
 	
-	public Token visit(ProcedureNameNode procedureNameNode) throws SemanticException {
+	public void visit(ProcedureNameNode procedureNameNode) throws SemanticException {
         printIndent();
         System.out.println("ProcedureNameNode: ");
         level++;
@@ -228,8 +228,6 @@ public class AstChecker extends Visitor {
             child.accept(this);
         }
         level--;
-        Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
-        return token;
 	}
 
     
