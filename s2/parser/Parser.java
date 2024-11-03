@@ -44,7 +44,7 @@ public class Parser {
 			new ProgramNode(new Context(tokenList));
 		} catch (IOException ex) {
 			return "File not found"; 
-		} catch (final SyntaxException ex) {
+		} catch (SyntaxException ex) {
 			return ex.getError();
 		}
 		return "OK";
