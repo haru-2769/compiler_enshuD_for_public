@@ -42,6 +42,7 @@ public class Checker {
 				tokenList.add(new Token(line));
 			}
 			ProgramNode programNode = new ProgramNode(new Context(tokenList));
+			programNode.pruneEmptyNodes();
 			programNode.accept(new AstChecker());
 		} catch (IOException ex) {
 			return "File not found"; 

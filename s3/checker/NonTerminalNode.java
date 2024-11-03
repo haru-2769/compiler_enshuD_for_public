@@ -15,4 +15,27 @@ public abstract class NonTerminalNode implements AstNode {
     public List<AstNode> getChildren() {
         return this.children;
     }
+
+    
+    public void pruneEmptyNodes() {
+        List<AstNode> childrenCopy = new ArrayList<>(getChildren());
+        for (AstNode child : childrenCopy) {
+            if (child instanceof NonTerminalNode) {
+                NonTerminalNode nonTerminalChild = (NonTerminalNode) child;
+                nonTerminalChild.pruneEmptyNodes();
+                if (nonTerminalChild.isEmpty()) {
+                    removeChild(nonTerminalChild);
+                }
+            }
+        }
+    }
+
+    public void removeChild(AstNode child) {
+        this.children.remove(child);
+    }
+
+    // ノードが空かどうかを判定するメソッド
+    public boolean isEmpty() {
+        return getChildren().isEmpty();
+    }
 }
