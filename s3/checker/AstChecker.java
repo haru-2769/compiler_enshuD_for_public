@@ -1,14 +1,18 @@
 package enshud.s3.checker;
-
+ 
+import java.util.HashSet;
+import java.util.Set;
+ 
 public class AstChecker extends Visitor {
-    private int level = 0; // ネストのレベルを管理
-
+    private int level = 0; 
+    private Set<String> declaredProcedureNames = new HashSet<>();
+ 
     private void printIndent() {
         for (int i = 0; i < level; i++) {
             System.out.print("  ");
         }
     }
-
+ 
     public void visit(TerminalNode terminalNode) throws SemanticException {
         printIndent();
         System.out.println(terminalNode.getToken().getLexical());
@@ -23,7 +27,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
 	
 	public void visit(ProgramNameNode programNameNode) throws SemanticException {
         printIndent();
@@ -34,7 +38,7 @@ public class AstChecker extends Visitor {
         }
         level--;	
 	}
-
+ 
     
     public void visit(BlockNode blockNode) throws SemanticException {
         printIndent();
@@ -45,7 +49,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(VariableDeclarationNode variableDeclarationNode) throws SemanticException {
         printIndent();
@@ -56,7 +60,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(VariableDeclarationSequenceNode variableDeclarationSequenceNode) throws SemanticException {
         printIndent();
@@ -67,7 +71,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(VariableNameSequenceNode variableNameSequenceNode) throws SemanticException {
         printIndent();
@@ -78,7 +82,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
 	
 	public void visit(VariableNameNode variableNameNode) throws SemanticException {
         printIndent();
@@ -89,7 +93,7 @@ public class AstChecker extends Visitor {
         }
         level--;
 	}
-
+ 
     
     public void visit(TypeNode typeNode) throws SemanticException {
         printIndent();
@@ -100,7 +104,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
 	
 	public void visit(StandardTypeNode standardTypeNode) throws SemanticException {
         printIndent();
@@ -111,7 +115,7 @@ public class AstChecker extends Visitor {
         }
         level--;
 	}
-
+ 
     
     public void visit(ArrayTypeNode arrayTypeNode) throws SemanticException {
         printIndent();
@@ -122,7 +126,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(IndexMinValueNode indexMinValueNode) throws SemanticException {
         printIndent();
@@ -133,7 +137,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(IndexMaxValueNode indexMaxValueNode) throws SemanticException {
         printIndent();
@@ -144,7 +148,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(IntegerNode integerNode) throws SemanticException {
         printIndent();
@@ -155,7 +159,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
 	
 	public void visit(SignNode signNode) throws SemanticException {
         printIndent();
@@ -166,7 +170,7 @@ public class AstChecker extends Visitor {
         }
         level--;
 	}
-
+ 
     
     public void visit(SubprogramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException {
         printIndent();
@@ -177,7 +181,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(SubprogramDeclarationNode subprogramDeclarationNode) throws SemanticException {
         printIndent();
@@ -188,18 +192,27 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException {
         printIndent();
         System.out.println("SubprogramHeadNode: ");
         level++;
         for (AstNode child : subprogramHeadNode.getChildren()) {
-            child.accept(this);
+            if (child instanceof ProcedureNameNode) {
+                ProcedureNameNode procedureNameNode = (ProcedureNameNode) child;
+                Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
+                String procedureName = token.getLexical();
+                if (!declaredProcedureNames.add(procedureName)) {
+                    throw new SemanticException(token);
+                }
+            } else {
+                child.accept(this);
+            }   
         }
         level--;
     }
-
+ 
 	
 	public void visit(ProcedureNameNode procedureNameNode) throws SemanticException {
         printIndent();
@@ -209,8 +222,9 @@ public class AstChecker extends Visitor {
             child.accept(this);
         }
         level--;
+        Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
 	}
-
+ 
     
     public void visit(FormalParameterNode formalParameterNode) throws SemanticException {
         printIndent();
@@ -221,7 +235,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(FormalParameterSequenceNode formalParameterSequenceNode) throws SemanticException {
         printIndent();
@@ -232,7 +246,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException {
         printIndent();
@@ -243,7 +257,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
 	
 	public void visit(FormalParameterNameNode formalParameterNameNode) throws SemanticException {
         printIndent();
@@ -254,7 +268,7 @@ public class AstChecker extends Visitor {
         }
         level--;
 	}
-
+ 
     
     public void visit(CompoundStatementNode compoundStatementNode) throws SemanticException {
         printIndent();
@@ -265,7 +279,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(StatementSequenceNode statementSequenceNode) throws SemanticException {
         printIndent();
@@ -276,7 +290,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(StatementNode statementNode) throws SemanticException {
         printIndent();
@@ -287,7 +301,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(BasicStatementNode basicStatementNode) throws SemanticException {
         printIndent();
@@ -298,7 +312,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(AssignmentStatementNode assignmentStatementNode) throws SemanticException {
         printIndent();
@@ -309,7 +323,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(LeftHandSideNode leftHandSideNode) throws SemanticException {
         printIndent();
@@ -320,7 +334,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(VariableNode variableNode) throws SemanticException {
         printIndent();
@@ -331,7 +345,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(PureVariableNode pureVariableNode) throws SemanticException {
         printIndent();
@@ -342,7 +356,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(IndexedVariableNode indexedVariableNode) throws SemanticException {
         printIndent();
@@ -353,7 +367,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(IndexNode indexNode) throws SemanticException {
         printIndent();
@@ -364,18 +378,27 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
         printIndent();
         System.out.println("ProcedureCallStatementNode: ");
         level++;
         for (AstNode child : procedureCallStatementNode.getChildren()) {
-            child.accept(this);
+            if (child instanceof ProcedureNameNode) {
+                ProcedureNameNode procedureNameNode = (ProcedureNameNode) child;
+                Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
+                String procedureName = token.getLexical();
+                if (declaredProcedureNames.add(procedureName)) {
+                    throw new SemanticException(token);
+                }
+            } else {
+                child.accept(this);
+            } 
         }
         level--;
     }
-
+ 
     
     public void visit(ExpressionSequenceNode expressionSequenceNode) throws SemanticException {
         printIndent();
@@ -386,7 +409,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(ExpressionNode expressionNode) throws SemanticException {
         printIndent();
@@ -397,7 +420,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(SimpleExpressionNode simpleExpressionNode) throws SemanticException {
         printIndent();
@@ -408,7 +431,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(TermNode termNode) throws SemanticException {
         printIndent();
@@ -419,7 +442,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(FactorNode factorNode) throws SemanticException {
         printIndent();
@@ -430,7 +453,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
 	
 	public void visit(RelationalOperatorNode relationalOperatorNode) throws SemanticException {
         printIndent();
@@ -441,7 +464,7 @@ public class AstChecker extends Visitor {
         }
         level--;
 	}
-
+ 
 	
 	public void visit(AdditiveOperatorNode additiveOperatorNode) throws SemanticException {
         printIndent();
@@ -452,7 +475,7 @@ public class AstChecker extends Visitor {
         }
         level--;
 	}
-
+ 
 	
 	public void visit(MultiplicativeOperatorNode multiplicativeOperatorNode) throws SemanticException {
         printIndent();
@@ -463,7 +486,7 @@ public class AstChecker extends Visitor {
         }
         level--;
 	}
-
+ 
     
     public void visit(InputOutputStatementNode inputOutputStatementNode) throws SemanticException {
         printIndent();
@@ -474,7 +497,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
     
     public void visit(VariableSequenceNode variableSequenceNode) throws SemanticException {
         printIndent();
@@ -485,7 +508,7 @@ public class AstChecker extends Visitor {
         }
         level--;
     }
-
+ 
 	
 	public void visit(ConstantNode constantNode) throws SemanticException {
         printIndent();
