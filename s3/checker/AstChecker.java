@@ -4,19 +4,15 @@ import java.util.HashSet;
 import java.util.Set;
  
 public class AstChecker extends Visitor {
-    private Set<String> programNames;
+    private String programName;
     private Set<String> procedureNames;
     
     public AstChecker() {
-        this.programNames = new HashSet<>();
         this.procedureNames = new HashSet<>();
     }
     
     public void visit(ProgramNode programNode) throws SemanticException {
-        Token programName = programNode.getProgramNameNode().getToken();
-        if (programNames.add(programName.getLexical()) == false) {
-            throw new SemanticException(programName);
-        }
+        this.programName = programNode.getProgramNameNode().getToken().getLexical();
         programNode.getBlockNode().accept(this);
         programNode.getCompoundStatementNode().accept(this);
     }
@@ -100,7 +96,7 @@ public class AstChecker extends Visitor {
     
     public void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException {
         Token procedureName = subprogramHeadNode.getProcedureNameNode().getToken();
-        if (procedureNames.add(procedureName.getLexical()) == false) {
+        if (procedureNames.add(procedureName.getLexical()) == false || procedureName.getLexical().equals(programName) == true) {
             throw new SemanticException(procedureName);
         }
         subprogramHeadNode.getFormalParameterNode().accept(this);
