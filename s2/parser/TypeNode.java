@@ -1,15 +1,29 @@
 package enshud.s2.parser;
 
-public class TypeNode extends NonTerminalNode {
-    public TypeNode(Context context) throws SyntaxException {
-        parse(context);
+public class TypeNode extends AstNode {
+    private StandardTypeNode standardTypeNode;
+    private ArrayTypeNode arrayTypeNode;
+
+    public TypeNode() throws SyntaxException {
+        this.standardTypeNode = null;
+        this.arrayTypeNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SINTEGER", "SCHAR", "SBOOLEAN")) {
-            addChild(new StandardTypeNode(context));
+            standardTypeNode = new StandardTypeNode();
+            standardTypeNode.parse(context);
         } else {
-            addChild(new ArrayTypeNode(context));
+            arrayTypeNode = new ArrayTypeNode();
+            arrayTypeNode.parse(context);
         }
+    }
+    
+    public StandardTypeNode getStandardTypeNode() {
+        return standardTypeNode;
+    }
+
+    public ArrayTypeNode getArrayTypeNode() {
+        return arrayTypeNode;
     }
 }

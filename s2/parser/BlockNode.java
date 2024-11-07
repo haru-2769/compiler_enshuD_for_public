@@ -1,12 +1,26 @@
 package enshud.s2.parser;
 
-public class BlockNode extends NonTerminalNode {
-    public BlockNode(Context context) throws SyntaxException {
-        parse(context);
+public class BlockNode extends AstNode {
+    private VariableDeclarationNode variableDeclarationNode;
+    private SubprogramDeclarationSequenceNode subprogramDeclarationSequenceNode;
+
+    public BlockNode() throws SyntaxException {
+        this.variableDeclarationNode = null;
+        this.subprogramDeclarationSequenceNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new VariableDeclarationNode(context));
-        addChild(new SubprogramDeclarationSequenceNode(context));
+        this.variableDeclarationNode = new VariableDeclarationNode();
+        this.variableDeclarationNode.parse(context);
+        this.subprogramDeclarationSequenceNode = new SubprogramDeclarationSequenceNode();
+        this.subprogramDeclarationSequenceNode.parse(context);
+    }
+
+    public VariableDeclarationNode getVariableDeclarationNode() {
+        return this.variableDeclarationNode;
+    }
+
+    public SubprogramDeclarationSequenceNode getSubprogramDeclarationSequenceNode() {
+        return this.subprogramDeclarationSequenceNode;
     }
 }

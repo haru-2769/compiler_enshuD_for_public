@@ -1,11 +1,17 @@
 package enshud.s2.parser;
 
-public class SignNode extends NonTerminalNode {
-    public SignNode(Context context) throws SyntaxException {
-        parse(context);
+public class SignNode extends AstNode {
+    private Token token;
+
+    public SignNode() throws SyntaxException {
+        this.token = null;
     }
     
     protected void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SPLUS", "SMINUS")));
-    };
+        this.token = context.checkTerminalSymbol("SPLUS", "SMINUS");
+    }
+
+    public Token getToken() {
+        return this.token;
+    }
 }

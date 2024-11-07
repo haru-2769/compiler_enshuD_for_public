@@ -1,15 +1,30 @@
 package enshud.s2.parser;
 
-public class ExpressionSequenceNode extends NonTerminalNode {
-    public ExpressionSequenceNode(Context context) throws SyntaxException {
-        parse(context);
+import java.util.List;
+import java.util.ArrayList;
+
+public class ExpressionSequenceNode extends AstNode {
+    private ExpressionNode expressionNode;
+    private List<ExpressionNode> expressionNodes;
+
+    public ExpressionSequenceNode() throws SyntaxException {
+        this.expressionNodes = new ArrayList<>();
+        this.expressionNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new ExpressionNode(context));
+        this.expressionNode = new ExpressionNode();
+        this.expressionNodes.add(this.expressionNode);
+        this.expressionNode.parse(context);
         while (context.equalsAny(0, "SCOMMA")) {
             context.checkTerminalSymbol("SCOMMA");
-            addChild(new ExpressionNode(context));
+            this.expressionNode = new ExpressionNode();
+            this.expressionNodes.add(this.expressionNode);
+            this.expressionNode.parse(context);
         }
+    }
+
+    public List<ExpressionNode> getExpressionNodes() {
+        return this.expressionNodes;
     }
 }

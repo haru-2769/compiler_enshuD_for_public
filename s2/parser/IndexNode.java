@@ -1,11 +1,17 @@
 package enshud.s2.parser;
+public class IndexNode extends AstNode {
+    private ExpressionNode expressionNode;
 
-public class IndexNode extends NonTerminalNode {
-    public IndexNode(Context context) throws SyntaxException {
-        parse(context);
+    public IndexNode() throws SyntaxException {
+        this.expressionNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new ExpressionNode(context));
+        this.expressionNode = new ExpressionNode();
+        this.expressionNode.parse(context);
+    }
+
+    public ExpressionNode getExpressionNode() {
+        return this.expressionNode;
     }
 }

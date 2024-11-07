@@ -1,11 +1,17 @@
 package enshud.s2.parser;
 
-public class RelationalOperatorNode extends NonTerminalNode {
-    public RelationalOperatorNode(Context context) throws SyntaxException {
-        parse(context);
+public class RelationalOperatorNode extends AstNode {
+    private Token token;
+
+    public RelationalOperatorNode() throws SyntaxException {
+        this.token = null;
     }
     
     protected void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL")));
+        this.token = context.checkTerminalSymbol("SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL");
+    }
+
+    public Token getToken() {
+        return this.token;
     }
 }

@@ -1,18 +1,39 @@
 package enshud.s2.parser;
 
-public class SimpleExpressionNode extends NonTerminalNode {
-    public SimpleExpressionNode(Context context) throws SyntaxException {
-        parse(context);
+import java.util.List;
+import java.util.ArrayList;
+
+public class SimpleExpressionNode extends AstNode {
+    private SignNode signNode;
+    private TermNode leftTermNode;
+    private AdditiveOperatorNode additiveOperatorNode;
+    private TermNode termNode;
+    private List<AdditiveOperatorNode> additiveOperatorNodes;
+    private List<TermNode> termNodes;
+
+    public SimpleExpressionNode() throws SyntaxException {
+        this.signNode = null;
+        this.leftTermNode = null;
+        this.additiveOperatorNode = null;
+        this.termNode = null;
+        this.additiveOperatorNodes = new ArrayList<>();
+        this.termNodes = new ArrayList<>();
     }
 
     protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SPLUS", "SMINUS")) {
-            addChild(new SignNode(context));
+            this.signNode = new SignNode();
+            this.signNode.parse(context);
         }
-        addChild(new TermNode(context));
+        this.leftTermNode = new TermNode();
+        this.leftTermNode.parse(context);
         while (context.equalsAny(0, "SPLUS", "SMINUS", "SOR")) {
-            addChild(new AdditiveOperatorNode(context));
-            addChild(new TermNode(context));
+            this.additiveOperatorNode = new AdditiveOperatorNode();
+            this.additiveOperatorNodes.add(this.additiveOperatorNode);
+            this.additiveOperatorNode.parse(context);
+            this.termNode = new TermNode();
+            this.termNodes.add(this.termNode);
+            this.termNode.parse(context);
         }
     }
 }

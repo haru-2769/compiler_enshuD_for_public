@@ -1,15 +1,30 @@
 package enshud.s2.parser;
 
-public class VariableNameSequenceNode extends NonTerminalNode {
-    public VariableNameSequenceNode(Context context) throws SyntaxException {
-        parse(context);
+import java.util.List;
+import java.util.ArrayList;
+
+public class VariableNameSequenceNode extends AstNode {
+    private VariableNameNode variableNameNode;
+    private List<VariableNameNode> variableNameNodes;
+
+    public VariableNameSequenceNode() throws SyntaxException {
+        this.variableNameNode = null;
+        this.variableNameNodes = new ArrayList<>();
     }
     
     protected void parse(Context context) throws SyntaxException {
-        addChild(new VariableNameNode(context));
+        this.variableNameNode = new VariableNameNode();
+        this.variableNameNodes.add(this.variableNameNode);
+        this.variableNameNode.parse(context);
         while (context.equalsAny(0, "SCOMMA")) {
             context.checkTerminalSymbol("SCOMMA");
-            addChild(new VariableNameNode(context));
+            this.variableNameNode = new VariableNameNode();
+            this.variableNameNodes.add(this.variableNameNode);
+            this.variableNameNode.parse(context);
         }
+    }
+
+    public List<VariableNameNode> getVariableNameNodes() {
+        return this.variableNameNodes;
     }
 }

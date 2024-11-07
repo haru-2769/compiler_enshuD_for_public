@@ -1,11 +1,14 @@
 package enshud.s2.parser;
 
-public class PureVariableNode extends NonTerminalNode{
-    public PureVariableNode(Context context) throws SyntaxException {
-        parse(context);
+public class PureVariableNode extends AstNode{
+    private VariableNameNode variableNameNode;
+
+    public PureVariableNode() throws SyntaxException {
+        this.variableNameNode = null;
     }
     
     protected void parse(Context context) throws SyntaxException {
-        addChild(new VariableNameNode(context));
+        this.variableNameNode = new VariableNameNode();
+        this.variableNameNode.parse(context);
     }
 }

@@ -1,11 +1,17 @@
 package enshud.s2.parser;
 
-public class ConstantNode extends NonTerminalNode {
-    public ConstantNode(Context context) throws SyntaxException {
-        parse(context);
+public class ConstantNode extends AstNode {
+    private Token token;
+    
+    public ConstantNode() throws SyntaxException {
+        this.token = null;
     }
     
     protected void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE")));
+        this.token = context.checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE");
+    }
+
+    public Token getToken() {
+        return this.token;
     }
 }

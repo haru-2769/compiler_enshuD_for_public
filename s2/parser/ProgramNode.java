@@ -1,16 +1,25 @@
 package enshud.s2.parser;
 
-public class ProgramNode extends NonTerminalNode {
-    public ProgramNode(Context context) throws SyntaxException {
-        parse(context);
+public class ProgramNode extends AstNode {
+    private ProgramNameNode programNameNode;
+    private BlockNode blockNode;
+    private CompoundStatementNode compoundStatementNode;
+
+    public ProgramNode() throws SyntaxException {
+        this.programNameNode = null;
+        this.blockNode = null;
+        this.compoundStatementNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
     	context.checkTerminalSymbol("SPROGRAM");
-        addChild(new ProgramNameNode(context));
+        this.programNameNode = new ProgramNameNode();
+        this.programNameNode.parse(context);
     	context.checkTerminalSymbol("SSEMICOLON");
-        addChild(new BlockNode(context));;
-        addChild(new CompoundStatementNode(context));
+        this.blockNode = new BlockNode();
+        this.blockNode.parse(context);
+        this.compoundStatementNode = new CompoundStatementNode();
+        this.compoundStatementNode.parse(context);
         context.checkTerminalSymbol("SDOT");
         if (context.getIndex() != context.getTokenList().size()) {
             throw new SyntaxException(context.getTokenList().get(context.getIndex()-1));

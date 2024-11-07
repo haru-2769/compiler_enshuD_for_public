@@ -1,13 +1,27 @@
 package enshud.s2.parser;
 
-public class AssignmentStatementNode extends NonTerminalNode {
-    public AssignmentStatementNode(Context context) throws SyntaxException {
-        parse(context);
+public class AssignmentStatementNode extends AstNode {
+    private LeftHandSideNode leftHandSideNode;
+    private ExpressionNode expressionNode;
+
+    public AssignmentStatementNode() throws SyntaxException {
+        this.leftHandSideNode = null;
+        this.expressionNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new LeftHandSideNode(context));
+        this.leftHandSideNode = new LeftHandSideNode();
+        this.leftHandSideNode.parse(context);
         context.checkTerminalSymbol("SASSIGN");
-        addChild(new ExpressionNode(context));
+        this.expressionNode = new ExpressionNode();
+        this.expressionNode.parse(context);
+    }
+
+    public LeftHandSideNode getLeftHandSideNode() {
+        return this.leftHandSideNode;
+    }
+
+    public ExpressionNode getExpressionNode() {
+        return this.expressionNode;
     }
 }

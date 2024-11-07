@@ -1,11 +1,18 @@
 package enshud.s2.parser;
 
-public class IndexMinValueNode extends NonTerminalNode {
-    public IndexMinValueNode(Context context) throws SyntaxException {
-        parse(context);
+public class IndexMinValueNode extends AstNode {
+    private IntegerNode integerNode;
+
+    public IndexMinValueNode() throws SyntaxException {
+        this.integerNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new IntegerNode(context));
+        this.integerNode = new IntegerNode();
+        this.integerNode.parse(context);
+    }
+
+    public IntegerNode getIntegerNode() {
+        return this.integerNode;
     }
 }

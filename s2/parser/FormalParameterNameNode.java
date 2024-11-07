@@ -1,11 +1,17 @@
 package enshud.s2.parser;
 
-public class FormalParameterNameNode extends NonTerminalNode{
-    public FormalParameterNameNode(Context context) throws SyntaxException {
-        parse(context);
+public class FormalParameterNameNode extends AstNode{
+    private Token token;
+
+    public FormalParameterNameNode() throws SyntaxException {
+        this.token = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new TerminalNode(context.checkTerminalSymbol("SIDENTIFIER")));
+        this.token = context.checkTerminalSymbol("SIDENTIFIER");
+    }
+
+    public Token getToken() {
+        return this.token;
     }
 }

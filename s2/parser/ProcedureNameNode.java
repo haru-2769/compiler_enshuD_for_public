@@ -1,11 +1,17 @@
 package enshud.s2.parser;
 
-public class ProcedureNameNode extends NonTerminalNode {
-	public ProcedureNameNode(Context context) throws SyntaxException {
-		parse(context);
+public class ProcedureNameNode extends AstNode {
+	private Token token;
+
+	public ProcedureNameNode() throws SyntaxException {
+		this.token = null;
 	}
 
 	protected void parse(Context context) throws SyntaxException {
-		addChild(new TerminalNode(context.checkTerminalSymbol("SIDENTIFIER")));
+		this.token = context.checkTerminalSymbol("SIDENTIFIER");
+	}
+
+	public Token getToken() {
+		return this.token;
 	}
 }
