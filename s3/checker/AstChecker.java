@@ -4,18 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
  
 public class AstChecker extends Visitor {
-<<<<<<< HEAD
-    private int level = 0; 
-    private Set<String> declaredProcedureNames = new HashSet<>();
- 
-    private void printIndent() {
-        for (int i = 0; i < level; i++) {
-            System.out.print("  ");
-        }
-    }
- 
-=======
->>>>>>> develop
     public void visit(TerminalNode terminalNode) throws SemanticException {
     }
     
@@ -84,40 +72,10 @@ public class AstChecker extends Visitor {
  
     
     public void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException {
-<<<<<<< HEAD
-        printIndent();
-        System.out.println("SubprogramHeadNode: ");
-        level++;
-        for (AstNode child : subprogramHeadNode.getChildren()) {
-            if (child instanceof ProcedureNameNode) {
-                ProcedureNameNode procedureNameNode = (ProcedureNameNode) child;
-                Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
-                String procedureName = token.getLexical();
-                if (!declaredProcedureNames.add(procedureName)) {
-                    throw new SemanticException(token);
-                }
-            } else {
-                child.accept(this);
-            }   
-        }
-        level--;
-=======
->>>>>>> develop
     }
  
 	
 	public void visit(ProcedureNameNode procedureNameNode) throws SemanticException {
-<<<<<<< HEAD
-        printIndent();
-        System.out.println("ProcedureNameNode: ");
-        level++;
-        for (AstNode child : procedureNameNode.getChildren()) {
-            child.accept(this);
-        }
-        level--;
-        Token token = ((TerminalNode) procedureNameNode.getChildren().get(0)).getToken();
-=======
->>>>>>> develop
 	}
  
     
