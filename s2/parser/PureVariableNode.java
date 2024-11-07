@@ -11,4 +11,8 @@ public class PureVariableNode extends AstNode{
         this.variableNameNode = new VariableNameNode();
         this.variableNameNode.parse(context);
     }
+
+    public VariableNameNode getVariableNameNode() {
+        return this.variableNameNode;
+    }
 }

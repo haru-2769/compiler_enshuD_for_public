@@ -37,6 +37,22 @@ public class SimpleExpressionNode extends AstNode {
         }
     }
 
+    public SignNode getSignNode() {
+        return this.signNode;
+    }
+
+    public TermNode getLeftTermNode() {
+        return this.leftTermNode;
+    }
+
+    public List<AdditiveOperatorNode> getAdditiveOperatorNodes() {
+        return this.additiveOperatorNodes;
+    }
+
+    public List<TermNode> getTermNodes() {
+        return this.termNodes;
+    }
+
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

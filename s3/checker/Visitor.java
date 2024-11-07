@@ -1,7 +1,6 @@
 package enshud.s3.checker;
 
 public abstract class Visitor {
-    public abstract void visit(TerminalNode terminalNode) throws SemanticException;
     public abstract void visit(ProgramNode programNode) throws SemanticException;
     public abstract void visit(ProgramNameNode programNameNode) throws SemanticException;
     public abstract void visit(BlockNode blockNode) throws SemanticException;

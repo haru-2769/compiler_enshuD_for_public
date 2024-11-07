@@ -2,6 +2,7 @@ package enshud.s3.checker;
 
 public class AdditiveOperatorNode extends AstNode {
     private Token token;
+    
     public AdditiveOperatorNode() throws SyntaxException {
         this.token = null;
     }

@@ -25,4 +25,16 @@ public class ProgramNode extends AstNode {
             throw new SyntaxException(context.getTokenList().get(context.getIndex()-1));
         }
     };
+
+    public ProgramNameNode getProgramNameNode() {
+        return this.programNameNode;
+    }
+
+    public BlockNode getBlockNode() {
+        return this.blockNode;
+    }
+
+    public CompoundStatementNode getCompoundStatementNode() {
+        return this.compoundStatementNode;
+    }
 }

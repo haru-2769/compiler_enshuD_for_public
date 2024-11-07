@@ -36,4 +36,20 @@ public class SimpleExpressionNode extends AstNode {
             this.termNode.parse(context);
         }
     }
+
+    public SignNode getSignNode() {
+        return this.signNode;
+    }
+
+    public TermNode getLeftTermNode() {
+        return this.leftTermNode;
+    }
+
+    public List<AdditiveOperatorNode> getAdditiveOperatorNodes() {
+        return this.additiveOperatorNodes;
+    }
+
+    public List<TermNode> getTermNodes() {
+        return this.termNodes;
+    }
 }

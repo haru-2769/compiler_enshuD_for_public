@@ -26,6 +26,18 @@ public class ProgramNode extends AstNode {
         }
     };
 
+    public ProgramNameNode getProgramNameNode() {
+        return this.programNameNode;
+    }
+
+    public BlockNode getBlockNode() {
+        return this.blockNode;
+    }
+
+    public CompoundStatementNode getCompoundStatementNode() {
+        return this.compoundStatementNode;
+    }
+
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

@@ -12,6 +12,10 @@ public class PureVariableNode extends AstNode{
         this.variableNameNode.parse(context);
     }
     
+    public VariableNameNode getVariableNameNode() {
+        return this.variableNameNode;
+    }
+    
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
