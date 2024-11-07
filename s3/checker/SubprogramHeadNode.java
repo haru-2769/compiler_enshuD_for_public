@@ -1,15 +1,29 @@
 package enshud.s3.checker;
 
-public class SubprogramHeadNode extends NonTerminalNode {
-    public SubprogramHeadNode(Context context) throws SyntaxException {
-        parse(context);
+public class SubprogramHeadNode extends AstNode {
+    private ProcedureNameNode procedureNameNode;
+    private FormalParameterNode formalParameterNode;
+
+    public SubprogramHeadNode() throws SyntaxException {
+        this.procedureNameNode = null;
+        this.formalParameterNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
         context.checkTerminalSymbol("SPROCEDURE");
-        addChild(new ProcedureNameNode(context));
-        addChild(new FormalParameterNode(context));
+        this.procedureNameNode = new ProcedureNameNode();
+        this.procedureNameNode.parse(context);
+        this.formalParameterNode = new FormalParameterNode();
+        this.formalParameterNode.parse(context);
         context.checkTerminalSymbol("SSEMICOLON");
+    }
+
+    public ProcedureNameNode getProcedureNameNode() {
+        return this.procedureNameNode;
+    }
+
+    public FormalParameterNode getFormalParameterNode() {
+        return this.formalParameterNode;
     }
     
     public void accept(Visitor visitor) throws SemanticException {

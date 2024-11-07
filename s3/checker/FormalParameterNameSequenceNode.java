@@ -1,16 +1,30 @@
 package enshud.s3.checker;
 
-public class FormalParameterNameSequenceNode extends NonTerminalNode{
-	public FormalParameterNameSequenceNode(Context context) throws SyntaxException {
-		parse(context);
+import java.util.List;
+import java.util.ArrayList;
+
+public class FormalParameterNameSequenceNode extends AstNode{
+	private FormalParameterNameNode formalParameterNameNode;
+	private List<FormalParameterNameNode> formalParameterNameNodes;
+
+	public FormalParameterNameSequenceNode() throws SyntaxException {
+		this.formalParameterNameNodes = new ArrayList<>();
 	}
 	
 	protected void parse(Context context) throws SyntaxException {
-		addChild(new FormalParameterNameNode(context));
+		this.formalParameterNameNode = new FormalParameterNameNode();
+		this.formalParameterNameNodes.add(this.formalParameterNameNode);
+		this.formalParameterNameNode.parse(context);
 		while (context.equalsAny(0, "SCOMMA")) {
 			context.checkTerminalSymbol("SCOMMA");
-			addChild(new FormalParameterNameNode(context));
+			this.formalParameterNameNode = new FormalParameterNameNode();
+			this.formalParameterNameNodes.add(this.formalParameterNameNode);
+			this.formalParameterNameNode.parse(context);
 		}
+	}
+
+	public List<FormalParameterNameNode> getFormalParameterNameNodes() {
+		return this.formalParameterNameNodes;
 	}
 
 	public void accept(Visitor visitor) throws SemanticException {

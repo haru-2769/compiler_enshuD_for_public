@@ -1,11 +1,18 @@
 package enshud.s3.checker;
-public class IndexNode extends NonTerminalNode {
-    public IndexNode(Context context) throws SyntaxException {
-        parse(context);
+public class IndexNode extends AstNode {
+    private ExpressionNode expressionNode;
+
+    public IndexNode() throws SyntaxException {
+        this.expressionNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new ExpressionNode(context));
+        this.expressionNode = new ExpressionNode();
+        this.expressionNode.parse(context);
+    }
+
+    public ExpressionNode getExpressionNode() {
+        return this.expressionNode;
     }
     
     public void accept(Visitor visitor) throws SemanticException {

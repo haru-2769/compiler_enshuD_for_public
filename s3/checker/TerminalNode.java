@@ -1,18 +1,22 @@
 package enshud.s3.checker;
 
-public class TerminalNode implements AstNode {
- private final Token token;
+public class TerminalNode extends AstNode {
+    private final Token token;
 
- public TerminalNode(Token token) {
-     this.token = token;
- }
+    public TerminalNode(Token token) {
+        this.token = token;
+    }
 
- public Token getToken() {
-     return this.token;
- }
+    public Token getToken() {
+        return this.token;
+    }
 
- public void accept(Visitor visitor) throws SemanticException {
-     visitor.visit(this);
- }
+    protected void parse(Context context) {
+        // Do nothing
+    }
+
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
+    }
 }
 

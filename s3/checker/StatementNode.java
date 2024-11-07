@@ -1,28 +1,62 @@
 package enshud.s3.checker;
 
-public class StatementNode extends NonTerminalNode{
-    public StatementNode(Context context) throws SyntaxException {
-        parse(context);
+public class StatementNode extends AstNode{
+    private BasicStatementNode basicStatementNode;
+    Token token;
+    private ExpressionNode expressionNode;
+    private CompoundStatementNode compoundStatementNode1, compoundStatementNode2;
+    public StatementNode() throws SyntaxException {
+        this.basicStatementNode = null;
+        this.expressionNode = null;
+        this.token = null;
+        this.compoundStatementNode1 = null;
+        this.compoundStatementNode2 = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN")) {
-            addChild(new BasicStatementNode(context));
+            this.basicStatementNode = new BasicStatementNode();
+            this.basicStatementNode.parse(context);
         } else if (context.equalsAny(0, "SIF")) {
-            addChild(new TerminalNode(context.checkTerminalSymbol("SIF")));
-            addChild(new ExpressionNode(context));
-            addChild(new TerminalNode(context.checkTerminalSymbol("STHEN")));
-            addChild(new CompoundStatementNode(context));
+            this.token = context.checkTerminalSymbol("SIF");
+            this.expressionNode = new ExpressionNode();
+            this.expressionNode.parse(context);
+            context.checkTerminalSymbol("STHEN");
+            this.compoundStatementNode1 = new CompoundStatementNode();
+            this.compoundStatementNode1.parse(context);
             if (context.equalsAny(0, "SELSE")) {
-                addChild(new TerminalNode(context.checkTerminalSymbol("SELSE")));
-                addChild(new CompoundStatementNode(context));
+                context.checkTerminalSymbol("SELSE");
+                this.compoundStatementNode2 = new CompoundStatementNode();
+                this.compoundStatementNode2.parse(context);
             }
         } else {
-            addChild(new TerminalNode(context.checkTerminalSymbol("SWHILE")));
-            addChild(new ExpressionNode(context));
-            addChild(new TerminalNode(context.checkTerminalSymbol("SDO")));
-            addChild(new CompoundStatementNode(context));
+            this.token = context.checkTerminalSymbol("SWHILE");
+            this.expressionNode = new ExpressionNode();
+            this.expressionNode.parse(context);
+            context.checkTerminalSymbol("SDO");
+            this.compoundStatementNode1 = new CompoundStatementNode();
+            this.compoundStatementNode1.parse(context);
         }
+    }
+
+    public BasicStatementNode getBasicStatementNode() {
+        return this.basicStatementNode;
+    }
+
+    public ExpressionNode getExpressionNode() {
+        return this.expressionNode;
+    }
+
+    public CompoundStatementNode getCompoundStatementNode1() {
+        return this.compoundStatementNode1;
+    }
+
+    public CompoundStatementNode getCompoundStatementNode2() {
+        return this.compoundStatementNode2;
+    }
+
+    public Token getToken() {
+        return this.token;
     }
 
     public void accept(Visitor visitor) throws SemanticException {

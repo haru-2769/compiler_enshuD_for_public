@@ -1,14 +1,21 @@
 package enshud.s3.checker;
 
-public class IndexMaxValueNode extends NonTerminalNode {
-    public IndexMaxValueNode(Context context) throws SyntaxException {
-        parse(context);
+public class IndexMaxValueNode extends AstNode {
+    private IntegerNode integerNode;
+
+    public IndexMaxValueNode() throws SyntaxException {
+        this.integerNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
-        addChild(new IntegerNode(context));
+        this.integerNode = new IntegerNode();
+        this.integerNode.parse(context);
     }
     
+    public IntegerNode getIntegerNode() {
+        return this.integerNode;
+    }
+
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

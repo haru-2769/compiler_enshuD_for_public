@@ -41,8 +41,8 @@ public class Checker {
 			for(String line: buffer) {
 				tokenList.add(new Token(line));
 			}
-			ProgramNode programNode = new ProgramNode(new Context(tokenList));
-			programNode.pruneEmptyNodes();
+			ProgramNode programNode = new ProgramNode();
+			programNode.parse(new Context(tokenList));
 			programNode.accept(new AstChecker());
 		} catch (IOException ex) {
 			return "File not found"; 

@@ -1,16 +1,30 @@
 package enshud.s3.checker;
 
-public class VariableNode extends NonTerminalNode {
-    public VariableNode(Context context) throws SyntaxException {
-        parse(context);
+public class VariableNode extends AstNode {
+    private IndexedVariableNode indexedVariableNode;
+    private PureVariableNode pureVariableNode;
+
+    public VariableNode() throws SyntaxException {
+        this.indexedVariableNode = null;
+        this.pureVariableNode = null;
     }
 
     protected void parse(Context context) throws SyntaxException {
         if (context.equalsAny(1, "SLBRACKET")) {
-            addChild(new IndexedVariableNode(context));
+            this.indexedVariableNode = new IndexedVariableNode();
+            this.indexedVariableNode.parse(context);
         } else {
-            addChild(new PureVariableNode(context));
+            this.pureVariableNode = new PureVariableNode();
+            this.pureVariableNode.parse(context);
         }
+    }
+
+    public IndexedVariableNode getIndexedVariableNode() {
+        return this.indexedVariableNode;
+    }
+
+    public PureVariableNode getPureVariableNode() {
+        return this.pureVariableNode;
     }
 
     public void accept(Visitor visitor) throws SemanticException {
