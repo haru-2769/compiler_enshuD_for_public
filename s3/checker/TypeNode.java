@@ -9,7 +9,7 @@ public class TypeNode extends AstNode {
         this.arrayTypeNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SINTEGER", "SCHAR", "SBOOLEAN")) {
             standardTypeNode = new StandardTypeNode();
             standardTypeNode.parse(context);

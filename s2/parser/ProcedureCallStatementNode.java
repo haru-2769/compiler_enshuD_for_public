@@ -9,7 +9,7 @@ public class ProcedureCallStatementNode extends AstNode {
         this.expressionSequenceNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.procedureNameNode = new ProcedureNameNode();
         this.procedureNameNode.parse(context);
         if (context.equalsAny(0, "SLPAREN")) {

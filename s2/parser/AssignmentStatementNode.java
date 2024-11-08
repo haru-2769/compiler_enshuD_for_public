@@ -9,7 +9,7 @@ public class AssignmentStatementNode extends AstNode {
         this.expressionNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.leftHandSideNode = new LeftHandSideNode();
         this.leftHandSideNode.parse(context);
         context.checkTerminalSymbol("SASSIGN");

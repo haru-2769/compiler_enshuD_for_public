@@ -18,7 +18,7 @@ public class InputOutputStatementNode extends AstNode {
         this.token = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SREADLN")) {
             this.token = context.checkTerminalSymbol("SREADLN");
             if (context.equalsAny(0, "SLPAREN")) {

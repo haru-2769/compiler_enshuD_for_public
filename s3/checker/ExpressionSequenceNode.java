@@ -12,7 +12,7 @@ public class ExpressionSequenceNode extends AstNode {
         this.expressionNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.expressionNode = new ExpressionNode();
         this.expressionNodes.add(this.expressionNode);
         this.expressionNode.parse(context);

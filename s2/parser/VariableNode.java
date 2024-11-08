@@ -9,7 +9,7 @@ public class VariableNode extends AstNode {
         this.pureVariableNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(1, "SLBRACKET")) {
             this.indexedVariableNode = new IndexedVariableNode();
             this.indexedVariableNode.parse(context);

@@ -16,7 +16,7 @@ public class FormalParameterSequenceNode extends AstNode{
         this.standardTypeNodes = new ArrayList<>();
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.formalParameterNameSequenceNode = new FormalParameterNameSequenceNode();
         this.formalParameterNameSequenceNodes.add(this.formalParameterNameSequenceNode);
         this.formalParameterNameSequenceNode.parse(context);

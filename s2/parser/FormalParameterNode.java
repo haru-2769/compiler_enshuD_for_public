@@ -7,7 +7,7 @@ public class FormalParameterNode extends AstNode {
         this.formalParameterSequenceNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SLPAREN")) {
             context.checkTerminalSymbol("SLPAREN");
             this.formalParameterSequenceNode = new FormalParameterSequenceNode();

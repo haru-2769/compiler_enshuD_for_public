@@ -15,7 +15,7 @@ public class FactorNode extends AstNode{
         this.token = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SIDENTIFIER")) {
             this.variableNode = new VariableNode();
             this.variableNode.parse(context);

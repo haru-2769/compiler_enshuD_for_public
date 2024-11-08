@@ -20,7 +20,7 @@ public class SimpleExpressionNode extends AstNode {
         this.termNodes = new ArrayList<>();
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SPLUS", "SMINUS")) {
             this.signNode = new SignNode();
             this.signNode.parse(context);

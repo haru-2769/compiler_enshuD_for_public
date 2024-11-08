@@ -7,7 +7,7 @@ public class LeftHandSideNode extends AstNode {
         this.variableNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.variableNode = new VariableNode();
         this.variableNode.parse(context);
     }

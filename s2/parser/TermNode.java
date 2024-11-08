@@ -18,7 +18,7 @@ public class TermNode extends AstNode {
         this.multiplicativeOperatorNodes = new ArrayList<MultiplicativeOperatorNode>();
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.leftFactorNode = new FactorNode();
         this.leftFactorNode.parse(context);
         while (context.equalsAny(0, "SSTAR", "SDIVD", "SMOD", "SAND")) {

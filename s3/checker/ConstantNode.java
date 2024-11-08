@@ -7,7 +7,7 @@ public class ConstantNode extends AstNode {
         this.token = null;
     }
     
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.token = context.checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE");
     }
 

@@ -13,7 +13,7 @@ public class StatementNode extends AstNode{
         this.compoundStatementNode2 = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN")) {
             this.basicStatementNode = new BasicStatementNode();
             this.basicStatementNode.parse(context);

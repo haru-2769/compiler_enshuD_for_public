@@ -12,7 +12,7 @@ public class SubprogramDeclarationSequenceNode extends AstNode {
         this.subprogramDeclarationNodes = new ArrayList<>();
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         while (context.equalsAny(0, "SPROCEDURE")) {
             this.subprogramDeclarationNode = new SubprogramDeclarationNode();
             this.subprogramDeclarationNodes.add(this.subprogramDeclarationNode);

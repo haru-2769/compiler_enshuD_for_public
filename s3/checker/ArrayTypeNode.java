@@ -11,7 +11,7 @@ public class ArrayTypeNode extends AstNode {
         this.standardTypeNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         context.checkTerminalSymbol("SARRAY");
         context.checkTerminalSymbol("SLBRACKET");
         this.indexMinValueNode = new IndexMinValueNode();

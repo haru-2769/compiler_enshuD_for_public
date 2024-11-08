@@ -12,7 +12,7 @@ public class VariableNameSequenceNode extends AstNode {
         this.variableNameNodes = new ArrayList<>();
     }
     
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.variableNameNode = new VariableNameNode();
         this.variableNameNodes.add(this.variableNameNode);
         this.variableNameNode.parse(context);

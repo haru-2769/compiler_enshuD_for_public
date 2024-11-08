@@ -6,7 +6,7 @@ public class IndexNode extends AstNode {
         this.expressionNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.expressionNode = new ExpressionNode();
         this.expressionNode.parse(context);
     }

@@ -9,7 +9,7 @@ public class BlockNode extends AstNode {
         this.subprogramDeclarationSequenceNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.variableDeclarationNode = new VariableDeclarationNode();
         this.variableDeclarationNode.parse(context);
         this.subprogramDeclarationSequenceNode = new SubprogramDeclarationSequenceNode();

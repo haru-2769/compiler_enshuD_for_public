@@ -11,7 +11,7 @@ public class ExpressionNode extends AstNode {
         this.rightSimpleExpressionNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.leftSimpleExpressionNode = new SimpleExpressionNode();
         this.leftSimpleExpressionNode.parse(context);
         if (context.equalsAny(0, "SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL")) {

@@ -11,7 +11,7 @@ public class SubprogramDeclarationNode extends AstNode {
         this.compoundStatementNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.subprogramHeadNode = new SubprogramHeadNode();
         this.subprogramHeadNode.parse(context);
         this.variableDeclarationNode = new VariableDeclarationNode();

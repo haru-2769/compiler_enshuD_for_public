@@ -16,7 +16,7 @@ public class VariableDeclarationSequenceNode extends AstNode {
         this.typeNodes = new ArrayList<>();
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         do {
             this.variableNameSequenceNode = new VariableNameSequenceNode();
             this.variableNameSequenceNodes.add(this.variableNameSequenceNode);

@@ -7,7 +7,7 @@ public class CompoundStatementNode extends AstNode {
         this.statementSequenceNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         context.checkTerminalSymbol("SBEGIN");
         this.statementSequenceNode = new StatementSequenceNode();
         this.statementSequenceNode.parse(context);

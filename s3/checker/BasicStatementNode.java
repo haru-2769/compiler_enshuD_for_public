@@ -13,7 +13,7 @@ public class BasicStatementNode extends AstNode {
         this.compoundStatementNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SIDENTIFIER")) {
             if (context.equalsAny(1, "SASSIGN", "SLBRACKET")) {
                 this.assignmentStatementNode = new AssignmentStatementNode();

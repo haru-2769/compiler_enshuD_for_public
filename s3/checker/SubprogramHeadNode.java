@@ -9,7 +9,7 @@ public class SubprogramHeadNode extends AstNode {
         this.formalParameterNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         context.checkTerminalSymbol("SPROCEDURE");
         this.procedureNameNode = new ProcedureNameNode();
         this.procedureNameNode.parse(context);

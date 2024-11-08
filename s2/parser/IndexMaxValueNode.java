@@ -7,7 +7,7 @@ public class IndexMaxValueNode extends AstNode {
         this.integerNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.integerNode = new IntegerNode();
         this.integerNode.parse(context);
     }

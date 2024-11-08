@@ -12,7 +12,7 @@ public class StatementSequenceNode extends AstNode{
         this.statementNodes = new ArrayList<>();
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         do {
             this.statementNode = new StatementNode();
             this.statementNodes.add(statementNode);

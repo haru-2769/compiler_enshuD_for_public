@@ -11,7 +11,7 @@ public class ProgramNode extends AstNode {
         this.compoundStatementNode = null;
     }
 
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
     	context.checkTerminalSymbol("SPROGRAM");
         this.programNameNode = new ProgramNameNode();
         this.programNameNode.parse(context);

@@ -7,7 +7,7 @@ public class PureVariableNode extends AstNode{
         this.variableNameNode = null;
     }
     
-    protected void parse(Context context) throws SyntaxException {
+    public void parse(Context context) throws SyntaxException {
         this.variableNameNode = new VariableNameNode();
         this.variableNameNode.parse(context);
     }
