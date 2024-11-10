@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class SignNode extends AstNode {
     private Token token;
 
-    public SignNode() throws SyntaxException {
+    public SignNode() {
         this.token = null;
     }
     

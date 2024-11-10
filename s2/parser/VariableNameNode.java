@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class VariableNameNode extends AstNode {
     private Token token;
 
-    public VariableNameNode() throws SyntaxException {
+    public VariableNameNode() {
         this.token = null;
     }
     

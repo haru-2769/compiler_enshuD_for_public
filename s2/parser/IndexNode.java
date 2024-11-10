@@ -2,7 +2,7 @@ package enshud.s2.parser;
 public class IndexNode extends AstNode {
     private ExpressionNode expressionNode;
 
-    public IndexNode() throws SyntaxException {
+    public IndexNode() {
         this.expressionNode = null;
     }
 

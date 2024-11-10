@@ -4,7 +4,7 @@ public class TypeNode extends AstNode {
     private StandardTypeNode standardTypeNode;
     private ArrayTypeNode arrayTypeNode;
 
-    public TypeNode() throws SyntaxException {
+    public TypeNode() {
         this.standardTypeNode = null;
         this.arrayTypeNode = null;
     }

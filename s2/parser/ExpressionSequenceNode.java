@@ -7,7 +7,7 @@ public class ExpressionSequenceNode extends AstNode {
     private ExpressionNode expressionNode;
     private List<ExpressionNode> expressionNodes;
 
-    public ExpressionSequenceNode() throws SyntaxException {
+    public ExpressionSequenceNode() {
         this.expressionNodes = new ArrayList<>();
         this.expressionNode = null;
     }

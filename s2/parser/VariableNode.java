@@ -4,7 +4,7 @@ public class VariableNode extends AstNode {
     private IndexedVariableNode indexedVariableNode;
     private PureVariableNode pureVariableNode;
 
-    public VariableNode() throws SyntaxException {
+    public VariableNode() {
         this.indexedVariableNode = null;
         this.pureVariableNode = null;
     }

@@ -4,7 +4,7 @@ public class AssignmentStatementNode extends AstNode {
     private LeftHandSideNode leftHandSideNode;
     private ExpressionNode expressionNode;
 
-    public AssignmentStatementNode() throws SyntaxException {
+    public AssignmentStatementNode() {
         this.leftHandSideNode = null;
         this.expressionNode = null;
     }

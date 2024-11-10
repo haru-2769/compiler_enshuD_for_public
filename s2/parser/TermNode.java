@@ -10,7 +10,7 @@ public class TermNode extends AstNode {
     private List<MultiplicativeOperatorNode> multiplicativeOperatorNodes;
     private List<FactorNode> factorNodes;
 
-    public TermNode() throws SyntaxException {
+    public TermNode() {
         this.leftFactorNode = null;
         this.multiplicativeOperatorNode = null;
         this.FactorNode = null;

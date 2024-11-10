@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class FormalParameterNode extends AstNode {
     private FormalParameterSequenceNode formalParameterSequenceNode;
 
-    public FormalParameterNode() throws SyntaxException {
+    public FormalParameterNode() {
         this.formalParameterSequenceNode = null;
     }
 

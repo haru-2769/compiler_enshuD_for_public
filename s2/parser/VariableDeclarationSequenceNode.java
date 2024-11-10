@@ -9,7 +9,7 @@ public class VariableDeclarationSequenceNode extends AstNode {
     private List<VariableNameSequenceNode> variableNameSequenceNodes;
     private List<TypeNode> typeNodes;
 
-    public VariableDeclarationSequenceNode() throws SyntaxException {
+    public VariableDeclarationSequenceNode() {
         this.variableNameSequenceNode = null;
         this.typeNode = null;
         this.variableNameSequenceNodes = new ArrayList<>();

@@ -5,7 +5,7 @@ public class ProgramNode extends AstNode {
     private BlockNode blockNode;
     private CompoundStatementNode compoundStatementNode;
 
-    public ProgramNode() throws SyntaxException {
+    public ProgramNode() {
         this.programNameNode = null;
         this.blockNode = null;
         this.compoundStatementNode = null;

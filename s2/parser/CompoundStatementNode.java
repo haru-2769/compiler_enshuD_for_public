@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class CompoundStatementNode extends AstNode {
     private StatementSequenceNode statementSequenceNode;
 
-    public CompoundStatementNode() throws SyntaxException {
+    public CompoundStatementNode() {
         this.statementSequenceNode = null;
     }
 

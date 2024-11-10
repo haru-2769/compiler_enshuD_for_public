@@ -4,7 +4,7 @@ public class IntegerNode extends AstNode {
     private SignNode signNode;
     private Token token;
 
-    public IntegerNode() throws SyntaxException {
+    public IntegerNode() {
         this.signNode = null;
         this.token = null;
     }

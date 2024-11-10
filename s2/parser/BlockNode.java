@@ -4,7 +4,7 @@ public class BlockNode extends AstNode {
     private VariableDeclarationNode variableDeclarationNode;
     private SubprogramDeclarationSequenceNode subprogramDeclarationSequenceNode;
 
-    public BlockNode() throws SyntaxException {
+    public BlockNode() {
         this.variableDeclarationNode = null;
         this.subprogramDeclarationSequenceNode = null;
     }

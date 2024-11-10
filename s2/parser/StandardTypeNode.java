@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class StandardTypeNode extends AstNode {
     private Token token;
 
-    public StandardTypeNode() throws SyntaxException {
+    public StandardTypeNode() {
         this.token = null;
     }
 

@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class FormalParameterNameNode extends AstNode{
     private Token token;
 
-    public FormalParameterNameNode() throws SyntaxException {
+    public FormalParameterNameNode() {
         this.token = null;
     }
 

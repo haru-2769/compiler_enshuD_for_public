@@ -7,7 +7,7 @@ public class FactorNode extends AstNode{
     private FactorNode factorNode;
     private Token token;
 
-    public FactorNode() throws SyntaxException {
+    public FactorNode() {
         this.variableNode = null;
         this.constantNode = null;
         this.expressionNode = null;

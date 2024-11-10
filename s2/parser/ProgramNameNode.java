@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class ProgramNameNode extends AstNode {
     private Token token;
     
-    public ProgramNameNode() throws SyntaxException {
+    public ProgramNameNode() {
         this.token = null;
     }
     

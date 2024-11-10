@@ -7,7 +7,7 @@ public class SubprogramDeclarationSequenceNode extends AstNode {
     private SubprogramDeclarationNode subprogramDeclarationNode;
     private List<SubprogramDeclarationNode> subprogramDeclarationNodes;
 
-    public SubprogramDeclarationSequenceNode() throws SyntaxException {
+    public SubprogramDeclarationSequenceNode() {
         this.subprogramDeclarationNode = null;
         this.subprogramDeclarationNodes = new ArrayList<>();
     }

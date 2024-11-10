@@ -5,7 +5,7 @@ public class SubprogramDeclarationNode extends AstNode {
     private VariableDeclarationNode variableDeclarationNode;
     private CompoundStatementNode compoundStatementNode;
 
-    public SubprogramDeclarationNode() throws SyntaxException {
+    public SubprogramDeclarationNode() {
         this.subprogramHeadNode = null;
         this.variableDeclarationNode = null;
         this.compoundStatementNode = null;

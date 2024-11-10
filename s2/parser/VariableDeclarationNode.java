@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class VariableDeclarationNode extends AstNode {
     private VariableDeclarationSequenceNode variableDeclarationSequenceNode;
 
-    public VariableDeclarationNode() throws SyntaxException {
+    public VariableDeclarationNode() {
         this.variableDeclarationSequenceNode = null;
     }
 

@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class IndexMinValueNode extends AstNode {
     private IntegerNode integerNode;
 
-    public IndexMinValueNode() throws SyntaxException {
+    public IndexMinValueNode() {
         this.integerNode = null;
     }
 

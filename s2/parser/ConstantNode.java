@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class ConstantNode extends AstNode {
     private Token token;
     
-    public ConstantNode() throws SyntaxException {
+    public ConstantNode() {
         this.token = null;
     }
     

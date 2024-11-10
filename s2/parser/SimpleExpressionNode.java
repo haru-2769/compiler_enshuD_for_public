@@ -11,7 +11,7 @@ public class SimpleExpressionNode extends AstNode {
     private List<AdditiveOperatorNode> additiveOperatorNodes;
     private List<TermNode> termNodes;
 
-    public SimpleExpressionNode() throws SyntaxException {
+    public SimpleExpressionNode() {
         this.signNode = null;
         this.leftTermNode = null;
         this.additiveOperatorNode = null;

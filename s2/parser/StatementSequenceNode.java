@@ -7,7 +7,7 @@ public class StatementSequenceNode extends AstNode{
     private StatementNode statementNode;
     private List<StatementNode> statementNodes;
 
-    public StatementSequenceNode() throws SyntaxException {
+    public StatementSequenceNode() {
         this.statementNode = null;
         this.statementNodes = new ArrayList<>();
     }

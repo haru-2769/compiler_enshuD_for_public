@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class RelationalOperatorNode extends AstNode {
     private Token token;
 
-    public RelationalOperatorNode() throws SyntaxException {
+    public RelationalOperatorNode() {
         this.token = null;
     }
     

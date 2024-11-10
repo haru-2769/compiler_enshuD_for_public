@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class MultiplicativeOperatorNode extends AstNode {
     private Token token;
     
-    public MultiplicativeOperatorNode() throws SyntaxException {
+    public MultiplicativeOperatorNode() {
         this.token = null;
     }
     

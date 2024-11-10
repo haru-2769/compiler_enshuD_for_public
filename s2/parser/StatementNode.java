@@ -5,7 +5,8 @@ public class StatementNode extends AstNode{
     Token token;
     private ExpressionNode expressionNode;
     private CompoundStatementNode compoundStatementNode1, compoundStatementNode2;
-    public StatementNode() throws SyntaxException {
+
+    public StatementNode() {
         this.basicStatementNode = null;
         this.expressionNode = null;
         this.token = null;

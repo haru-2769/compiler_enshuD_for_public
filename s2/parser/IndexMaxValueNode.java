@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class IndexMaxValueNode extends AstNode {
     private IntegerNode integerNode;
 
-    public IndexMaxValueNode() throws SyntaxException {
+    public IndexMaxValueNode() {
         this.integerNode = null;
     }
 

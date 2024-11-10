@@ -10,7 +10,7 @@ public class InputOutputStatementNode extends AstNode {
     private List<ExpressionSequenceNode> expressionSequenceNodes;
     private Token token;
 
-    public InputOutputStatementNode() throws SyntaxException {
+    public InputOutputStatementNode() {
         this.variableSequenceNode = null;
         this.expressionSequenceNode = null;
         this.variableSequenceNodes = new ArrayList<>();

@@ -5,7 +5,7 @@ public class ArrayTypeNode extends AstNode {
     private IndexMaxValueNode indexMaxValueNode;
     private StandardTypeNode standardTypeNode;
 
-    public ArrayTypeNode() throws SyntaxException {
+    public ArrayTypeNode() {
         this.indexMinValueNode = null;
         this.indexMaxValueNode = null;
         this.standardTypeNode = null;

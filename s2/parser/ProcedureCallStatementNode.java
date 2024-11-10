@@ -4,7 +4,7 @@ public class ProcedureCallStatementNode extends AstNode {
     private ProcedureNameNode procedureNameNode;
     private ExpressionSequenceNode expressionSequenceNode;
 
-    public ProcedureCallStatementNode() throws SyntaxException {
+    public ProcedureCallStatementNode() {
         this.procedureNameNode = null;
         this.expressionSequenceNode = null;
     }

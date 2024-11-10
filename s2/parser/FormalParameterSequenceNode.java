@@ -9,7 +9,7 @@ public class FormalParameterSequenceNode extends AstNode{
     private List<FormalParameterNameSequenceNode> formalParameterNameSequenceNodes;
     private List<StandardTypeNode> standardTypeNodes;
 
-    public FormalParameterSequenceNode() throws SyntaxException {
+    public FormalParameterSequenceNode() {
         this.formalParameterNameSequenceNode = null;
         this.standardTypeNode = null;
         this.formalParameterNameSequenceNodes = new ArrayList<>();

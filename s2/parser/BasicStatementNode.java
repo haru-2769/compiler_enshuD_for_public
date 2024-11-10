@@ -6,7 +6,7 @@ public class BasicStatementNode extends AstNode {
     private InputOutputStatementNode inputOutputStatementNode;
     private CompoundStatementNode compoundStatementNode;
     
-    public BasicStatementNode() throws SyntaxException {
+    public BasicStatementNode() {
         this.assignmentStatementNode = null;
         this.procedureCallStatementNode = null;
         this.inputOutputStatementNode = null;

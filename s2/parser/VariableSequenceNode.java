@@ -7,7 +7,7 @@ public class VariableSequenceNode extends AstNode {
     private VariableNode variableNode;
     private List<VariableNode> variableNodes;
 
-    public VariableSequenceNode() throws SyntaxException {
+    public VariableSequenceNode() {
         this.variableNodes = new ArrayList<VariableNode>();
     }
 

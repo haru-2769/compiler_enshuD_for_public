@@ -5,7 +5,7 @@ public class ExpressionNode extends AstNode {
     private RelationalOperatorNode relationalOperatorNode;
     private SimpleExpressionNode rightSimpleExpressionNode;
 
-    public ExpressionNode() throws SyntaxException {
+    public ExpressionNode() {
         this.leftSimpleExpressionNode = null;
         this.relationalOperatorNode = null;
         this.rightSimpleExpressionNode = null;

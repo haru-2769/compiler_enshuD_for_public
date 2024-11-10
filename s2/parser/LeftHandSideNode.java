@@ -3,7 +3,7 @@ package enshud.s2.parser;
 public class LeftHandSideNode extends AstNode {
     private VariableNode variableNode;
 
-    public LeftHandSideNode() throws SyntaxException {
+    public LeftHandSideNode() {
         this.variableNode = null;
     }
 

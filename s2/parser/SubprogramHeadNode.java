@@ -4,7 +4,7 @@ public class SubprogramHeadNode extends AstNode {
     private ProcedureNameNode procedureNameNode;
     private FormalParameterNode formalParameterNode;
 
-    public SubprogramHeadNode() throws SyntaxException {
+    public SubprogramHeadNode() {
         this.procedureNameNode = null;
         this.formalParameterNode = null;
     }
