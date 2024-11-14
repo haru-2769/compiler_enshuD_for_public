@@ -8,7 +8,8 @@ public class SemanticException extends Exception {
         this.error = "Semantic error: line " + token.getLineCount();
     }
     
-    public String getError() {
+    @Override
+    public String getMessage() {
         return this.error;
     }
 

@@ -48,10 +48,10 @@ public class Checker {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {
 			ex.printStackTrace();
-			return ex.getError();
+			return ex.getMessage();
 		} catch (final SemanticException ex) {
 			ex.printStackTrace();
-			return ex.getError();
+			return ex.getMessage();
 		}
 		
 		return "OK";
