@@ -46,7 +46,7 @@ public class Parser {
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (SyntaxException ex) {
-			return ex.getError();
+			return ex.getMessage();
 		}
 		return "OK";
 	}
