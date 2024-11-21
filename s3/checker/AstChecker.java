@@ -1,22 +1,22 @@
 package enshud.s3.checker;
- 
-import java.util.HashSet;
+
 import java.util.List;
-// import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
+import java.util.ArrayList;
 import java.util.HashMap;
  
 public class AstChecker extends Visitor {
     private String programName;
     private String currentType;
-    private Set<String> procedureNames;
+    private List<String> formalParameterTypes;
+    private HashMap<String, ProcedureInfo> procedureNames;
     private Stack<HashMap<String, VariableInfo>> variableNames;
     
     public AstChecker() {
         this.programName = null;
         this.currentType = null;
-        this.procedureNames = new HashSet<>();
+        this.formalParameterTypes = new ArrayList<>();
+        this.procedureNames = new HashMap<>();
         this.variableNames = new Stack<>();
     }
     
@@ -68,7 +68,7 @@ public class AstChecker extends Visitor {
         List<VariableNameNode> variableNameNodes = variableNameSequenceNode.getVariableNameNodes();
         for (VariableNameNode variableNameNode : variableNameNodes) {
             Token variableName = variableNameNode.getToken();
-            if (currentScope.put(variableName.getLexical(), new VariableInfo(currentType)) != null || variableName.getLexical().equals(programName) || procedureNames.contains(variableName.getLexical())) {
+            if (currentScope.put(variableName.getLexical(), new VariableInfo(this.currentType)) != null || variableName.getLexical().equals(programName) || procedureNames.containsKey(variableName.getLexical())) {//
                 throw new SemanticException(variableName);
             }
         }
@@ -138,10 +138,13 @@ public class AstChecker extends Visitor {
     
     public void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException {
         Token procedureName = subprogramHeadNode.getProcedureNameNode().getToken();
-        if (!procedureNames.add(procedureName.getLexical()) || procedureName.getLexical().equals(programName) || variableNames.peek().containsKey(procedureName.getLexical())) {
+        ProcedureInfo procedureInfo = new ProcedureInfo();
+        if (procedureNames.put(procedureName.getLexical(), procedureInfo) != null || procedureName.getLexical().equals(programName) || variableNames.peek().containsKey(procedureName.getLexical())) {
             throw new SemanticException(procedureName);
         }
         subprogramHeadNode.getFormalParameterNode().accept(this);
+        procedureInfo.setType(this.formalParameterTypes);
+        this.formalParameterTypes.clear();
     }
  
 	
@@ -175,7 +178,8 @@ public class AstChecker extends Visitor {
             if (currentScope.containsKey(formalParameterName.getLexical())) {
                 throw new SemanticException(formalParameterName);
             }
-            currentScope.put(formalParameterName.getLexical(), new VariableInfo(currentType));
+            currentScope.put(formalParameterName.getLexical(), new VariableInfo(this.currentType));
+            this.formalParameterTypes.add(this.currentType);
         }
     }
  
@@ -310,13 +314,17 @@ public class AstChecker extends Visitor {
     
     public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
         Token procedureName = procedureCallStatementNode.getProcedureNameNode().getToken();
-        if (procedureNames.contains(procedureName.getLexical()) == false) {
+        if (!procedureNames.containsKey(procedureName.getLexical())) {
             throw new SemanticException(procedureName);
         }
         ExpressionSequenceNode expressionSequenceNode = procedureCallStatementNode.getExpressionSequenceNode();
         if (expressionSequenceNode != null) {
             expressionSequenceNode.accept(this);
         }
+        if (!procedureNames.get(procedureName.getLexical()).getType().equals(this.formalParameterTypes)) {
+            throw new SemanticException(procedureName);
+        }
+        this.formalParameterTypes.clear();
     }
  
     
@@ -324,6 +332,7 @@ public class AstChecker extends Visitor {
         List<ExpressionNode> expressionNodes = expressionSequenceNode.getExpressionNodes();
         for (ExpressionNode expressionNode : expressionNodes) {
             expressionNode.accept(this);
+            this.formalParameterTypes.add(this.currentType);
         }
     }
  
@@ -399,6 +408,9 @@ public class AstChecker extends Visitor {
             expressionNode.accept(this);
         } else {
             factorNode2.accept(this);
+            if (!this.currentType.equals("boolean")) {
+                throw new SemanticException(factorNode.getToken());
+            }
         }
     }
  
@@ -434,6 +446,7 @@ public class AstChecker extends Visitor {
         }
         for (ExpressionSequenceNode expressionSequenceNode : inputOutputStatementNode.getExpressionSequenceNodes()) {
             expressionSequenceNode.accept(this);
+            this.formalParameterTypes.clear();
         }
     }
  

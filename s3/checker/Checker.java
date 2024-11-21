@@ -14,7 +14,7 @@ public class Checker {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Checker().run("data/ts/normal15.ts"));
+		System.out.println(new Checker().run("data/ts/normal08.ts"));
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class Checker {
 //			ex.printStackTrace();
 			return ex.getMessage();
 		} catch (final SemanticException ex) {
-			// ex.printStackTrace();
+//			 ex.printStackTrace();
 			return ex.getMessage();
 		}
 		
