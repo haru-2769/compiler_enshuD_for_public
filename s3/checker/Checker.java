@@ -14,7 +14,7 @@ public class Checker {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Checker().run("data/ts/normal01.ts"));
+		System.out.println(new Checker().run("data/ts/normal15.ts"));
 	}
 
 	/**
@@ -47,10 +47,10 @@ public class Checker {
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {
-			ex.printStackTrace();
+//			ex.printStackTrace();
 			return ex.getMessage();
 		} catch (final SemanticException ex) {
-			ex.printStackTrace();
+			// ex.printStackTrace();
 			return ex.getMessage();
 		}
 		
