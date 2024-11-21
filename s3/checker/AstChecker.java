@@ -9,6 +9,7 @@ public class AstChecker extends Visitor {
     private String programName;
     private String currentType;
     private List<String> formalParameterTypes;
+    private List<String> variableTypes;
     private HashMap<String, ProcedureInfo> procedureNames;
     private Stack<HashMap<String, VariableInfo>> variableNames;
     
@@ -16,6 +17,7 @@ public class AstChecker extends Visitor {
         this.programName = null;
         this.currentType = null;
         this.formalParameterTypes = new ArrayList<>();
+        this.variableTypes = new ArrayList<>();
         this.procedureNames = new HashMap<>();
         this.variableNames = new Stack<>();
     }
@@ -142,9 +144,9 @@ public class AstChecker extends Visitor {
         if (procedureNames.put(procedureName.getLexical(), procedureInfo) != null || procedureName.getLexical().equals(programName) || variableNames.peek().containsKey(procedureName.getLexical())) {
             throw new SemanticException(procedureName);
         }
+        this.formalParameterTypes.clear();
         subprogramHeadNode.getFormalParameterNode().accept(this);
         procedureInfo.setType(this.formalParameterTypes);
-        this.formalParameterTypes.clear();
     }
  
 	
@@ -317,6 +319,7 @@ public class AstChecker extends Visitor {
         if (!procedureNames.containsKey(procedureName.getLexical())) {
             throw new SemanticException(procedureName);
         }
+        this.formalParameterTypes.clear();
         ExpressionSequenceNode expressionSequenceNode = procedureCallStatementNode.getExpressionSequenceNode();
         if (expressionSequenceNode != null) {
             expressionSequenceNode.accept(this);
@@ -324,7 +327,6 @@ public class AstChecker extends Visitor {
         if (!procedureNames.get(procedureName.getLexical()).getType().equals(this.formalParameterTypes)) {
             throw new SemanticException(procedureName);
         }
-        this.formalParameterTypes.clear();
     }
  
     
@@ -442,16 +444,32 @@ public class AstChecker extends Visitor {
     
     public void visit(InputOutputStatementNode inputOutputStatementNode) throws SemanticException {
         for (VariableSequenceNode variableSequenceNode : inputOutputStatementNode.getVariableSequenceNodes()) {
+            this.variableTypes.clear();//TODO
             variableSequenceNode.accept(this);
+            for (String type : this.variableTypes) {
+                if (!type.equals("integer") && !type.equals("char") && !type.equals("array of char")) {
+                    throw new SemanticException(inputOutputStatementNode.getToken());
+                }
+            }
         }
         for (ExpressionSequenceNode expressionSequenceNode : inputOutputStatementNode.getExpressionSequenceNodes()) {
-            expressionSequenceNode.accept(this);
             this.formalParameterTypes.clear();
+            expressionSequenceNode.accept(this);
+            for (String type : this.formalParameterTypes) {
+                if (!type.equals("integer") && !type.equals("char") && !type.equals("array of char")) {
+                    throw new SemanticException(inputOutputStatementNode.getToken());
+                }
+            }
         }
     }
  
     
     public void visit(VariableSequenceNode variableSequenceNode) throws SemanticException {
+        List<VariableNode> variableNodes = variableSequenceNode.getVariableNodes();
+        for (VariableNode variableNode : variableNodes) {
+            variableNode.accept(this);
+            this.variableTypes.add(this.currentType);
+        }
     }
  
 	

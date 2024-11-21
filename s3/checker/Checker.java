@@ -14,7 +14,7 @@ public class Checker {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Checker().run("data/ts/normal08.ts"));
+		System.out.println(new Checker().run("data/ts/normal20.ts"));
 	}
 
 	/**
