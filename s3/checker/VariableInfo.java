@@ -2,22 +2,24 @@ package enshud.s3.checker;
 
 public class VariableInfo {
     private Type type;
-    private boolean isReferenced;
+    private Integer indexMin;
+    private Integer indexMax;
 
-    public VariableInfo(Type type) {
+    public VariableInfo(Type type, Integer indexMin, Integer indexMax) {
         this.type = type;
-        this.isReferenced = false;
+        this.indexMin = indexMin;
+        this.indexMax = indexMax;
     }
 
     public Type getType() {
-        return type;
+        return this.type;
     }
 
-    public boolean isReferenced() {
-        return isReferenced;
+    public Integer getIndexMin() {
+        return this.indexMin;
     }
 
-    public void setReferenced(boolean isReferenced) {
-        this.isReferenced = isReferenced;
+    public Integer getIndexMax() {
+        return this.indexMax;
     }
 }

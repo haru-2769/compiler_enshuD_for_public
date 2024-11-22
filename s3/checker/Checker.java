@@ -11,10 +11,10 @@ public class Checker {
 	/**
 	 * サンプルmainメソッド．
 	 * 単体テストの対象ではないので自由に改変しても良い．
-	 */
+	/ */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Checker().run("data/ts/normal20.ts"));
+		System.out.println(new Checker().run("data/ts/normal11.ts"));
 	}
 
 	/**
