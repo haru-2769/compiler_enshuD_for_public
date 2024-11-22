@@ -8,11 +8,19 @@ public enum Type {
     ARRAY_OF_CHAR,
     ARRAY_OF_BOOLEAN;
 
-    public boolean isArrayType() {
+    public boolean isBoolean() {
+        return this == BOOLEAN;
+    }
+
+    public boolean isInteger() {
+        return this == INTEGER;
+    }
+
+    public boolean isArray() {
         return this == ARRAY_OF_INTEGER || this == ARRAY_OF_CHAR || this == ARRAY_OF_BOOLEAN;
     }
 
-    public boolean isArgumentType() {
+    public boolean isArgument() {
         return this != INTEGER && this != CHAR && this != ARRAY_OF_CHAR;
     }
 }
