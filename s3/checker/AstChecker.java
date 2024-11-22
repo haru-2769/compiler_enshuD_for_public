@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Stack;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+// import java.util.Map;
  
 public class AstChecker extends Visitor {
-    private String programName;
+    // private String programName;
     private String currentSubprogramName;
     private Type currentType;
     private Integer currentValue;
@@ -19,7 +19,7 @@ public class AstChecker extends Visitor {
     private Stack<HashMap<String, VariableInfo>> variableNames;
     
     public AstChecker() {
-        this.programName = null;
+        // this.programName = null;
         this.currentSubprogramName = null;
         this.currentType = null;
         this.formalParameterTypes = new ArrayList<>();
@@ -28,20 +28,20 @@ public class AstChecker extends Visitor {
         this.variableNames = new Stack<>();
     }
     
-    private void check(HashMap<String, VariableInfo> currentScope) {
-        for (Map.Entry<String, VariableInfo> entry : currentScope.entrySet()) {
-            String variableName = entry.getKey();
-            VariableInfo variableInfo = entry.getValue();
-            System.out.println("Variable Name: " + variableName + ", Type: " + variableInfo.getType() + ", IndexMin: " + variableInfo.getIndexMin() + ", IndexMax: " + variableInfo.getIndexMax());
-        }
-    }
+    // private void check(HashMap<String, VariableInfo> currentScope) {
+    //     for (Map.Entry<String, VariableInfo> entry : currentScope.entrySet()) {
+    //         String variableName = entry.getKey();
+    //         VariableInfo variableInfo = entry.getValue();
+    //         System.out.println("Variable Name: " + variableName + ", Type: " + variableInfo.getType() + ", IndexMin: " + variableInfo.getIndexMin() + ", IndexMax: " + variableInfo.getIndexMax());
+    //     }
+    // }
 
     public void visit(ProgramNode programNode) throws SemanticException {
         this.variableNames.push(new HashMap<>());
-        this.programName = programNode.getProgramNameNode().getToken().getLexical();
+        // this.programName = programNode.getProgramNameNode().getToken().getLexical();
         programNode.getBlockNode().accept(this);
         programNode.getCompoundStatementNode().accept(this);
-        check(this.variableNames.peek());
+        // check(this.variableNames.peek());
         this.variableNames.pop();
     }
  
@@ -77,7 +77,7 @@ public class AstChecker extends Visitor {
         List<VariableNameNode> variableNameNodes = variableNameSequenceNode.getVariableNameNodes();
         for (VariableNameNode variableNameNode : variableNameNodes) {
             Token variableName = variableNameNode.getToken();
-            if (currentScope.put(variableName.getLexical(), new VariableInfo(this.currentType, this.minValue, this.maxValue)) != null || variableName.getLexical().equals(programName) || variableName.getLexical().equals(currentSubprogramName)) {//
+            if (currentScope.put(variableName.getLexical(), new VariableInfo(this.currentType, this.minValue, this.maxValue)) != null || /*variableName.getLexical().equals(programName) ||*/ variableName.getLexical().equals(currentSubprogramName)) {//
                 throw new SemanticException(variableName);
             }
         }
@@ -175,7 +175,7 @@ public class AstChecker extends Visitor {
         Token procedureName = subprogramHeadNode.getProcedureNameNode().getToken();
         this.currentSubprogramName = procedureName.getLexical();
         ProcedureInfo procedureInfo = new ProcedureInfo();
-        if (procedureNames.put(this.currentSubprogramName, procedureInfo) != null || this.currentSubprogramName.equals(programName)) {
+        if (procedureNames.put(this.currentSubprogramName, procedureInfo) != null /*|| this.currentSubprogramName.equals(programName)*/) {
             throw new SemanticException(procedureName);
         }
         this.formalParameterTypes.clear();
@@ -211,7 +211,7 @@ public class AstChecker extends Visitor {
         List<FormalParameterNameNode> formalParameterNameNodes = formalParameterNameSequenceNode.getFormalParameterNameNodes();
         for (FormalParameterNameNode formalParameterNameNode : formalParameterNameNodes) {
             Token formalParameterName = formalParameterNameNode.getToken();
-            if (currentScope.containsKey(formalParameterName.getLexical()) || formalParameterName.getLexical().equals(programName) || formalParameterName.getLexical().equals(currentSubprogramName)) {
+            if (currentScope.containsKey(formalParameterName.getLexical()) || /*formalParameterName.getLexical().equals(programName) ||*/ formalParameterName.getLexical().equals(currentSubprogramName)) {
                 throw new SemanticException(formalParameterName);
             }
             currentScope.put(formalParameterName.getLexical(), new VariableInfo(this.currentType, null, null));
