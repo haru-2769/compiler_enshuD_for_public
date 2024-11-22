@@ -38,7 +38,6 @@ public class AstChecker extends Visitor {
 
     public void visit(ProgramNode programNode) throws SemanticException {
         this.variableNames.push(new HashMap<>());
-        // this.programName = programNode.getProgramNameNode().getToken().getLexical();
         programNode.getBlockNode().accept(this);
         programNode.getCompoundStatementNode().accept(this);
         // check(this.variableNames.peek());
@@ -46,7 +45,7 @@ public class AstChecker extends Visitor {
     }
  
 	public void visit(ProgramNameNode programNameNode) throws SemanticException {
-        //TODO
+        // this.programName = programNameNode.getToken().getLexical();
     }
  
     public void visit(BlockNode blockNode) throws SemanticException {
@@ -141,9 +140,7 @@ public class AstChecker extends Visitor {
     
     public void visit(IntegerNode integerNode) throws SemanticException {
         SignNode signNode = integerNode.getSignNode();
-        if (signNode == null) {
-            this.currentValue = Integer.parseInt(integerNode.getToken().getLexical());
-        } else if (signNode.getToken().getTokenName().equals("SPLUS")) {
+        if (signNode == null || signNode.getToken().getTokenName().equals("SPLUS")) {
             this.currentValue = Integer.parseInt(integerNode.getToken().getLexical());
         } else {
             this.currentValue = -Integer.parseInt(integerNode.getToken().getLexical());
