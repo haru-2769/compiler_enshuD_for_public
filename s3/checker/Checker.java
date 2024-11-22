@@ -50,7 +50,7 @@ public class Checker {
 //			ex.printStackTrace();
 			return ex.getMessage();
 		} catch (final SemanticException ex) {
-//			 ex.printStackTrace();
+//			ex.printStackTrace();
 			return ex.getMessage();
 		}
 		

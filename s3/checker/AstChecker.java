@@ -96,12 +96,13 @@ public class AstChecker extends Visitor {
  
 	
 	public void visit(StandardTypeNode standardTypeNode) throws SemanticException {
-        this.currentType = switch (standardTypeNode.getToken().getTokenName()) {
-            case "SINTEGER" -> Type.INTEGER;
-            case "SCHAR" -> Type.CHAR;
-            case "SBOOLEAN" -> Type.BOOLEAN;
-            default -> throw new SemanticException(standardTypeNode.getToken());
-        };
+        if (standardTypeNode.getToken().getTokenName().equals("SINTEGER")) {
+            this.currentType = Type.INTEGER;
+        } else if (standardTypeNode.getToken().getTokenName().equals("SCHAR")) {
+            this.currentType = Type.CHAR;
+        } else {
+            this.currentType = Type.BOOLEAN;
+        }
 	}
  
     
@@ -109,12 +110,13 @@ public class AstChecker extends Visitor {
         // arrayTypeNode.getIndexMinValueNode().accept(this);
         // arrayTypeNode.getIndexMaxValueNode().accept(this);
         arrayTypeNode.getStandardTypeNode().accept(this);
-        this.currentType = switch (this.currentType) {
-            case Type.INTEGER -> Type.ARRAY_OF_INTEGER;
-            case Type.CHAR -> Type.ARRAY_OF_CHAR;
-            case Type.BOOLEAN -> Type.ARRAY_OF_BOOLEAN;
-            default -> throw new SemanticException(arrayTypeNode.getStandardTypeNode().getToken());
-        };
+        if (this.currentType == Type.INTEGER) {
+            this.currentType = Type.ARRAY_OF_INTEGER;
+        } else if (this.currentType == Type.CHAR) {
+            this.currentType = Type.ARRAY_OF_CHAR;
+        } else {
+            this.currentType = Type.ARRAY_OF_BOOLEAN;
+        }
     }
  
     
@@ -220,7 +222,7 @@ public class AstChecker extends Visitor {
             statementNode.getBasicStatementNode().accept(this);
         } else if (token.getTokenName().equals("SIF")) {
             statementNode.getExpressionNode().accept(this);
-            if (!this.currentType.equals(Type.BOOLEAN)) {
+            if (this.currentType != Type.BOOLEAN) {
                 throw new SemanticException(token);
             }
             statementNode.getCompoundStatementNode1().accept(this);
@@ -230,7 +232,7 @@ public class AstChecker extends Visitor {
             }
         } else {
             statementNode.getExpressionNode().accept(this);
-            if (!this.currentType.equals(Type.BOOLEAN)) {
+            if (this.currentType != Type.BOOLEAN) {
                 throw new SemanticException(token);
             }
             statementNode.getCompoundStatementNode1().accept(this);
@@ -257,12 +259,12 @@ public class AstChecker extends Visitor {
     public void visit(AssignmentStatementNode assignmentStatementNode) throws SemanticException {
         assignmentStatementNode.getLeftHandSideNode().accept(this);
         Type leftHandSideType = this.currentType;
-        if (leftHandSideType == Type.ARRAY_OF_INTEGER || leftHandSideType == Type.ARRAY_OF_CHAR || leftHandSideType == Type.ARRAY_OF_BOOLEAN) {
+        if (leftHandSideType.isArrayType()) {
             throw new SemanticException(assignmentStatementNode.getToken());
         }
         assignmentStatementNode.getExpressionNode().accept(this);
         Type expressionType = this.currentType;
-        if (!leftHandSideType.equals(expressionType)) {
+        if (leftHandSideType != expressionType) {
             throw new SemanticException(assignmentStatementNode.getToken());
         }
     }
@@ -307,7 +309,7 @@ public class AstChecker extends Visitor {
                 Type type = scope.get(variableName.getLexical()).getType();
                 if (type == Type.ARRAY_OF_INTEGER || type == Type.ARRAY_OF_CHAR || type == Type.ARRAY_OF_BOOLEAN) {
                     indexedVariableNode.getIndexNode().accept(this);
-                    if (!this.currentType.equals(Type.INTEGER)) {
+                    if (this.currentType != Type.INTEGER) {
                         throw new SemanticException(variableName);
                     }
                     this.currentType = switch (type) {
@@ -361,12 +363,12 @@ public class AstChecker extends Visitor {
         RelationalOperatorNode relationalOperatorNode = expressionNode.getRelationalOperatorNode();
         if (relationalOperatorNode != null) {
             Type leftType = this.currentType;
-            if (!leftType.equals(Type.INTEGER) && !leftType.equals(Type.CHAR) && !leftType.equals(Type.BOOLEAN)) {
+            if (leftType.isArrayType()) {
                 throw new SemanticException(relationalOperatorNode.getToken());
             }
             expressionNode.getRightSimpleExpressionNode().accept(this);
             Type rightType = this.currentType;
-            if (!rightType.equals(leftType)) {
+            if (rightType != leftType) {
                 throw new SemanticException(relationalOperatorNode.getToken());
             }
             relationalOperatorNode.accept(this);
@@ -378,8 +380,7 @@ public class AstChecker extends Visitor {
         SignNode signNode = simpleExpressionNode.getSignNode();
         simpleExpressionNode.getLeftTermNode().accept(this);
         if (signNode != null) {
-            signNode.accept(this); //TODO
-            if (!this.currentType.equals(Type.INTEGER)) {
+            if (this.currentType != Type.INTEGER) {
                 throw new SemanticException(signNode.getToken());
             }
         }
@@ -390,7 +391,7 @@ public class AstChecker extends Visitor {
             termNodes.get(i).accept(this);
             Type rightType = this.currentType;
             additiveOperatorNodes.get(i).accept(this);
-            if (!leftType.equals(this.currentType) || !rightType.equals(this.currentType)) {
+            if (leftType != this.currentType || rightType != this.currentType) {
                 throw new SemanticException(additiveOperatorNodes.get(i).getToken());
             }
         }
@@ -406,7 +407,7 @@ public class AstChecker extends Visitor {
             factorNodes.get(i).accept(this);
             Type rightType = this.currentType;
             multiplicativeOperatorNodes.get(i).accept(this);
-            if (!leftType.equals(this.currentType) || !rightType.equals(this.currentType)) {
+            if (leftType != this.currentType || rightType != this.currentType) {
                 throw new SemanticException(multiplicativeOperatorNodes.get(i).getToken());
             }
         }
@@ -427,7 +428,7 @@ public class AstChecker extends Visitor {
             expressionNode.accept(this);
         } else {
             factorNode2.accept(this);
-            if (!this.currentType.equals(Type.BOOLEAN)) {
+            if (this.currentType != Type.BOOLEAN) {
                 throw new SemanticException(factorNode.getToken());
             }
         }
@@ -464,7 +465,7 @@ public class AstChecker extends Visitor {
             this.variableTypes.clear();//TODO
             variableSequenceNode.accept(this);
             for (Type type : this.variableTypes) {
-                if (!type.equals(Type.INTEGER) && !type.equals(Type.CHAR) && !type.equals(Type.ARRAY_OF_CHAR)) {
+                if (type.isArgumentType()) {
                     throw new SemanticException(inputOutputStatementNode.getToken());
                 }
             }
@@ -473,7 +474,7 @@ public class AstChecker extends Visitor {
             this.formalParameterTypes.clear();
             expressionSequenceNode.accept(this);
             for (Type type : this.formalParameterTypes) {
-                if (!type.equals(Type.INTEGER) && !type.equals(Type.CHAR) && !type.equals(Type.ARRAY_OF_CHAR)) {
+                if (type.isArgumentType()) {
                     throw new SemanticException(inputOutputStatementNode.getToken());
                 }
             }
