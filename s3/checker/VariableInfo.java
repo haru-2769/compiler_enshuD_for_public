@@ -1,15 +1,15 @@
 package enshud.s3.checker;
 
 public class VariableInfo {
-    private String type;
+    private Type type;
     private boolean isReferenced;
 
-    public VariableInfo(String type) {
+    public VariableInfo(Type type) {
         this.type = type;
         this.isReferenced = false;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 

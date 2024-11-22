@@ -4,18 +4,18 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ProcedureInfo {
-    private List<String> types;
+    private List<Type> types;
     private boolean isReferenced;
 
     public ProcedureInfo() {
         this.isReferenced = false;
     }
 
-    public List<String> getType() {
+    public List<Type> getType() {
         return types;
     }
 
-    public void setType(List<String> types) {
+    public void setType(List<Type> types) {
         this.types = new ArrayList<>(types);
     }
 

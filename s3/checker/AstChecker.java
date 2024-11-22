@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Stack;
 import java.util.ArrayList;
 import java.util.HashMap;
+// import java.util.Map;
  
 public class AstChecker extends Visitor {
     private String programName;
-    private String currentType;
-    private List<String> formalParameterTypes;
-    private List<String> variableTypes;
+    private Type currentType;
+    private List<Type> formalParameterTypes;
+    private List<Type> variableTypes;
     private HashMap<String, ProcedureInfo> procedureNames;
     private Stack<HashMap<String, VariableInfo>> variableNames;
     
@@ -35,6 +36,7 @@ public class AstChecker extends Visitor {
         this.programName = programNode.getProgramNameNode().getToken().getLexical();
         programNode.getBlockNode().accept(this);
         programNode.getCompoundStatementNode().accept(this);
+        // check(this.variableNames.peek());
         this.variableNames.pop();
     }
  
@@ -94,7 +96,12 @@ public class AstChecker extends Visitor {
  
 	
 	public void visit(StandardTypeNode standardTypeNode) throws SemanticException {
-        this.currentType = standardTypeNode.getToken().getLexical();
+        this.currentType = switch (standardTypeNode.getToken().getTokenName()) {
+            case "SINTEGER" -> Type.INTEGER;
+            case "SCHAR" -> Type.CHAR;
+            case "SBOOLEAN" -> Type.BOOLEAN;
+            default -> throw new SemanticException(standardTypeNode.getToken());
+        };
 	}
  
     
@@ -102,7 +109,12 @@ public class AstChecker extends Visitor {
         // arrayTypeNode.getIndexMinValueNode().accept(this);
         // arrayTypeNode.getIndexMaxValueNode().accept(this);
         arrayTypeNode.getStandardTypeNode().accept(this);
-        this.currentType = "array of " + this.currentType;
+        this.currentType = switch (this.currentType) {
+            case Type.INTEGER -> Type.ARRAY_OF_INTEGER;
+            case Type.CHAR -> Type.ARRAY_OF_CHAR;
+            case Type.BOOLEAN -> Type.ARRAY_OF_BOOLEAN;
+            default -> throw new SemanticException(arrayTypeNode.getStandardTypeNode().getToken());
+        };
     }
  
     
@@ -208,7 +220,7 @@ public class AstChecker extends Visitor {
             statementNode.getBasicStatementNode().accept(this);
         } else if (token.getTokenName().equals("SIF")) {
             statementNode.getExpressionNode().accept(this);
-            if (!this.currentType.equals("boolean")) {
+            if (!this.currentType.equals(Type.BOOLEAN)) {
                 throw new SemanticException(token);
             }
             statementNode.getCompoundStatementNode1().accept(this);
@@ -218,7 +230,7 @@ public class AstChecker extends Visitor {
             }
         } else {
             statementNode.getExpressionNode().accept(this);
-            if (!this.currentType.equals("boolean")) {
+            if (!this.currentType.equals(Type.BOOLEAN)) {
                 throw new SemanticException(token);
             }
             statementNode.getCompoundStatementNode1().accept(this);
@@ -244,12 +256,12 @@ public class AstChecker extends Visitor {
     
     public void visit(AssignmentStatementNode assignmentStatementNode) throws SemanticException {
         assignmentStatementNode.getLeftHandSideNode().accept(this);
-        String leftHandSideType = this.currentType;
-        if (leftHandSideType.startsWith("array of ")) {
+        Type leftHandSideType = this.currentType;
+        if (leftHandSideType == Type.ARRAY_OF_INTEGER || leftHandSideType == Type.ARRAY_OF_CHAR || leftHandSideType == Type.ARRAY_OF_BOOLEAN) {
             throw new SemanticException(assignmentStatementNode.getToken());
         }
         assignmentStatementNode.getExpressionNode().accept(this);
-        String expressionType = this.currentType;
+        Type expressionType = this.currentType;
         if (!leftHandSideType.equals(expressionType)) {
             throw new SemanticException(assignmentStatementNode.getToken());
         }
@@ -292,13 +304,18 @@ public class AstChecker extends Visitor {
             HashMap<String, VariableInfo> scope = variableNames.get(i);
             if (scope.containsKey(variableName.getLexical())) {
                 scope.get(variableName.getLexical()).setReferenced(true);
-                String type = scope.get(variableName.getLexical()).getType();
-                if (type.startsWith("array of ")) {
+                Type type = scope.get(variableName.getLexical()).getType();
+                if (type == Type.ARRAY_OF_INTEGER || type == Type.ARRAY_OF_CHAR || type == Type.ARRAY_OF_BOOLEAN) {
                     indexedVariableNode.getIndexNode().accept(this);
-                    if (!this.currentType.equals("integer")) {
+                    if (!this.currentType.equals(Type.INTEGER)) {
                         throw new SemanticException(variableName);
                     }
-                    this.currentType = type.substring(9);
+                    this.currentType = switch (type) {
+                        case ARRAY_OF_INTEGER -> Type.INTEGER;
+                        case ARRAY_OF_CHAR -> Type.CHAR;
+                        case ARRAY_OF_BOOLEAN -> Type.BOOLEAN;
+                        default -> throw new SemanticException(variableName);
+                    };
                     return;
                 } else {
                     throw new SemanticException(variableName);
@@ -343,12 +360,12 @@ public class AstChecker extends Visitor {
         expressionNode.getLeftSimpleExpressionNode().accept(this);
         RelationalOperatorNode relationalOperatorNode = expressionNode.getRelationalOperatorNode();
         if (relationalOperatorNode != null) {
-            String leftType = this.currentType;
-            if (!leftType.equals("integer") && !leftType.equals("char") && !leftType.equals("boolean")) {
+            Type leftType = this.currentType;
+            if (!leftType.equals(Type.INTEGER) && !leftType.equals(Type.CHAR) && !leftType.equals(Type.BOOLEAN)) {
                 throw new SemanticException(relationalOperatorNode.getToken());
             }
             expressionNode.getRightSimpleExpressionNode().accept(this);
-            String rightType = this.currentType;
+            Type rightType = this.currentType;
             if (!rightType.equals(leftType)) {
                 throw new SemanticException(relationalOperatorNode.getToken());
             }
@@ -362,16 +379,16 @@ public class AstChecker extends Visitor {
         simpleExpressionNode.getLeftTermNode().accept(this);
         if (signNode != null) {
             signNode.accept(this); //TODO
-            if (!this.currentType.equals("integer")) {
+            if (!this.currentType.equals(Type.INTEGER)) {
                 throw new SemanticException(signNode.getToken());
             }
         }
         List<AdditiveOperatorNode> additiveOperatorNodes = simpleExpressionNode.getAdditiveOperatorNodes();
         List<TermNode> termNodes = simpleExpressionNode.getTermNodes();
         for (int i = 0; i < additiveOperatorNodes.size(); i++) {
-            String leftType = this.currentType;
+            Type leftType = this.currentType;
             termNodes.get(i).accept(this);
-            String rightType = this.currentType;
+            Type rightType = this.currentType;
             additiveOperatorNodes.get(i).accept(this);
             if (!leftType.equals(this.currentType) || !rightType.equals(this.currentType)) {
                 throw new SemanticException(additiveOperatorNodes.get(i).getToken());
@@ -385,9 +402,9 @@ public class AstChecker extends Visitor {
         List<MultiplicativeOperatorNode> multiplicativeOperatorNodes = termNode.getMultiplicativeOperatorNodes();
         List<FactorNode> factorNodes = termNode.getFactorNodes();
         for (int i = 0; i < multiplicativeOperatorNodes.size(); i++) {
-            String leftType = this.currentType;
+            Type leftType = this.currentType;
             factorNodes.get(i).accept(this);
-            String rightType = this.currentType;
+            Type rightType = this.currentType;
             multiplicativeOperatorNodes.get(i).accept(this);
             if (!leftType.equals(this.currentType) || !rightType.equals(this.currentType)) {
                 throw new SemanticException(multiplicativeOperatorNodes.get(i).getToken());
@@ -410,7 +427,7 @@ public class AstChecker extends Visitor {
             expressionNode.accept(this);
         } else {
             factorNode2.accept(this);
-            if (!this.currentType.equals("boolean")) {
+            if (!this.currentType.equals(Type.BOOLEAN)) {
                 throw new SemanticException(factorNode.getToken());
             }
         }
@@ -418,16 +435,16 @@ public class AstChecker extends Visitor {
  
 	
 	public void visit(RelationalOperatorNode relationalOperatorNode) throws SemanticException {
-        this.currentType = "boolean";
+        this.currentType = Type.BOOLEAN;
 	}
  
 	
 	public void visit(AdditiveOperatorNode additiveOperatorNode) throws SemanticException {
         Token dditiveOperator = additiveOperatorNode.getToken();
         if (dditiveOperator.getTokenName().equals("SPLUS") || dditiveOperator.getTokenName().equals("SMINUS")) {
-            this.currentType = "integer";
+            this.currentType = Type.INTEGER;
         } else {
-            this.currentType = "boolean";
+            this.currentType = Type.BOOLEAN;
         }
 	}
  
@@ -435,9 +452,9 @@ public class AstChecker extends Visitor {
 	public void visit(MultiplicativeOperatorNode multiplicativeOperatorNode) throws SemanticException {
         Token multiplicativeOperator = multiplicativeOperatorNode.getToken();
         if (multiplicativeOperator.getTokenName().equals("SAND")) {
-            this.currentType = "boolean";
+            this.currentType = Type.BOOLEAN;
         } else {
-            this.currentType = "integer";
+            this.currentType = Type.INTEGER;
         }
 	}
  
@@ -446,8 +463,8 @@ public class AstChecker extends Visitor {
         for (VariableSequenceNode variableSequenceNode : inputOutputStatementNode.getVariableSequenceNodes()) {
             this.variableTypes.clear();//TODO
             variableSequenceNode.accept(this);
-            for (String type : this.variableTypes) {
-                if (!type.equals("integer") && !type.equals("char") && !type.equals("array of char")) {
+            for (Type type : this.variableTypes) {
+                if (!type.equals(Type.INTEGER) && !type.equals(Type.CHAR) && !type.equals(Type.ARRAY_OF_CHAR)) {
                     throw new SemanticException(inputOutputStatementNode.getToken());
                 }
             }
@@ -455,8 +472,8 @@ public class AstChecker extends Visitor {
         for (ExpressionSequenceNode expressionSequenceNode : inputOutputStatementNode.getExpressionSequenceNodes()) {
             this.formalParameterTypes.clear();
             expressionSequenceNode.accept(this);
-            for (String type : this.formalParameterTypes) {
-                if (!type.equals("integer") && !type.equals("char") && !type.equals("array of char")) {
+            for (Type type : this.formalParameterTypes) {
+                if (!type.equals(Type.INTEGER) && !type.equals(Type.CHAR) && !type.equals(Type.ARRAY_OF_CHAR)) {
                     throw new SemanticException(inputOutputStatementNode.getToken());
                 }
             }
@@ -476,11 +493,11 @@ public class AstChecker extends Visitor {
 	public void visit(ConstantNode constantNode) throws SemanticException {
         Token constant = constantNode.getToken();
         if (constant.getTokenName().equals("SCONSTANT")) {
-            this.currentType = "integer";
+            this.currentType = Type.INTEGER;
         } else if (constant.getTokenName().equals("SSTRING")) {
-            this.currentType = "char";
+            this.currentType = Type.CHAR;
         } else {
-            this.currentType = "boolean";
+            this.currentType = Type.BOOLEAN;
         }   
 	}
 }
