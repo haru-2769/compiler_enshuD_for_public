@@ -473,7 +473,7 @@ public class AstChecker extends Visitor {
     
     public void visit(InputOutputStatementNode inputOutputStatementNode) throws SemanticException {
         for (VariableSequenceNode variableSequenceNode : inputOutputStatementNode.getVariableSequenceNodes()) {
-            this.variableTypes.clear();//TODO
+            this.variableTypes.clear();
             variableSequenceNode.accept(this);
             for (Type type : this.variableTypes) {
                 if (type.isArgument()) {
