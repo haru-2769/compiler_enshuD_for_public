@@ -13,7 +13,6 @@ public class AstChecker extends Visitor {
     private Integer currentValue;
     private Integer minValue;
     private Integer maxValue;
-    private List<Type> formalParameterTypes;
     private List<Type> variableTypes;
     private HashMap<String, ProcedureInfo> procedureNames;
     private Stack<HashMap<String, VariableInfo>> variableNames;
@@ -22,7 +21,6 @@ public class AstChecker extends Visitor {
         // this.programName = null;
         this.currentSubprogramName = null;
         this.currentType = null;
-        this.formalParameterTypes = new ArrayList<>();
         this.variableTypes = new ArrayList<>();
         this.procedureNames = new HashMap<>();
         this.variableNames = new Stack<>();
@@ -175,9 +173,9 @@ public class AstChecker extends Visitor {
         if (procedureNames.put(this.currentSubprogramName, procedureInfo) != null /*|| this.currentSubprogramName.equals(programName)*/) {
             throw new SemanticException(procedureName);
         }
-        this.formalParameterTypes.clear();
+        this.variableTypes.clear();
         subprogramHeadNode.getFormalParameterNode().accept(this);
-        procedureInfo.setType(this.formalParameterTypes);
+        procedureInfo.setType(this.variableTypes);
     }
  
 	
@@ -212,7 +210,7 @@ public class AstChecker extends Visitor {
                 throw new SemanticException(formalParameterName);
             }
             currentScope.put(formalParameterName.getLexical(), new VariableInfo(this.currentType, null, null));
-            this.formalParameterTypes.add(this.currentType);
+            this.variableTypes.add(this.currentType);
         }
     }
  
@@ -349,12 +347,12 @@ public class AstChecker extends Visitor {
         if (!procedureNames.containsKey(procedureName.getLexical())) {
             throw new SemanticException(procedureName);
         }
-        this.formalParameterTypes.clear();
+        this.variableTypes.clear();
         ExpressionSequenceNode expressionSequenceNode = procedureCallStatementNode.getExpressionSequenceNode();
         if (expressionSequenceNode != null) {
             expressionSequenceNode.accept(this);
         }
-        if (!procedureNames.get(procedureName.getLexical()).getType().equals(this.formalParameterTypes)) {
+        if (!procedureNames.get(procedureName.getLexical()).getType().equals(this.variableTypes)) {
             throw new SemanticException(procedureName);
         }
     }
@@ -364,7 +362,7 @@ public class AstChecker extends Visitor {
         List<ExpressionNode> expressionNodes = expressionSequenceNode.getExpressionNodes();
         for (ExpressionNode expressionNode : expressionNodes) {
             expressionNode.accept(this);
-            this.formalParameterTypes.add(this.currentType);
+            this.variableTypes.add(this.currentType);
         }
     }
  
@@ -482,9 +480,9 @@ public class AstChecker extends Visitor {
             }
         }
         for (ExpressionSequenceNode expressionSequenceNode : inputOutputStatementNode.getExpressionSequenceNodes()) {
-            this.formalParameterTypes.clear();
+            this.variableTypes.clear();
             expressionSequenceNode.accept(this);
-            for (Type type : this.formalParameterTypes) {
+            for (Type type : this.variableTypes) {
                 if (type.isArgument()) {
                     throw new SemanticException(inputOutputStatementNode.getToken());
                 }
