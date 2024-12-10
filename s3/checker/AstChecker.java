@@ -428,7 +428,6 @@ public class AstChecker extends Visitor {
         ConstantNode constantNode = factorNode.getConstantNode();
         ExpressionNode expressionNode = factorNode.getExpressionNode();
         FactorNode factorNode2 = factorNode.getFactorNode();
-        //Token token = factorNode.getToken();
         if (variableNode != null) {
             variableNode.accept(this);
         } else if (constantNode != null) {
