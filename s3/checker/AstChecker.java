@@ -84,7 +84,6 @@ public class AstChecker extends Visitor {
  
 	
 	public void visit(VariableNameNode variableNameNode) throws SemanticException {
-        //TODO
 	}
  
     
