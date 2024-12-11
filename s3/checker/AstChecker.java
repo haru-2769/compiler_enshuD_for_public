@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Stack;
 import java.util.ArrayList;
 import java.util.HashMap;
-// import java.util.Map;
  
 public class AstChecker extends Visitor {
     // private String programName;
@@ -25,20 +24,11 @@ public class AstChecker extends Visitor {
         this.procedureNames = new HashMap<>();
         this.variableNames = new Stack<>();
     }
-    
-    // private void check(HashMap<String, VariableInfo> currentScope) {
-    //     for (Map.Entry<String, VariableInfo> entry : currentScope.entrySet()) {
-    //         String variableName = entry.getKey();
-    //         VariableInfo variableInfo = entry.getValue();
-    //         System.out.println("Variable Name: " + variableName + ", Type: " + variableInfo.getType() + ", IndexMin: " + variableInfo.getIndexMin() + ", IndexMax: " + variableInfo.getIndexMax());
-    //     }
-    // }
 
     public void visit(ProgramNode programNode) throws SemanticException {
         this.variableNames.push(new HashMap<>());
         programNode.getBlockNode().accept(this);
         programNode.getCompoundStatementNode().accept(this);
-        // check(this.variableNames.peek());
         this.variableNames.pop();
     }
  
