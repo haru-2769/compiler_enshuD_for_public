@@ -14,7 +14,7 @@ public class Checker {
 	/ */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Checker().run("tmp/out.ts"));
+		System.out.println(new Checker().run("data/ts/normal13.ts"));
 	}
 
 	/**
@@ -44,6 +44,7 @@ public class Checker {
 			ProgramNode programNode = new ProgramNode();
 			programNode.parse(new Context(tokenList));
 			programNode.accept(new AstChecker());
+			// programNode.accept(new AstPrinter());
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {
