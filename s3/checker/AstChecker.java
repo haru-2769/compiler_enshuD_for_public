@@ -7,7 +7,6 @@ import java.util.HashMap;
  
 public class AstChecker extends Visitor {
     // private String programName;
-    private String currentSubprogramName;
     private Type currentType;
     private Integer currentValue;
     private Integer minValue;
@@ -18,7 +17,6 @@ public class AstChecker extends Visitor {
     
     public AstChecker() {
         // this.programName = null;
-        this.currentSubprogramName = null;
         this.currentType = null;
         this.variableTypes = new ArrayList<>();
         this.procedureNames = new HashMap<>();
@@ -64,7 +62,7 @@ public class AstChecker extends Visitor {
         List<VariableNameNode> variableNameNodes = variableNameSequenceNode.getVariableNameNodes();
         for (VariableNameNode variableNameNode : variableNameNodes) {
             Token variableName = variableNameNode.getToken();
-            if (currentScope.put(variableName.getLexical(), new VariableInfo(this.currentType, this.minValue, this.maxValue)) != null || /*variableName.getLexical().equals(programName) ||*/ variableName.getLexical().equals(currentSubprogramName)) {//
+            if (currentScope.put(variableName.getLexical(), new VariableInfo(this.currentType, this.minValue, this.maxValue)) != null || /*variableName.getLexical().equals(programName) ||*/ procedureNames.containsKey(variableName.getLexical())) {//
                 throw new SemanticException(variableName);
             }
         }
@@ -157,9 +155,9 @@ public class AstChecker extends Visitor {
     
     public void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException {
         Token procedureName = subprogramHeadNode.getProcedureNameNode().getToken();
-        this.currentSubprogramName = procedureName.getLexical();
+        String currentSubprogramName = procedureName.getLexical();
         ProcedureInfo procedureInfo = new ProcedureInfo();
-        if (procedureNames.put(this.currentSubprogramName, procedureInfo) != null /*|| this.currentSubprogramName.equals(programName)*/) {
+        if (procedureNames.put(currentSubprogramName, procedureInfo) != null /*|| currentSubprogramName.equals(programName)*/) {
             throw new SemanticException(procedureName);
         }
         this.variableTypes.clear();
@@ -195,7 +193,7 @@ public class AstChecker extends Visitor {
         List<FormalParameterNameNode> formalParameterNameNodes = formalParameterNameSequenceNode.getFormalParameterNameNodes();
         for (FormalParameterNameNode formalParameterNameNode : formalParameterNameNodes) {
             Token formalParameterName = formalParameterNameNode.getToken();
-            if (currentScope.containsKey(formalParameterName.getLexical()) || /*formalParameterName.getLexical().equals(programName) ||*/ formalParameterName.getLexical().equals(currentSubprogramName)) {
+            if (currentScope.containsKey(formalParameterName.getLexical()) || /*formalParameterName.getLexical().equals(programName) ||*/ procedureNames.containsKey(formalParameterName.getLexical())) {
                 throw new SemanticException(formalParameterName);
             }
             currentScope.put(formalParameterName.getLexical(), new VariableInfo(this.currentType, null, null));
