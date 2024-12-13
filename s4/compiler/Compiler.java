@@ -1,9 +1,15 @@
 package enshud.s4.compiler;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
 import enshud.casl.CaslSimulator;
 
 public class Compiler {
-
+	
 	/**
 	 * サンプルmainメソッド．
 	 * 単体テストの対象ではないので自由に改変しても良い．
@@ -33,9 +39,29 @@ public class Compiler {
 	 * @param outputFileName 出力casファイル名
 	 */
 	public String run(final String inputFileName, final String outputFileName) {
-
-		// TODO
-		return "";
+		List<Token> tokenList;
+		try {
+			tokenList = new ArrayList<>();
+			for(String line: Files.readAllLines(Paths.get(inputFileName))) {
+				tokenList.add(new Token(line));
+			}
+			ProgramNode programNode = new ProgramNode();
+			programNode.parse(new Context(tokenList));
+			programNode.accept(new AstChecker());
+			// programNode.accept(new AstPrinter());
+			AstCompiler astCompiler;
+			programNode.accept((astCompiler = new AstCompiler()));
+			Files.write(Paths.get(outputFileName), astCompiler.getCaslCode());
+		} catch (IOException ex) {
+			return "File not found"; 
+		} catch (final SyntaxException ex) {
+//			ex.printStackTrace();
+			return ex.getMessage();
+		} catch (final SemanticException ex) {
+//			ex.printStackTrace();
+			return ex.getMessage();
+		}
+		return "OK";
 
 	}
 }
