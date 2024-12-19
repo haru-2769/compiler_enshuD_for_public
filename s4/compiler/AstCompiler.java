@@ -4,31 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AstCompiler extends Visitor {
+	private int defindeStorageVar;
 	private List<String> caslCode;
 	private List<String> labels;
-	private List<String> defindConstants;
+	private List<String> definedConstants;
 
 	public AstCompiler() {
-		caslCode = new ArrayList<>();
-		labels = new ArrayList<>();
-		defindConstants = new ArrayList<>();
+		this.defindeStorageVar = 0;
+		this.caslCode = new ArrayList<>();
+		this.labels = new ArrayList<>();
+		this.definedConstants = new ArrayList<>();
 	}
 
 	public List<String> getCaslCode() {
-		return caslCode;
+		return this.caslCode;
 	}
 
 	@Override
 	public void visit(ProgramNode programNode) throws SemanticException {
-		caslCode.add("CASL\tSTART\tBEGIN");
-		caslCode.add("BEGIN\tLAD\tGR6, 0");
-		caslCode.add("\tLAD\tGR7, LIBBUF");
+		this.caslCode.add("CASL\tSTART\tBEGIN");
+		this.caslCode.add("BEGIN\tLAD\tGR6, 0");
+		this.caslCode.add("\tLAD\tGR7, LIBBUF");
         programNode.getCompoundStatementNode().accept(this);
 		programNode.getBlockNode().accept(this);
-		caslCode.add("VAR\tDS\t0");
-		caslCode.add("CHAR0\tDC\t'test'");
-		caslCode.add("LIBBUF\tDS\t256");
-		caslCode.add("\tEND");
+		this.caslCode.add("VAR\tDS\t" + this.defindeStorageVar);
+		for (int i = 0; i < this.labels.size(); i++) {
+			this.caslCode.add(this.labels.get(i) + "\tDC\t" + this.definedConstants.get(i));
+		}
+		this.caslCode.add("LIBBUF\tDS\t256");
+		this.caslCode.add("\tEND");
 	}
 
 	@Override
@@ -158,7 +162,7 @@ public class AstCompiler extends Visitor {
 	@Override
 	public void visit(CompoundStatementNode compoundStatementNode) throws SemanticException {
 		compoundStatementNode.getStatementSequenceNode().accept(this);
-		caslCode.add("\tRET");
+		this.caslCode.add("\tRET");
 	}
 
 	@Override
@@ -333,11 +337,11 @@ public class AstCompiler extends Visitor {
 		} else {
 			for (ExpressionSequenceNode expressionSequenceNode : inputOutputStatementNode.getExpressionSequenceNodes()) {
 				expressionSequenceNode.accept(this);
-				caslCode.add("\tPOP\tGR2");
-				caslCode.add("\tPOP\tGR1");
-				caslCode.add("\tCALL\tWRTSTR");
+				this.caslCode.add("\tPOP\tGR2");
+				this.caslCode.add("\tPOP\tGR1");
+				this.caslCode.add("\tCALL\tWRTSTR");
 			}
-			caslCode.add("\tCALL\tWRTLN");
+			this.caslCode.add("\tCALL\tWRTLN");
 		}
 	}
 
@@ -357,12 +361,12 @@ public class AstCompiler extends Visitor {
 		} else if (token.getTokenName().equals("SCONSTANT")) {
 			//TODO
 		} else {
-			caslCode.add("\tLD\tGR1, =" + (token.getLexical().length()-2));
-			caslCode.add("\tPUSH\t0, GR1");
-			caslCode.add("\tLAD\tGR2, " + constantNode.getLabel());
-			caslCode.add("\tPUSH\t0, GR2");
-			labels.add(constantNode.getLabel());
-			defindConstants.add(token.getLexical());
+			this.caslCode.add("\tLD\tGR1, =" + (token.getLexical().length()-2));
+			this.caslCode.add("\tPUSH\t0, GR1");
+			this.caslCode.add("\tLAD\tGR2, " + constantNode.getLabel());
+			this.caslCode.add("\tPUSH\t0, GR2");
+			this.labels.add(constantNode.getLabel());
+			this.definedConstants.add(token.getLexical());
 		}
 	}
 
