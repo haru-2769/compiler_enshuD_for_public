@@ -346,8 +346,7 @@ public class AstChecker extends Visitor {
  
     
     public void visit(ExpressionSequenceNode expressionSequenceNode) throws SemanticException {
-        List<ExpressionNode> expressionNodes = expressionSequenceNode.getExpressionNodes();
-        for (ExpressionNode expressionNode : expressionNodes) {
+        for (ExpressionNode expressionNode : expressionSequenceNode.getExpressionNodes()) {
             expressionNode.accept(this);
             this.variableTypes.add(this.currentType);
         }

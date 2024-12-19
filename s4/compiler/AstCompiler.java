@@ -1,7 +1,7 @@
 package enshud.s4.compiler;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AstCompiler extends Visitor {
 	private List<String> caslCode;
@@ -11,20 +11,24 @@ public class AstCompiler extends Visitor {
 	}
 
 	public List<String> getCaslCode() {
-		
 		return caslCode;
 	}
 
 	@Override
 	public void visit(ProgramNode programNode) throws SemanticException {
-		
-		
+		caslCode.add("CASL\tSTART\tBEGIN");
+		caslCode.add("BEGIN\tLAD\tGR6, 0");
+		caslCode.add("\tLAD\tGR7, LIBBUF");
+        programNode.getCompoundStatementNode().accept(this);
+		programNode.getBlockNode().accept(this);
+		caslCode.add("VAR\tDS\t0");
+		caslCode.add("CHAR0\tDC\t'test'");
+		caslCode.add("LIBBUF\tDS\t256");
+		caslCode.add("\tEND");
 	}
 
 	@Override
 	public void visit(ProgramNameNode programNameNode) throws SemanticException {
-		
-		
 	}
 
 	@Override
@@ -149,26 +153,51 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(CompoundStatementNode compoundStatementNode) throws SemanticException {
-		
-		
+		compoundStatementNode.getStatementSequenceNode().accept(this);
+		caslCode.add("\tRET");
 	}
 
 	@Override
 	public void visit(StatementSequenceNode statementSequenceNode) throws SemanticException {
-		
-		
+		for (StatementNode statementNode : statementSequenceNode.getStatementNodes()) {
+		statementNode.accept(this);
+		}
 	}
 
+	//TODO
 	@Override
 	public void visit(StatementNode statementNode) throws SemanticException {
-		
-		
+		Token token = statementNode.getToken();
+        if (token == null) {
+            statementNode.getBasicStatementNode().accept(this);
+        } else if (token.getTokenName().equals("SIF")) {
+            statementNode.getExpressionNode().accept(this);
+            statementNode.getCompoundStatementNode1().accept(this);
+            CompoundStatementNode compoundStatementNode2 = statementNode.getCompoundStatementNode2();
+            if (compoundStatementNode2 != null) {
+                compoundStatementNode2.accept(this);
+            }
+        } else {
+            statementNode.getExpressionNode().accept(this);
+            statementNode.getCompoundStatementNode1().accept(this);
+        }
 	}
 
 	@Override
 	public void visit(BasicStatementNode basicStatementNode) throws SemanticException {
-		
-		
+		AssignmentStatementNode assignmentStatementNode = basicStatementNode.getAssignmentStatementNode();
+        ProcedureCallStatementNode procedureCallStatementNode = basicStatementNode.getProcedureCallStatementNode();
+        InputOutputStatementNode inputOutputStatementNode = basicStatementNode.getInputOutputStatementNode();
+        CompoundStatementNode compoundStatementNode = basicStatementNode.getCompoundStatementNode();
+        if (assignmentStatementNode != null) {
+            assignmentStatementNode.accept(this);
+        } else if (procedureCallStatementNode != null) {
+            procedureCallStatementNode.accept(this);
+        } else if (inputOutputStatementNode != null) {
+            inputOutputStatementNode.accept(this);
+        } else {
+            compoundStatementNode.accept(this);
+        }
 	}
 
 	@Override
@@ -215,32 +244,61 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(ExpressionSequenceNode expressionSequenceNode) throws SemanticException {
-		
-		
+        for (ExpressionNode expressionNode : expressionSequenceNode.getExpressionNodes()) {
+            expressionNode.accept(this);
+        }
 	}
 
 	@Override
 	public void visit(ExpressionNode expressionNode) throws SemanticException {
-		
-		
+		expressionNode.getLeftSimpleExpressionNode().accept(this);
+        RelationalOperatorNode relationalOperatorNode = expressionNode.getRelationalOperatorNode();
+        if (relationalOperatorNode != null) {
+            expressionNode.getRightSimpleExpressionNode().accept(this);
+            relationalOperatorNode.accept(this);
+        }
 	}
 
 	@Override
 	public void visit(SimpleExpressionNode simpleExpressionNode) throws SemanticException {
-		
-		
+		SignNode signNode = simpleExpressionNode.getSignNode();
+        simpleExpressionNode.getLeftTermNode().accept(this);
+        if (signNode != null) {
+        }
+        List<AdditiveOperatorNode> additiveOperatorNodes = simpleExpressionNode.getAdditiveOperatorNodes();
+        List<TermNode> termNodes = simpleExpressionNode.getTermNodes();
+        for (int i = 0; i < additiveOperatorNodes.size(); i++) {
+            termNodes.get(i).accept(this);
+            additiveOperatorNodes.get(i).accept(this);
+        }
 	}
 
 	@Override
 	public void visit(TermNode termNode) throws SemanticException {
-		
-		
+        termNode.getLeftFactorNode().accept(this);
+        List<MultiplicativeOperatorNode> multiplicativeOperatorNodes = termNode.getMultiplicativeOperatorNodes();
+        List<FactorNode> factorNodes = termNode.getFactorNodes();
+        for (int i = 0; i < multiplicativeOperatorNodes.size(); i++) {
+            factorNodes.get(i).accept(this);
+            multiplicativeOperatorNodes.get(i).accept(this);
+        }
 	}
 
 	@Override
 	public void visit(FactorNode factorNode) throws SemanticException {
-		
-		
+        VariableNode variableNode = factorNode.getVariableNode();
+        ConstantNode constantNode = factorNode.getConstantNode();
+        ExpressionNode expressionNode = factorNode.getExpressionNode();
+        FactorNode factorNode2 = factorNode.getFactorNode();
+        if (variableNode != null) {
+            variableNode.accept(this);
+        } else if (constantNode != null) {
+            constantNode.accept(this);
+        } else if (expressionNode != null) {
+            expressionNode.accept(this);
+        } else {
+            factorNode2.accept(this);
+        }
 	}
 
 	@Override
@@ -258,13 +316,25 @@ public class AstCompiler extends Visitor {
 	@Override
 	public void visit(MultiplicativeOperatorNode multiplicativeOperatorNode) throws SemanticException {
 		
-		
+	
 	}
 
 	@Override
 	public void visit(InputOutputStatementNode inputOutputStatementNode) throws SemanticException {
-		
-		
+		if (inputOutputStatementNode.getVariableSequenceNodes().size() > 0) {
+			for (VariableSequenceNode variableSequenceNode : inputOutputStatementNode.getVariableSequenceNodes()) {
+				variableSequenceNode.accept(this);
+				//TODO
+			}
+		} else {
+			for (ExpressionSequenceNode expressionSequenceNode : inputOutputStatementNode.getExpressionSequenceNodes()) {
+				expressionSequenceNode.accept(this);
+				caslCode.add("\tPOP\tGR2");
+				caslCode.add("\tPOP\tGR1");
+				caslCode.add("\tCALL\tWRTSTR");
+			}
+			caslCode.add("\tCALL\tWRTLN");
+		}
 	}
 
 	@Override
@@ -275,8 +345,19 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(ConstantNode constantNode) throws SemanticException {
-		
-		
+		Token token = constantNode.getToken();
+		if (token.getTokenName().equals("STRUE")) {
+			//TODO
+		} else if (token.getTokenName().equals("SFALSE")) {
+			//TODO
+		} else if (token.getTokenName().equals("SCONSTANT")) {
+			//TODO
+		} else {
+			caslCode.add("\tLD\tGR1, =" + (token.getLexical().length()-2));
+			caslCode.add("\tPUSH\t0, GR1");
+			caslCode.add("\tLAD\tGR2, CHAR0");
+			caslCode.add("\tPUSH\t0, GR2");
+		}
 	}
 
 }
