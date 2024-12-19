@@ -370,6 +370,7 @@ public class AstChecker extends Visitor {
             }
             relationalOperatorNode.accept(this);
         }
+        expressionNode.setType(this.currentType);
     }
  
     
@@ -457,22 +458,17 @@ public class AstChecker extends Visitor {
  
     
     public void visit(InputOutputStatementNode inputOutputStatementNode) throws SemanticException {
-        for (VariableSequenceNode variableSequenceNode : inputOutputStatementNode.getVariableSequenceNodes()) {
-            this.variableTypes.clear();
-            variableSequenceNode.accept(this);
-            for (Type type : this.variableTypes) {
-                if (type.isArgument()) {
-                    throw new SemanticException(inputOutputStatementNode.getToken());
-                }
+        this.variableTypes.clear();
+        for (VariableNode variableNode : inputOutputStatementNode.getVariableNodes()) {
+            variableNode.accept(this);
+            if (currentType.isArgument()) {
+                throw new SemanticException(inputOutputStatementNode.getToken());
             }
         }
-        for (ExpressionSequenceNode expressionSequenceNode : inputOutputStatementNode.getExpressionSequenceNodes()) {
-            this.variableTypes.clear();
-            expressionSequenceNode.accept(this);
-            for (Type type : this.variableTypes) {
-                if (type.isArgument()) {
-                    throw new SemanticException(inputOutputStatementNode.getToken());
-                }
+        for (ExpressionNode expressionNode : inputOutputStatementNode.getExpressionNodes()) {
+            expressionNode.accept(this);
+            if (currentType.isArgument()) {
+                throw new SemanticException(inputOutputStatementNode.getToken());
             }
         }
     }

@@ -16,6 +16,10 @@ public enum Type {
         return this == INTEGER;
     }
 
+    public boolean isChar() {
+        return this == CHAR;
+    }
+
     public boolean isArray() {
         return this == ARRAY_OF_INTEGER || this == ARRAY_OF_CHAR || this == ARRAY_OF_BOOLEAN;
     }

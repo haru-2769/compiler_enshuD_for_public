@@ -329,17 +329,22 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(InputOutputStatementNode inputOutputStatementNode) throws SemanticException {
-		if (inputOutputStatementNode.getVariableSequenceNodes().size() > 0) {
-			for (VariableSequenceNode variableSequenceNode : inputOutputStatementNode.getVariableSequenceNodes()) {
-				variableSequenceNode.accept(this);
+		if (inputOutputStatementNode.getVariableNodes().size() > 0) {
+			for (VariableNode variableNode : inputOutputStatementNode.getVariableNodes()) {
+				variableNode.accept(this);
 				//TODO
 			}
 		} else {
-			for (ExpressionSequenceNode expressionSequenceNode : inputOutputStatementNode.getExpressionSequenceNodes()) {
-				expressionSequenceNode.accept(this);
-				this.caslCode.add("\tPOP\tGR2");
-				this.caslCode.add("\tPOP\tGR1");
-				this.caslCode.add("\tCALL\tWRTSTR");
+			for (ExpressionNode expressionNode : inputOutputStatementNode.getExpressionNodes()) {
+				expressionNode.accept(this);
+				if (expressionNode.getType().isChar()) {
+					this.caslCode.add("\tPOP\tGR2");
+					this.caslCode.add("\tPOP\tGR1");
+					this.caslCode.add("\tCALL\tWRTSTR");
+				} else {
+					this.caslCode.add("\tPOP\tGR1");
+					this.caslCode.add("\tCALL\tWRTINT");
+				}
 			}
 			this.caslCode.add("\tCALL\tWRTLN");
 		}

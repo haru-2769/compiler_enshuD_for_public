@@ -1,11 +1,13 @@
 package enshud.s4.compiler;
 
 public class ExpressionNode extends AstNode {
+    private Type type;
     private SimpleExpressionNode leftSimpleExpressionNode;
     private RelationalOperatorNode relationalOperatorNode;
     private SimpleExpressionNode rightSimpleExpressionNode;
 
     public ExpressionNode() throws SyntaxException {
+        type = null;
         this.leftSimpleExpressionNode = null;
         this.relationalOperatorNode = null;
         this.rightSimpleExpressionNode = null;
@@ -32,6 +34,14 @@ public class ExpressionNode extends AstNode {
 
     public SimpleExpressionNode getRightSimpleExpressionNode() {
         return this.rightSimpleExpressionNode;
+    }
+
+    public Type getType() {
+        return this.type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
     
     public void accept(Visitor visitor) throws SemanticException {
