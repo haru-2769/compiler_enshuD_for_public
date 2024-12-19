@@ -5,9 +5,13 @@ import java.util.List;
 
 public class AstCompiler extends Visitor {
 	private List<String> caslCode;
+	private List<String> labels;
+	private List<String> defindConstants;
 
 	public AstCompiler() {
 		caslCode = new ArrayList<>();
+		labels = new ArrayList<>();
+		defindConstants = new ArrayList<>();
 	}
 
 	public List<String> getCaslCode() {
@@ -355,8 +359,10 @@ public class AstCompiler extends Visitor {
 		} else {
 			caslCode.add("\tLD\tGR1, =" + (token.getLexical().length()-2));
 			caslCode.add("\tPUSH\t0, GR1");
-			caslCode.add("\tLAD\tGR2, CHAR0");
+			caslCode.add("\tLAD\tGR2, " + constantNode.getLabel());
 			caslCode.add("\tPUSH\t0, GR2");
+			labels.add(constantNode.getLabel());
+			defindConstants.add(token.getLexical());
 		}
 	}
 

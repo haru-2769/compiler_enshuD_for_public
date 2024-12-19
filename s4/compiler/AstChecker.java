@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
  
 public class AstChecker extends Visitor {
+    private int charCount;
     // private String programName;
     private Type currentType;
     private Integer currentValue;
@@ -16,6 +17,7 @@ public class AstChecker extends Visitor {
     private Stack<HashMap<String, VariableInfo>> variableNames;
     
     public AstChecker() throws SemanticException {
+        this.charCount = 0;
         // this.programName = null;
         this.currentType = null;
         this.variableTypes = new ArrayList<>();
@@ -490,6 +492,7 @@ public class AstChecker extends Visitor {
         if (constant.getTokenName().equals("SCONSTANT")) {
             this.currentType = Type.INTEGER;
         } else if (constant.getTokenName().equals("SSTRING")) {
+            constantNode.setLabel("CHAR" + this.charCount++);
             this.currentType = Type.CHAR;
         } else {
             this.currentType = Type.BOOLEAN;
