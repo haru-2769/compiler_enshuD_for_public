@@ -12,6 +12,7 @@ public class AstChecker extends Visitor {
     private Integer currentValue;
     private Integer minValue;
     private Integer maxValue;
+    private Integer currentAddress;
     private List<Type> variableTypes;
     private HashMap<String, ProcedureInfo> procedureNames;
     private Stack<HashMap<String, VariableInfo>> variableNames;
@@ -20,6 +21,10 @@ public class AstChecker extends Visitor {
         this.charCount = 0;
         // this.programName = null;
         this.currentType = null;
+        this.currentValue = null;
+        this.minValue = null;
+        this.maxValue = null;
+        this.currentAddress = null;
         this.variableTypes = new ArrayList<>();
         this.procedureNames = new HashMap<>();
         this.variableNames = new Stack<>();
@@ -64,7 +69,7 @@ public class AstChecker extends Visitor {
         List<VariableNameNode> variableNameNodes = variableNameSequenceNode.getVariableNameNodes();
         for (VariableNameNode variableNameNode : variableNameNodes) {
             Token variableName = variableNameNode.getToken();
-            if (currentScope.put(variableName.getLexical(), new VariableInfo(this.currentType, this.minValue, this.maxValue)) != null || /*variableName.getLexical().equals(programName) ||*/ procedureNames.containsKey(variableName.getLexical())) {//
+            if (currentScope.put(variableName.getLexical(), new VariableInfo(this.currentType, this.minValue, this.maxValue, this.currentAddress)) != null || /*variableName.getLexical().equals(programName) ||*/ procedureNames.containsKey(variableName.getLexical())) {//
                 throw new SemanticException(variableName);
             }
         }
@@ -191,6 +196,7 @@ public class AstChecker extends Visitor {
  
     
     public void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException {
+        //TODO; check address neccecity
         HashMap<String, VariableInfo> currentScope = variableNames.peek();
         List<FormalParameterNameNode> formalParameterNameNodes = formalParameterNameSequenceNode.getFormalParameterNameNodes();
         for (FormalParameterNameNode formalParameterNameNode : formalParameterNameNodes) {
@@ -198,7 +204,7 @@ public class AstChecker extends Visitor {
             if (currentScope.containsKey(formalParameterName.getLexical()) || /*formalParameterName.getLexical().equals(programName) ||*/ procedureNames.containsKey(formalParameterName.getLexical())) {
                 throw new SemanticException(formalParameterName);
             }
-            currentScope.put(formalParameterName.getLexical(), new VariableInfo(this.currentType, null, null));
+            currentScope.put(formalParameterName.getLexical(), new VariableInfo(this.currentType, null, null, this.currentAddress));
             this.variableTypes.add(this.currentType);
         }
     }

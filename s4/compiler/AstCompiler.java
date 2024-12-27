@@ -41,32 +41,38 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(BlockNode blockNode) throws SemanticException {
-		
-		
+		blockNode.getVariableDeclarationNode().accept(this);
+		blockNode.getSubprogramDeclarationSequenceNode().accept(this);
 	}
 
 	@Override
 	public void visit(VariableDeclarationNode variableDeclarationNode) throws SemanticException {
-		
-		
+		if (variableDeclarationNode.getVariableDeclarationSequenceNode() != null) {
+            variableDeclarationNode.getVariableDeclarationSequenceNode().accept(this);
+        }
 	}
 
 	@Override
 	public void visit(VariableDeclarationSequenceNode variableDeclarationSequenceNode) throws SemanticException {
-		
-		
+		List<VariableNameSequenceNode> variableNameSequenceNodes = variableDeclarationSequenceNode.getVariableNameSequenceNodes();
+        List<TypeNode> typeNodes = variableDeclarationSequenceNode.getTypeNodes();
+        for (int i = 0; i < variableNameSequenceNodes.size(); i++) {
+            typeNodes.get(i).accept(this);
+            variableNameSequenceNodes.get(i).accept(this);
+        }
 	}
 
 	@Override
 	public void visit(VariableNameSequenceNode variableNameSequenceNode) throws SemanticException {
-		
-		
+        List<VariableNameNode> variableNameNodes = variableNameSequenceNode.getVariableNameNodes();
+        for (VariableNameNode variableNameNode : variableNameNodes) {
+			variableNameNode.accept(this);
+        }
 	}
 
 	@Override
 	public void visit(VariableNameNode variableNameNode) throws SemanticException {
-		
-		
+		this.defindeStorageVar++;
 	}
 
 	@Override
@@ -210,31 +216,38 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(AssignmentStatementNode assignmentStatementNode) throws SemanticException {
-		
-		
+		assignmentStatementNode.getLeftHandSideNode().accept(this);
+		assignmentStatementNode.getExpressionNode().accept(this);
+		this.caslCode.add("\tPOP\tGR1");
+		this.caslCode.add("\tPOP\tGR2");
+		this.caslCode.add("\tST\tGR1, 0, GR2");
 	}
 
 	@Override
 	public void visit(LeftHandSideNode leftHandSideNode) throws SemanticException {
-		
-		
+		this.caslCode.add("\tLAD\tGR2, VAR");
+		leftHandSideNode.getVariableNode().accept(this);
 	}
 
 	@Override
 	public void visit(VariableNode variableNode) throws SemanticException {
-		
-		
+		IndexedVariableNode indexedVariableNode = variableNode.getIndexedVariableNode();
+		PureVariableNode pureVariableNode = variableNode.getPureVariableNode();
+		if (indexedVariableNode != null) {
+			indexedVariableNode.accept(this);
+		} else {
+			pureVariableNode.accept(this);
+		}
 	}
 
 	@Override
 	public void visit(PureVariableNode pureVariableNode) throws SemanticException {
-		
-		
+		this.caslCode.add("\tPUSH\t0, GR2");
 	}
 
 	@Override
 	public void visit(IndexedVariableNode indexedVariableNode) throws SemanticException {
-		
+	
 		
 	}
 
@@ -299,6 +312,7 @@ public class AstCompiler extends Visitor {
         ExpressionNode expressionNode = factorNode.getExpressionNode();
         FactorNode factorNode2 = factorNode.getFactorNode();
         if (variableNode != null) {
+			this.caslCode.add("\tLD\tGR2, VAR");
             variableNode.accept(this);
         } else if (constantNode != null) {
             constantNode.accept(this);
@@ -342,7 +356,7 @@ public class AstCompiler extends Visitor {
 					this.caslCode.add("\tPOP\tGR1");
 					this.caslCode.add("\tCALL\tWRTSTR");
 				} else {
-					this.caslCode.add("\tPOP\tGR1");
+					this.caslCode.add("\tPOP\tGR2");
 					this.caslCode.add("\tCALL\tWRTINT");
 				}
 			}
@@ -364,7 +378,7 @@ public class AstCompiler extends Visitor {
 		} else if (token.getTokenName().equals("SFALSE")) {
 			//TODO
 		} else if (token.getTokenName().equals("SCONSTANT")) {
-			//TODO
+			this.caslCode.add("\tPUSH\t" + token.getLexical());
 		} else {
 			this.caslCode.add("\tLD\tGR1, =" + (token.getLexical().length()-2));
 			this.caslCode.add("\tPUSH\t0, GR1");
