@@ -1,27 +1,27 @@
 package enshud.s4.compiler;
 
-public class SubprogramDeclarationNode extends AstNode {
-    private SubprogramHeadNode subprogramHeadNode;
+public class SubProgramDeclarationNode extends AstNode {
+    private SubProgramHeadNode subProgramHeadNode;
     private VariableDeclarationNode variableDeclarationNode;
     private CompoundStatementNode compoundStatementNode;
 
-    public SubprogramDeclarationNode() throws SyntaxException {
-        this.subprogramHeadNode = null;
+    public SubProgramDeclarationNode() throws SyntaxException {
+        this.subProgramHeadNode = null;
         this.variableDeclarationNode = null;
         this.compoundStatementNode = null;
     }
 
     public void parse(Context context) throws SyntaxException {
-        this.subprogramHeadNode = new SubprogramHeadNode();
-        this.subprogramHeadNode.parse(context);
+        this.subProgramHeadNode = new SubProgramHeadNode();
+        this.subProgramHeadNode.parse(context);
         this.variableDeclarationNode = new VariableDeclarationNode();
         this.variableDeclarationNode.parse(context);
         this.compoundStatementNode = new CompoundStatementNode();
         this.compoundStatementNode.parse(context);
     }
 
-    public SubprogramHeadNode getSubprogramHeadNode() {
-        return this.subprogramHeadNode;
+    public SubProgramHeadNode getSubProgramHeadNode() {
+        return this.subProgramHeadNode;
     }
 
     public VariableDeclarationNode getVariableDeclarationNode() {

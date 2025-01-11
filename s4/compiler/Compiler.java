@@ -3,9 +3,9 @@ package enshud.s4.compiler;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.nio.file.StandardOpenOption;
 
 import enshud.casl.CaslSimulator;
 
@@ -17,7 +17,7 @@ public class Compiler {
 	 */
 	public static void main(final String[] args) {
 		// Compilerを実行してcasを生成する
-		System.out.println(new Compiler().run("data/ts/normal02.ts", "tmp/out.cas"));
+		System.out.println(new Compiler().run("data/ts/normal20.ts", "tmp/out.cas"));
 
 		// 上記casを，CASLアセンブラ & COMETシミュレータで実行する
 		CaslSimulator.run("tmp/out.cas", "tmp/out.ans");

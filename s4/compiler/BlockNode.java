@@ -2,26 +2,26 @@ package enshud.s4.compiler;
 
 public class BlockNode extends AstNode {
     private VariableDeclarationNode variableDeclarationNode;
-    private SubprogramDeclarationSequenceNode subprogramDeclarationSequenceNode;
+    private SubProgramDeclarationSequenceNode subProgramDeclarationSequenceNode;
 
     public BlockNode() throws SyntaxException {
         this.variableDeclarationNode = null;
-        this.subprogramDeclarationSequenceNode = null;
+        this.subProgramDeclarationSequenceNode = null;
     }
 
     public void parse(Context context) throws SyntaxException {
         this.variableDeclarationNode = new VariableDeclarationNode();
         this.variableDeclarationNode.parse(context);
-        this.subprogramDeclarationSequenceNode = new SubprogramDeclarationSequenceNode();
-        this.subprogramDeclarationSequenceNode.parse(context);
+        this.subProgramDeclarationSequenceNode = new SubProgramDeclarationSequenceNode();
+        this.subProgramDeclarationSequenceNode.parse(context);
     }
 
     public VariableDeclarationNode getVariableDeclarationNode() {
         return this.variableDeclarationNode;
     }
 
-    public SubprogramDeclarationSequenceNode getSubprogramDeclarationSequenceNode() {
-        return this.subprogramDeclarationSequenceNode;
+    public SubProgramDeclarationSequenceNode getSubProgramDeclarationSequenceNode() {
+        return this.subProgramDeclarationSequenceNode;
     }
     
     public void accept(Visitor visitor) throws SemanticException {

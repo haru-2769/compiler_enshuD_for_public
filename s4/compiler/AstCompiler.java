@@ -93,19 +93,19 @@ public class AstCompiler extends Visitor {
 	}
 
 	@Override
-	public void visit(SubprogramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException {
+	public void visit(SubProgramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException {
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}
 
 	@Override
-	public void visit(SubprogramDeclarationNode subprogramDeclarationNode) throws SemanticException {
+	public void visit(SubProgramDeclarationNode subprogramDeclarationNode) throws SemanticException {
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}
 
 	@Override
-	public void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException {
+	public void visit(SubProgramHeadNode subprogramHeadNode) throws SemanticException {
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}

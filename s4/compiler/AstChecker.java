@@ -8,6 +8,7 @@ import java.util.Stack;
 public class AstChecker extends Visitor {
     private TypeEnum currentType;
     private int currentValue;
+    private String currentSubProgramName;
     private int minValue;
     private int maxValue;
     private int address;
@@ -33,12 +34,17 @@ public class AstChecker extends Visitor {
         this.variableList.push(new HashMap<>());
         programNode.getBlockNode().accept(this);
         programNode.getCompoundStatementNode().accept(this);
-        programNode.setVariables(new ArrayList<> (this.variableList.pop().values()));
+        programNode.setVariableList(new ArrayList<>(this.variableList.pop().values()));
+        programNode.setSubProgramList(new ArrayList<>(this.subProgramList.values()));
+
+        // for (Variable variable : programNode.getVariableList()) {
+        //     System.out.println(variable.getName() + " " + variable.getType() + " " + variable.getAddress() + " " + variable.getSize() + " " + variable.getOffset());
+        // }
     }
  
     public void visit(BlockNode blockNode) throws SemanticException {
         blockNode.getVariableDeclarationNode().accept(this);
-        blockNode.getSubprogramDeclarationSequenceNode().accept(this);
+        blockNode.getSubProgramDeclarationSequenceNode().accept(this);
     }
  
     
@@ -62,7 +68,7 @@ public class AstChecker extends Visitor {
     public void visit(VariableNameSequenceNode variableNameSequenceNode) throws SemanticException {
         HashMap<String, Variable> currentScope = variableList.peek();
         List<VariableNameNode> variableNameNodes = variableNameSequenceNode.getVariableNameNodes();
-        int size = Math.max(1, this.maxValue-this.minValue);
+        int size = Math.max(1, this.maxValue-this.minValue+1);
         for (VariableNameNode variableNameNode : variableNameNodes) {
             Token variableName = variableNameNode.getToken();
             if (currentScope.put(variableName.getLexical(), new Variable(variableName.getLexical(), this.currentType, this.address, size, this.minValue)) != null || /*variableName.getLexical().equals(programName) ||*/ subProgramList.containsKey(variableName.getLexical())) {//
@@ -141,32 +147,32 @@ public class AstChecker extends Visitor {
 	}
  
     
-    public void visit(SubprogramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException {
-        for (SubprogramDeclarationNode subprogramDeclarationNode : subprogramDeclarationSequenceNode.getSubprogramDeclarationNodes()) {
+    public void visit(SubProgramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException {
+        for (SubProgramDeclarationNode subprogramDeclarationNode : subprogramDeclarationSequenceNode.getSubProgramDeclarationNodes()) {
             subprogramDeclarationNode.accept(this);
         }
     }
  
     
-    public void visit(SubprogramDeclarationNode subprogramDeclarationNode) throws SemanticException {
+    public void visit(SubProgramDeclarationNode subprogramDeclarationNode) throws SemanticException {
         this.variableList.push(new HashMap<>());
-        subprogramDeclarationNode.getSubprogramHeadNode().accept(this);
+        subprogramDeclarationNode.getSubProgramHeadNode().accept(this);
         subprogramDeclarationNode.getVariableDeclarationNode().accept(this);
         subprogramDeclarationNode.getCompoundStatementNode().accept(this);
-        this.variableList.pop();
+        subProgramList.get(currentSubProgramName).setVariableList(new ArrayList<> (this.variableList.pop().values()));
     }
  
     
-    public void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException {
+    public void visit(SubProgramHeadNode subprogramHeadNode) throws SemanticException {
         Token procedureName = subprogramHeadNode.getProcedureNameNode().getToken();
-        String currentSubprogramName = procedureName.getLexical();
-        SubProgram subProgram = new SubProgram(currentSubprogramName);
-        if (subProgramList.put(currentSubprogramName, subProgram) != null /*|| currentSubprogramName.equals(programName)*/) {
+        currentSubProgramName = procedureName.getLexical();
+        SubProgram subProgram = new SubProgram(currentSubProgramName);
+        if (subProgramList.put(currentSubProgramName, subProgram) != null /*|| currentSubProgramName.equals(programName)*/) {
             throw new SemanticException(procedureName.getLineCount());
         }
         this.variableTypes.clear();
         subprogramHeadNode.getFormalParameterNode().accept(this);
-        procedureInfo.setType(this.variableTypes);
+        subProgram.setArgumentType(this.variableTypes);
     }
  
 	
@@ -193,14 +199,16 @@ public class AstChecker extends Visitor {
  
     
     public void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException {
-        HashMap<String, VariableInfo> currentScope = variableList.peek();
+        HashMap<String, Variable> currentScope = variableList.peek();
+        this.address = 0;
         List<FormalParameterNameNode> formalParameterNameNodes = formalParameterNameSequenceNode.getFormalParameterNameNodes();
         for (FormalParameterNameNode formalParameterNameNode : formalParameterNameNodes) {
             Token formalParameterName = formalParameterNameNode.getToken();
             if (currentScope.containsKey(formalParameterName.getLexical()) || /*formalParameterName.getLexical().equals(programName) ||*/ subProgramList.containsKey(formalParameterName.getLexical())) {
                 throw new SemanticException(formalParameterName.getLineCount());
             }
-            currentScope.put(formalParameterName.getLexical(), new VariableInfo(this.currentType, null, null));
+            currentScope.put(formalParameterName.getLexical(), new Variable(formalParameterName.getLexical(), this.currentType, this.address, 1, 0));
+            this.address++;
             this.variableTypes.add(this.currentType);
         }
     }
@@ -273,7 +281,7 @@ public class AstChecker extends Visitor {
     public void visit(PureVariableNode pureVariableNode) throws SemanticException {
         Token variableName = pureVariableNode.getVariableNameNode().getToken();
         for (int i = variableList.size() - 1; i >= 0; i--) {
-            HashMap<String, VariableInfo> scope = variableList.get(i);
+            HashMap<String, Variable> scope = variableList.get(i);
             if (scope.containsKey(variableName.getLexical())) {
                 this.currentType = scope.get(variableName.getLexical()).getType();
                 return;
@@ -286,7 +294,7 @@ public class AstChecker extends Visitor {
     public void visit(IndexedVariableNode indexedVariableNode) throws SemanticException {
         Token variableName = indexedVariableNode.getVariableNameNode().getToken();
         for (int i = variableList.size() - 1; i >= 0; i--) {
-            HashMap<String, VariableInfo> scope = variableList.get(i);
+            HashMap<String, Variable> scope = variableList.get(i);
             if (scope.containsKey(variableName.getLexical())) {
                 TypeEnum type = scope.get(variableName.getLexical()).getType();
                 indexedVariableNode.getIndexNode().accept(this);
@@ -320,7 +328,7 @@ public class AstChecker extends Visitor {
         for (ExpressionNode expressionNode : procedureCallStatementNode.getExpressionNodes()) {
             expressionNode.accept(this);
         }
-        if (!subProgramList.get(procedureName.getLexical()).getType().equals(this.variableTypes)) {
+        if (!subProgramList.get(procedureName.getLexical()).getArgumentList().equals(this.variableTypes)) {
             throw new SemanticException(procedureName.getLineCount());
         }
     }

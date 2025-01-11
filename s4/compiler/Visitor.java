@@ -14,9 +14,9 @@ public abstract class Visitor {
     public abstract void visit(IndexMaxValueNode indexMaxValueNode) throws SemanticException;
     public abstract void visit(IntegerNode integerNode) throws SemanticException;
     public abstract void visit(SignNode signNode) throws SemanticException;
-    public abstract void visit(SubprogramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException;
-    public abstract void visit(SubprogramDeclarationNode subprogramDeclarationNode) throws SemanticException;
-    public abstract void visit(SubprogramHeadNode subprogramHeadNode) throws SemanticException;
+    public abstract void visit(SubProgramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException;
+    public abstract void visit(SubProgramDeclarationNode subprogramDeclarationNode) throws SemanticException;
+    public abstract void visit(SubProgramHeadNode subprogramHeadNode) throws SemanticException;
     public abstract void visit(ProcedureNameNode procedureNameNode) throws SemanticException;
     public abstract void visit(FormalParameterNode formalParameterNode) throws SemanticException;
     public abstract void visit(FormalParameterSequenceNode formalParameterSequenceNode) throws SemanticException;

@@ -6,7 +6,8 @@ public class ProgramNode extends AstNode {
     private Token programName;
     private BlockNode blockNode;
     private CompoundStatementNode compoundStatementNode;
-    private List<Variable> variables;
+    private List<Variable> variableList;
+    private List<SubProgram> subProgramList;
 
     public ProgramNode() throws SyntaxException {
         this.programName = null;
@@ -40,14 +41,22 @@ public class ProgramNode extends AstNode {
         return this.compoundStatementNode;
     }
 
-    public List<Variable> getVariables() {
-        return this.variables;
+    public List<Variable> getVariableList() {
+        return this.variableList;
     }
 
-    public void setVariables(List<Variable> variables) {
-        this.variables = variables;
+    public List<SubProgram> getSubProgramList() {
+        return this.subProgramList;
     }
 
+    public void setVariableList(List<Variable> variables) {
+        this.variableList = variables;
+    }
+
+    public void setSubProgramList(List<SubProgram> subPrograms) {
+        this.subProgramList = subPrograms;
+    }
+    
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

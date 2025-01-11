@@ -1,10 +1,10 @@
 package enshud.s4.compiler;
 
-public class SubprogramHeadNode extends AstNode {
+public class SubProgramHeadNode extends AstNode {
     private ProcedureNameNode procedureNameNode;
     private FormalParameterNode formalParameterNode;
 
-    public SubprogramHeadNode() throws SyntaxException {
+    public SubProgramHeadNode() throws SyntaxException {
         this.procedureNameNode = null;
         this.formalParameterNode = null;
     }
