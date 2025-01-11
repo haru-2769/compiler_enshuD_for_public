@@ -15,7 +15,7 @@ public class IfNode extends StmtNode {
 
 	@Override
 	public void parse(Context context) throws SyntaxException {
-		context.checkTerminalSymbol("SIF");
+		this.setLine(context.checkTerminalSymbol("SIF").getLineCount());
         this.expressionNode = new ExpressionNode();
         this.expressionNode.parse(context);
         context.checkTerminalSymbol("STHEN");

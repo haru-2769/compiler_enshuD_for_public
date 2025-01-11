@@ -12,7 +12,7 @@ public class AssignmentStatementNode extends StmtNode {
     public void parse(Context context) throws SyntaxException {
         this.leftHandSideNode = new LeftHandSideNode();
         this.leftHandSideNode.parse(context);
-        context.checkTerminalSymbol("SASSIGN");
+        this.setLine(context.checkTerminalSymbol("SASSIGN").getLineCount());
         this.expressionNode = new ExpressionNode();
         this.expressionNode.parse(context);
     }

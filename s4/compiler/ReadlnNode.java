@@ -12,11 +12,11 @@ public class ReadlnNode extends StmtNode {
 
 	@Override
 	public void parse(Context context) throws SyntaxException {	
-		context.checkTerminalSymbol("SREADLN");
+		this.setLine(context.checkTerminalSymbol("SREADLN").getLineCount());
 		if (context.equalsAny(0, "SLPAREN")) {
 			VariableNode variableNode;
 			context.checkTerminalSymbol("SLPAREN");
-			while (true) {
+			do {
 				variableNode = new VariableNode();
 				variableNode.parse(context);
 				this.variableNodes.add(variableNode);
@@ -25,7 +25,7 @@ public class ReadlnNode extends StmtNode {
 				} else {
 					break;
 				}
-			}
+			} while (true);
 			context.checkTerminalSymbol("SRPAREN");
 		}
 	}

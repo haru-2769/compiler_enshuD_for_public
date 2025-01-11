@@ -1,9 +1,12 @@
 package enshud.s4.compiler;
 
+import java.util.List;
+
 public class ProgramNode extends AstNode {
     private Token programName;
     private BlockNode blockNode;
     private CompoundStatementNode compoundStatementNode;
+    private List<Variable> variables;
 
     public ProgramNode() throws SyntaxException {
         this.programName = null;
@@ -35,6 +38,14 @@ public class ProgramNode extends AstNode {
 
     public CompoundStatementNode getCompoundStatementNode() {
         return this.compoundStatementNode;
+    }
+
+    public List<Variable> getVariables() {
+        return this.variables;
+    }
+
+    public void setVariables(List<Variable> variables) {
+        this.variables = variables;
     }
 
     public void accept(Visitor visitor) throws SemanticException {

@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.StandardOpenOption;
 
 import enshud.casl.CaslSimulator;
 
@@ -49,10 +50,10 @@ public class Compiler {
 			programNode.parse(new Context(tokenList));
 			AstChecker astChecker = new AstChecker();
 			astChecker.start(programNode);
-			// AstCompiler astCompiler = new AstCompiler();
-			// astCompiler.start(programNode);
-			// Files.write(Paths.get(outputFileName), astCompiler.getCaslCode());
-			// Files.write(Paths.get(outputFileName), Files.readAllLines(Paths.get("data/cas/lib.cas")), StandardOpenOption.APPEND);
+			AstCompiler astCompiler = new AstCompiler();
+			astCompiler.start(programNode);
+			Files.write(Paths.get(outputFileName), astCompiler.getCaslCode());
+			Files.write(Paths.get(outputFileName), Files.readAllLines(Paths.get("data/cas/lib.cas")), StandardOpenOption.APPEND);
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {

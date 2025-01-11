@@ -21,12 +21,6 @@ public class AstCompiler extends Visitor {
 	}
 
 	@Override
-	public void visit(ProgramNameNode programNameNode) throws SemanticException {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
-
-	@Override
 	public void visit(BlockNode blockNode) throws SemanticException {
 		// TODO 自動生成されたメソッド・スタブ
 		
@@ -153,22 +147,11 @@ public class AstCompiler extends Visitor {
 	}
 
 	@Override
-	public void visit(StatementSequenceNode statementSequenceNode) throws SemanticException {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
-
-	@Override
 	public void visit(StatementNode statementNode) throws SemanticException {
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}
 
-	@Override
-	public void visit(BasicStatementNode basicStatementNode) throws SemanticException {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
 
 	@Override
 	public void visit(AssignmentStatementNode assignmentStatementNode) throws SemanticException {
@@ -212,11 +195,6 @@ public class AstCompiler extends Visitor {
 		
 	}
 
-	@Override
-	public void visit(ExpressionSequenceNode expressionSequenceNode) throws SemanticException {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
 
 	@Override
 	public void visit(ExpressionNode expressionNode) throws SemanticException {
@@ -260,20 +238,33 @@ public class AstCompiler extends Visitor {
 		
 	}
 
-	@Override
-	public void visit(InputOutputStatementNode inputOutputStatementNode) throws SemanticException {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
-
-	@Override
-	public void visit(VariableSequenceNode variableSequenceNode) throws SemanticException {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
 
 	@Override
 	public void visit(ConstantNode constantNode) throws SemanticException {
+		// TODO 自動生成されたメソッド・スタブ
+		
+	}
+
+	@Override
+	public void visit(IfNode ifNode) throws SemanticException {
+		// TODO 自動生成されたメソッド・スタブ
+		
+	}
+
+	@Override
+	public void visit(WhileNode whileNode) throws SemanticException {
+		// TODO 自動生成されたメソッド・スタブ
+		
+	}
+
+	@Override
+	public void visit(ReadlnNode readlnNode) throws SemanticException {
+		// TODO 自動生成されたメソッド・スタブ
+		
+	}
+
+	@Override
+	public void visit(WritelnNode writelnNode) throws SemanticException {
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}

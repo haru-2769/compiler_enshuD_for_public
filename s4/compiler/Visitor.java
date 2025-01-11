@@ -33,7 +33,6 @@ public abstract class Visitor {
     public abstract void visit(IndexedVariableNode indexedVariableNode) throws SemanticException;
     public abstract void visit(IndexNode indexNode) throws SemanticException;
     public abstract void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException;
-    public abstract void visit(ExpressionSequenceNode expressionSequenceNode) throws SemanticException;
     public abstract void visit(ExpressionNode expressionNode) throws SemanticException;
     public abstract void visit(SimpleExpressionNode simpleExpressionNode) throws SemanticException;
     public abstract void visit(TermNode termNode) throws SemanticException;
