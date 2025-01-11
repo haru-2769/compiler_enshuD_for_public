@@ -1,22 +1,20 @@
 package enshud.s4.compiler;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
-public class ProcedureCallStatementNode extends StmtNode {
-    private ProcedureNameNode procedureNameNode;
-    private List<ExpressionNode> expressionNodes;
+public class WritelnNode extends StmtNode {
+    final private List<ExpressionNode> expressionNodes;
 
-    public ProcedureCallStatementNode() throws SyntaxException {
-        this.procedureNameNode = null;
-        this.expressionNodes = new ArrayList<ExpressionNode>();
+    public WritelnNode() {
+        this.expressionNodes = new ArrayList<>();
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
-        this.procedureNameNode = new ProcedureNameNode();
-        this.procedureNameNode.parse(context);
+        setLine(context.checkTerminalSymbol("SWRITELN").getLineCount());
         if (context.equalsAny(0, "SLPAREN")) {
-            ExpressionNode expressionNode;
+            ExpressionNode  expressionNode;
             context.checkTerminalSymbol("SLPAREN");
             while (true) {
                 expressionNode = new ExpressionNode();
@@ -32,16 +30,12 @@ public class ProcedureCallStatementNode extends StmtNode {
         }
     }
 
-    public ProcedureNameNode getProcedureNameNode() {
-        return this.procedureNameNode;
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 
     public List<ExpressionNode> getExpressionNodes() {
         return this.expressionNodes;
     }
-
-    public void accept(Visitor visitor) throws SemanticException {
-        visitor.visit(this);
-    }
-
 }

@@ -30,5 +30,4 @@ public class VariableNode extends AstNode {
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

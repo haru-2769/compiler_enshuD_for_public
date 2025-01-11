@@ -6,28 +6,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
  
 public class AstChecker extends Visitor {
-    private int charCount;
-    // private String programName;
-    private Type currentType;
+    private TypeEnum currentType;
     private Integer currentValue;
     private Integer minValue;
     private Integer maxValue;
-    private Integer currentAddress;
-    private List<Type> variableTypes;
+    private List<TypeEnum> variableTypes;
     private HashMap<String, ProcedureInfo> procedureNames;
     private Stack<HashMap<String, VariableInfo>> variableNames;
     
-    public AstChecker() throws SemanticException {
-        this.charCount = 0;
-        // this.programName = null;
+    public AstChecker() {
         this.currentType = null;
-        this.currentValue = null;
-        this.minValue = null;
-        this.maxValue = null;
-        this.currentAddress = null;
         this.variableTypes = new ArrayList<>();
         this.procedureNames = new HashMap<>();
         this.variableNames = new Stack<>();
+    }
+
+    public void start(ProgramNode programNode) throws SemanticException {
+        visit(programNode);
     }
 
     public void visit(ProgramNode programNode) throws SemanticException {
@@ -35,10 +30,6 @@ public class AstChecker extends Visitor {
         programNode.getBlockNode().accept(this);
         programNode.getCompoundStatementNode().accept(this);
         this.variableNames.pop();
-    }
- 
-	public void visit(ProgramNameNode programNameNode) throws SemanticException {
-        // this.programName = programNameNode.getToken().getLexical();
     }
  
     public void visit(BlockNode blockNode) throws SemanticException {
@@ -69,8 +60,8 @@ public class AstChecker extends Visitor {
         List<VariableNameNode> variableNameNodes = variableNameSequenceNode.getVariableNameNodes();
         for (VariableNameNode variableNameNode : variableNameNodes) {
             Token variableName = variableNameNode.getToken();
-            if (currentScope.put(variableName.getLexical(), new VariableInfo(this.currentType, this.minValue, this.maxValue, this.currentAddress)) != null || /*variableName.getLexical().equals(programName) ||*/ procedureNames.containsKey(variableName.getLexical())) {//
-                throw new SemanticException(variableName);
+            if (currentScope.put(variableName.getLexical(), new VariableInfo(this.currentType, this.minValue, this.maxValue)) != null || /*variableName.getLexical().equals(programName) ||*/ procedureNames.containsKey(variableName.getLexical())) {//
+                throw new SemanticException(variableName.getLineCount());
             }
         }
         this.minValue = null;
@@ -95,11 +86,11 @@ public class AstChecker extends Visitor {
 	
 	public void visit(StandardTypeNode standardTypeNode) throws SemanticException {
         if (standardTypeNode.getToken().getTokenName().equals("SINTEGER")) {
-            this.currentType = Type.INTEGER;
+            this.currentType = TypeEnum.INTEGER;
         } else if (standardTypeNode.getToken().getTokenName().equals("SCHAR")) {
-            this.currentType = Type.CHAR;
+            this.currentType = TypeEnum.CHAR;
         } else {
-            this.currentType = Type.BOOLEAN;
+            this.currentType = TypeEnum.BOOLEAN;
         }
 	}
  
@@ -108,12 +99,12 @@ public class AstChecker extends Visitor {
         arrayTypeNode.getIndexMinValueNode().accept(this);
         arrayTypeNode.getIndexMaxValueNode().accept(this);
         arrayTypeNode.getStandardTypeNode().accept(this);
-        if (this.currentType == Type.INTEGER) {
-            this.currentType = Type.ARRAY_OF_INTEGER;
-        } else if (this.currentType == Type.CHAR) {
-            this.currentType = Type.ARRAY_OF_CHAR;
+        if (this.currentType == TypeEnum.INTEGER) {
+            this.currentType = TypeEnum.ARRAY_OF_INTEGER;
+        } else if (this.currentType == TypeEnum.CHAR) {
+            this.currentType = TypeEnum.ARRAY_OF_CHAR;
         } else {
-            this.currentType = Type.ARRAY_OF_BOOLEAN;
+            this.currentType = TypeEnum.ARRAY_OF_BOOLEAN;
         }
     }
  
@@ -165,7 +156,7 @@ public class AstChecker extends Visitor {
         String currentSubprogramName = procedureName.getLexical();
         ProcedureInfo procedureInfo = new ProcedureInfo();
         if (procedureNames.put(currentSubprogramName, procedureInfo) != null /*|| currentSubprogramName.equals(programName)*/) {
-            throw new SemanticException(procedureName);
+            throw new SemanticException(procedureName.getLineCount());
         }
         this.variableTypes.clear();
         subprogramHeadNode.getFormalParameterNode().accept(this);
@@ -196,15 +187,14 @@ public class AstChecker extends Visitor {
  
     
     public void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException {
-        //TODO; check address neccecity
         HashMap<String, VariableInfo> currentScope = variableNames.peek();
         List<FormalParameterNameNode> formalParameterNameNodes = formalParameterNameSequenceNode.getFormalParameterNameNodes();
         for (FormalParameterNameNode formalParameterNameNode : formalParameterNameNodes) {
             Token formalParameterName = formalParameterNameNode.getToken();
             if (currentScope.containsKey(formalParameterName.getLexical()) || /*formalParameterName.getLexical().equals(programName) ||*/ procedureNames.containsKey(formalParameterName.getLexical())) {
-                throw new SemanticException(formalParameterName);
+                throw new SemanticException(formalParameterName.getLineCount());
             }
-            currentScope.put(formalParameterName.getLexical(), new VariableInfo(this.currentType, null, null, this.currentAddress));
+            currentScope.put(formalParameterName.getLexical(), new VariableInfo(this.currentType, null, null));
             this.variableTypes.add(this.currentType);
         }
     }
@@ -215,67 +205,45 @@ public class AstChecker extends Visitor {
  
     
     public void visit(CompoundStatementNode compoundStatementNode) throws SemanticException {
-        compoundStatementNode.getStatementSequenceNode().accept(this);
-    }
- 
-    
-    public void visit(StatementSequenceNode statementSequenceNode) throws SemanticException {
-        for (StatementNode statementNode : statementSequenceNode.getStatementNodes()) {
+        for (StatementNode statementNode : compoundStatementNode.getStatementNodes()) {
             statementNode.accept(this);
         }
     }
  
     
     public void visit(StatementNode statementNode) throws SemanticException {
-        Token token = statementNode.getToken();
-        if (token == null) {
-            statementNode.getBasicStatementNode().accept(this);
-        } else if (token.getTokenName().equals("SIF")) {
-            statementNode.getExpressionNode().accept(this);
-            if (!this.currentType.isBoolean()) {
-                throw new SemanticException(token);
-            }
-            statementNode.getCompoundStatementNode1().accept(this);
-            CompoundStatementNode compoundStatementNode2 = statementNode.getCompoundStatementNode2();
-            if (compoundStatementNode2 != null) {
-                compoundStatementNode2.accept(this);
-            }
-        } else {
-            statementNode.getExpressionNode().accept(this);
-            if (!this.currentType.isBoolean()) {
-                throw new SemanticException(token);
-            }
-            statementNode.getCompoundStatementNode1().accept(this);
-        }
+        statementNode.getAstNode().accept(this);
     }
- 
-    public void visit(BasicStatementNode basicStatementNode) throws SemanticException {
-        AssignmentStatementNode assignmentStatementNode = basicStatementNode.getAssignmentStatementNode();
-        ProcedureCallStatementNode procedureCallStatementNode = basicStatementNode.getProcedureCallStatementNode();
-        InputOutputStatementNode inputOutputStatementNode = basicStatementNode.getInputOutputStatementNode();
-        CompoundStatementNode compoundStatementNode = basicStatementNode.getCompoundStatementNode();
-        if (assignmentStatementNode != null) {
-            assignmentStatementNode.accept(this);
-        } else if (procedureCallStatementNode != null) {
-            procedureCallStatementNode.accept(this);
-        } else if (inputOutputStatementNode != null) {
-            inputOutputStatementNode.accept(this);
-        } else {
+
+    public void visit(IfNode ifNode) throws SemanticException {
+        ifNode.getExpressionNode().accept(this);
+        if (!this.currentType.isBoolean()) {
+            throw new SemanticException(ifNode.getLine());
+        }
+        for (CompoundStatementNode compoundStatementNode : ifNode.getCompoundStatementNodes()) {
             compoundStatementNode.accept(this);
         }
+    }
+
+    public void visit(WhileNode whileNode) throws SemanticException {
+        whileNode.getExpressionNode().accept(this);
+        if (!this.currentType.isBoolean()) {
+            throw new SemanticException(whileNode.getLine());
+        }
+        whileNode.getCompoundStatementNode().accept(this);
     }
  
     
     public void visit(AssignmentStatementNode assignmentStatementNode) throws SemanticException {
         assignmentStatementNode.getLeftHandSideNode().accept(this);
-        Type leftHandSideType = this.currentType;
+        TypeEnum leftHandSideType = this.currentType;
         if (leftHandSideType.isArray()) {
-            throw new SemanticException(assignmentStatementNode.getToken());
+            throw new SemanticException(assignmentStatementNode.getLine());
         }
         assignmentStatementNode.getExpressionNode().accept(this);
-        Type expressionType = this.currentType;
+        TypeEnum expressionType = this.currentType;
         if (leftHandSideType != expressionType) {
-            throw new SemanticException(assignmentStatementNode.getToken());
+            throw new SemanticException(assignmentStatementNode.getLine());
         }
     }
  
@@ -305,7 +273,7 @@ public class AstChecker extends Visitor {
                 return;
             }
         }
-        throw new SemanticException(variableName);
+        throw new SemanticException(variableName.getLineCount());
     }
  
     
@@ -314,21 +282,21 @@ public class AstChecker extends Visitor {
         for (int i = variableNames.size() - 1; i >= 0; i--) {
             HashMap<String, VariableInfo> scope = variableNames.get(i);
             if (scope.containsKey(variableName.getLexical())) {
-                Type type = scope.get(variableName.getLexical()).getType();
+                TypeEnum type = scope.get(variableName.getLexical()).getType();
                 indexedVariableNode.getIndexNode().accept(this);
                 if (!this.currentType.isInteger()) {
-                    throw new SemanticException(variableName);
+                    throw new SemanticException(variableName.getLineCount());
                 }
                 this.currentType = switch (type) {
-                    case ARRAY_OF_INTEGER -> Type.INTEGER;
-                    case ARRAY_OF_CHAR -> Type.CHAR;
-                    case ARRAY_OF_BOOLEAN -> Type.BOOLEAN;
-                    default -> throw new SemanticException(variableName);
+                    case ARRAY_OF_INTEGER -> TypeEnum.INTEGER;
+                    case ARRAY_OF_CHAR -> TypeEnum.CHAR;
+                    case ARRAY_OF_BOOLEAN -> TypeEnum.BOOLEAN;
+                    default -> throw new SemanticException(variableName.getLineCount());
                 };
                 return;
             }
         }
-        throw new SemanticException(variableName);
+        throw new SemanticException(variableName.getLineCount());
     }
  
     
@@ -340,21 +308,21 @@ public class AstChecker extends Visitor {
     public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
         Token procedureName = procedureCallStatementNode.getProcedureNameNode().getToken();
         if (!procedureNames.containsKey(procedureName.getLexical())) {
-            throw new SemanticException(procedureName);
+            throw new SemanticException(procedureName.getLineCount());
         }
         this.variableTypes.clear();
-        ExpressionSequenceNode expressionSequenceNode = procedureCallStatementNode.getExpressionSequenceNode();
-        if (expressionSequenceNode != null) {
-            expressionSequenceNode.accept(this);
+        for (ExpressionNode expressionNode : procedureCallStatementNode.getExpressionNodes()) {
+            expressionNode.accept(this);
         }
         if (!procedureNames.get(procedureName.getLexical()).getType().equals(this.variableTypes)) {
-            throw new SemanticException(procedureName);
+            throw new SemanticException(procedureName.getLineCount());
         }
     }
  
     
     public void visit(ExpressionSequenceNode expressionSequenceNode) throws SemanticException {
-        for (ExpressionNode expressionNode : expressionSequenceNode.getExpressionNodes()) {
+        List<ExpressionNode> expressionNodes = expressionSequenceNode.getExpressionNodes();
+        for (ExpressionNode expressionNode : expressionNodes) {
             expressionNode.accept(this);
             this.variableTypes.add(this.currentType);
         }
@@ -365,18 +333,17 @@ public class AstChecker extends Visitor {
         expressionNode.getLeftSimpleExpressionNode().accept(this);
         RelationalOperatorNode relationalOperatorNode = expressionNode.getRelationalOperatorNode();
         if (relationalOperatorNode != null) {
-            Type leftType = this.currentType;
+            TypeEnum leftType = this.currentType;
             if (leftType.isArray()) {
-                throw new SemanticException(relationalOperatorNode.getToken());
+                throw new SemanticException(relationalOperatorNode.getToken().getLineCount());
             }
             expressionNode.getRightSimpleExpressionNode().accept(this);
-            Type rightType = this.currentType;
+            TypeEnum rightType = this.currentType;
             if (rightType != leftType) {
-                throw new SemanticException(relationalOperatorNode.getToken());
+                throw new SemanticException(relationalOperatorNode.getToken().getLineCount());
             }
             relationalOperatorNode.accept(this);
         }
-        expressionNode.setType(this.currentType);
     }
  
     
@@ -385,18 +352,18 @@ public class AstChecker extends Visitor {
         simpleExpressionNode.getLeftTermNode().accept(this);
         if (signNode != null) {
             if (!this.currentType.isInteger()) {
-                throw new SemanticException(signNode.getToken());
+                throw new SemanticException(signNode.getToken().getLineCount());
             }
         }
         List<AdditiveOperatorNode> additiveOperatorNodes = simpleExpressionNode.getAdditiveOperatorNodes();
         List<TermNode> termNodes = simpleExpressionNode.getTermNodes();
         for (int i = 0; i < additiveOperatorNodes.size(); i++) {
-            Type leftType = this.currentType;
+            TypeEnum leftType = this.currentType;
             termNodes.get(i).accept(this);
-            Type rightType = this.currentType;
+            TypeEnum rightType = this.currentType;
             additiveOperatorNodes.get(i).accept(this);
             if (leftType != this.currentType || rightType != this.currentType) {
-                throw new SemanticException(additiveOperatorNodes.get(i).getToken());
+                throw new SemanticException(additiveOperatorNodes.get(i).getToken().getLineCount());
             }
         }
     }
@@ -407,12 +374,12 @@ public class AstChecker extends Visitor {
         List<MultiplicativeOperatorNode> multiplicativeOperatorNodes = termNode.getMultiplicativeOperatorNodes();
         List<FactorNode> factorNodes = termNode.getFactorNodes();
         for (int i = 0; i < multiplicativeOperatorNodes.size(); i++) {
-            Type leftType = this.currentType;
+            TypeEnum leftType = this.currentType;
             factorNodes.get(i).accept(this);
-            Type rightType = this.currentType;
+            TypeEnum rightType = this.currentType;
             multiplicativeOperatorNodes.get(i).accept(this);
             if (leftType != this.currentType || rightType != this.currentType) {
-                throw new SemanticException(multiplicativeOperatorNodes.get(i).getToken());
+                throw new SemanticException(multiplicativeOperatorNodes.get(i).getToken().getLineCount());
             }
         }
     }
@@ -432,23 +399,23 @@ public class AstChecker extends Visitor {
         } else {
             factorNode2.accept(this);
             if (!this.currentType.isBoolean()) {
-                throw new SemanticException(factorNode.getToken());
+                throw new SemanticException(factorNode.getToken().getLineCount());
             }
         }
     }
  
 	
 	public void visit(RelationalOperatorNode relationalOperatorNode) throws SemanticException {
-        this.currentType = Type.BOOLEAN;
+        this.currentType = TypeEnum.BOOLEAN;
 	}
  
 	
 	public void visit(AdditiveOperatorNode additiveOperatorNode) throws SemanticException {
         Token dditiveOperator = additiveOperatorNode.getToken();
         if (dditiveOperator.getTokenName().equals("SPLUS") || dditiveOperator.getTokenName().equals("SMINUS")) {
-            this.currentType = Type.INTEGER;
+            this.currentType = TypeEnum.INTEGER;
         } else {
-            this.currentType = Type.BOOLEAN;
+            this.currentType = TypeEnum.BOOLEAN;
         }
 	}
  
@@ -456,48 +423,39 @@ public class AstChecker extends Visitor {
 	public void visit(MultiplicativeOperatorNode multiplicativeOperatorNode) throws SemanticException {
         Token multiplicativeOperator = multiplicativeOperatorNode.getToken();
         if (multiplicativeOperator.getTokenName().equals("SAND")) {
-            this.currentType = Type.BOOLEAN;
+            this.currentType = TypeEnum.BOOLEAN;
         } else {
-            this.currentType = Type.INTEGER;
+            this.currentType = TypeEnum.INTEGER;
         }
 	}
  
     
-    public void visit(InputOutputStatementNode inputOutputStatementNode) throws SemanticException {
-        this.variableTypes.clear();
-        for (VariableNode variableNode : inputOutputStatementNode.getVariableNodes()) {
+    public void visit(ReadlnNode readlnNode) throws SemanticException {
+        for (VariableNode variableNode : readlnNode.getVariableNodes()) {
             variableNode.accept(this);
             if (currentType.isArgument()) {
-                throw new SemanticException(inputOutputStatementNode.getToken());
+                throw new SemanticException(readlnNode.getLine());
             }
         }
-        for (ExpressionNode expressionNode : inputOutputStatementNode.getExpressionNodes()) {
+    }
+
+    public void visit(WritelnNode writelnNode) throws SemanticException {
+        for (ExpressionNode expressionNode : writelnNode.getExpressionNodes()) {
             expressionNode.accept(this);
             if (currentType.isArgument()) {
-                throw new SemanticException(inputOutputStatementNode.getToken());
+                throw new SemanticException(writelnNode.getLine());
             }
         }
     }
- 
-    
-    public void visit(VariableSequenceNode variableSequenceNode) throws SemanticException {
-        List<VariableNode> variableNodes = variableSequenceNode.getVariableNodes();
-        for (VariableNode variableNode : variableNodes) {
-            variableNode.accept(this);
-            this.variableTypes.add(this.currentType);
-        }
-    }
- 
 	
 	public void visit(ConstantNode constantNode) throws SemanticException {
         Token constant = constantNode.getToken();
         if (constant.getTokenName().equals("SCONSTANT")) {
-            this.currentType = Type.INTEGER;
+            this.currentType = TypeEnum.INTEGER;
         } else if (constant.getTokenName().equals("SSTRING")) {
-            constantNode.setLabel("CHAR" + this.charCount++);
-            this.currentType = Type.CHAR;
+            this.currentType = TypeEnum.CHAR;
         } else {
-            this.currentType = Type.BOOLEAN;
+            this.currentType = TypeEnum.BOOLEAN;
         }   
 	}
 }

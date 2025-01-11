@@ -2,7 +2,6 @@ package enshud.s4.compiler;
 
 public abstract class Visitor {
     public abstract void visit(ProgramNode programNode) throws SemanticException;
-    public abstract void visit(ProgramNameNode programNameNode) throws SemanticException;
     public abstract void visit(BlockNode blockNode) throws SemanticException;
     public abstract void visit(VariableDeclarationNode variableDeclarationNode) throws SemanticException;
     public abstract void visit(VariableDeclarationSequenceNode variableDeclarationSequenceNode) throws SemanticException;
@@ -24,10 +23,10 @@ public abstract class Visitor {
     public abstract void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException;
     public abstract void visit(FormalParameterNameNode formalParameterNameNode) throws SemanticException;
     public abstract void visit(CompoundStatementNode compoundStatementNode) throws SemanticException;
-    public abstract void visit(StatementSequenceNode statementSequenceNode) throws SemanticException;
     public abstract void visit(StatementNode statementNode) throws SemanticException;
-    public abstract void visit(BasicStatementNode basicStatementNode) throws SemanticException;
     public abstract void visit(AssignmentStatementNode assignmentStatementNode) throws SemanticException;
+    public abstract void visit(IfNode ifNode) throws SemanticException;
+    public abstract void visit(WhileNode whileNode) throws SemanticException;
     public abstract void visit(LeftHandSideNode leftHandSideNode) throws SemanticException;
     public abstract void visit(VariableNode variableNode) throws SemanticException;
     public abstract void visit(PureVariableNode pureVariableNode) throws SemanticException;
@@ -42,7 +41,7 @@ public abstract class Visitor {
     public abstract void visit(RelationalOperatorNode relationalOperatorNode) throws SemanticException;
     public abstract void visit(AdditiveOperatorNode additiveOperatorNode) throws SemanticException;
     public abstract void visit(MultiplicativeOperatorNode multiplicativeOperatorNode) throws SemanticException;
-    public abstract void visit(InputOutputStatementNode inputOutputStatementNode) throws SemanticException;
-    public abstract void visit(VariableSequenceNode variableSequenceNode) throws SemanticException;
+    public abstract void visit(ReadlnNode readlnNode) throws SemanticException;
+    public abstract void visit(WritelnNode writelnNode) throws SemanticException;
     public abstract void visit(ConstantNode constantNode) throws SemanticException;
 }

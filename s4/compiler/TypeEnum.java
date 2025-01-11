@@ -1,6 +1,6 @@
 package enshud.s4.compiler;
 
-public enum Type {
+public enum TypeEnum {
 	INTEGER,
     CHAR,
     BOOLEAN,
@@ -14,10 +14,6 @@ public enum Type {
 
     public boolean isInteger() {
         return this == INTEGER;
-    }
-
-    public boolean isChar() {
-        return this == CHAR;
     }
 
     public boolean isArray() {

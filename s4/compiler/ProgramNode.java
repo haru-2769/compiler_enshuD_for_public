@@ -1,20 +1,19 @@
 package enshud.s4.compiler;
 
 public class ProgramNode extends AstNode {
-    private ProgramNameNode programNameNode;
+    private Token programName;
     private BlockNode blockNode;
     private CompoundStatementNode compoundStatementNode;
 
     public ProgramNode() throws SyntaxException {
-        this.programNameNode = null;
+        this.programName = null;
         this.blockNode = null;
         this.compoundStatementNode = null;
     }
 
     public void parse(Context context) throws SyntaxException {
     	context.checkTerminalSymbol("SPROGRAM");
-        this.programNameNode = new ProgramNameNode();
-        this.programNameNode.parse(context);
+        this.programName = context.checkTerminalSymbol("SIDENTIFIER");
     	context.checkTerminalSymbol("SSEMICOLON");
         this.blockNode = new BlockNode();
         this.blockNode.parse(context);
@@ -26,8 +25,8 @@ public class ProgramNode extends AstNode {
         }
     };
 
-    public ProgramNameNode getProgramNameNode() {
-        return this.programNameNode;
+    public Token getProgramName() {
+        return this.programName;
     }
 
     public BlockNode getBlockNode() {

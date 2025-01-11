@@ -1,19 +1,17 @@
 package enshud.s4.compiler;
 
 public class VariableInfo {
-    private Type type;
+    private TypeEnum type;
     private Integer indexMin;
     private Integer indexMax;
-    private int address;
 
-    public VariableInfo(Type type, Integer indexMin, Integer indexMax, int address) {
+    public VariableInfo(TypeEnum type, Integer indexMin, Integer indexMax) {
         this.type = type;
         this.indexMin = indexMin;
         this.indexMax = indexMax;
-        this.address = address;
     }
 
-    public Type getType() {
+    public TypeEnum getType() {
         return this.type;
     }
 
@@ -23,9 +21,5 @@ public class VariableInfo {
 
     public Integer getIndexMax() {
         return this.indexMax;
-    }
-
-    public int getAddress() {
-        return this.address;
     }
 }

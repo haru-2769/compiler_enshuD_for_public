@@ -3,7 +3,6 @@ package enshud.s4.compiler;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,19 +47,17 @@ public class Compiler {
 			}
 			ProgramNode programNode = new ProgramNode();
 			programNode.parse(new Context(tokenList));
-			programNode.accept(new AstChecker());
-			// programNode.accept(new AstPrinter());
-			AstCompiler astCompiler;
-			programNode.accept((astCompiler = new AstCompiler()));
-			Files.write(Paths.get(outputFileName), astCompiler.getCaslCode());
-			Files.write(Paths.get(outputFileName), Files.readAllLines(Paths.get("data/cas/lib.cas")), StandardOpenOption.APPEND);
+			AstChecker astChecker = new AstChecker();
+			astChecker.start(programNode);
+			// AstCompiler astCompiler = new AstCompiler();
+			// astCompiler.start(programNode);
+			// Files.write(Paths.get(outputFileName), astCompiler.getCaslCode());
+			// Files.write(Paths.get(outputFileName), Files.readAllLines(Paths.get("data/cas/lib.cas")), StandardOpenOption.APPEND);
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {
-//			ex.printStackTrace();
 			return ex.getMessage();
 		} catch (final SemanticException ex) {
-//			ex.printStackTrace();
 			return ex.getMessage();
 		}
 		return "OK";
