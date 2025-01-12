@@ -3,7 +3,6 @@ package enshud.s4.compiler;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class Compiler {
 	 */
 	public static void main(final String[] args) {
 		// Compilerを実行してcasを生成する
-		System.out.println(new Compiler().run("data/ts/normal20.ts", "tmp/out.cas"));
+		System.out.println(new Compiler().run("data/ts/normal03.ts", "tmp/out.cas"));
 
 		// 上記casを，CASLアセンブラ & COMETシミュレータで実行する
 		CaslSimulator.run("tmp/out.cas", "tmp/out.ans");
@@ -53,7 +52,7 @@ public class Compiler {
 			AstCompiler astCompiler = new AstCompiler();
 			astCompiler.start(programNode);
 			Files.write(Paths.get(outputFileName), astCompiler.getCaslCode());
-			Files.write(Paths.get(outputFileName), Files.readAllLines(Paths.get("data/cas/lib.cas")), StandardOpenOption.APPEND);
+			CaslSimulator.appendLibcas(outputFileName);
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {

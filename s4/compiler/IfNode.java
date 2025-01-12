@@ -5,8 +5,9 @@ import java.util.List;
 
 
 public class IfNode extends StmtNode {
-	ExpressionNode expressionNode;
-	List<CompoundStatementNode> compoundStatementNodes;
+	private int labelCount;
+	private ExpressionNode expressionNode;
+	private List<CompoundStatementNode> compoundStatementNodes;
 
 	public IfNode() {
 		this.expressionNode = null;
@@ -15,7 +16,8 @@ public class IfNode extends StmtNode {
 
 	@Override
 	public void parse(Context context) throws SyntaxException {
-		this.setLine(context.checkTerminalSymbol("SIF").getLineCount());
+		this.setLine(context.getLineCount());
+		context.checkTerminalSymbol("SIF");
         this.expressionNode = new ExpressionNode();
         this.expressionNode.parse(context);
         context.checkTerminalSymbol("STHEN");
@@ -33,6 +35,14 @@ public class IfNode extends StmtNode {
 	@Override
 	public void accept(Visitor visitor) throws SemanticException {
 		visitor.visit(this);
+	}
+
+	public void setLabelCount(int labelCount) {
+		this.labelCount = labelCount;
+	}
+
+	public int getLabelCount() {
+		return this.labelCount;
 	}
 
 	public ExpressionNode getExpressionNode() {

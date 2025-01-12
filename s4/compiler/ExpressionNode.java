@@ -1,6 +1,6 @@
 package enshud.s4.compiler;
 
-public class ExpressionNode extends AstNode {
+public class ExpressionNode extends ExprNode {
     private SimpleExpressionNode leftSimpleExpressionNode;
     private RelationalOperatorNode relationalOperatorNode;
     private SimpleExpressionNode rightSimpleExpressionNode;
@@ -12,6 +12,7 @@ public class ExpressionNode extends AstNode {
     }
 
     public void parse(Context context) throws SyntaxException {
+        this.setLine(context.getLineCount());
         this.leftSimpleExpressionNode = new SimpleExpressionNode();
         this.leftSimpleExpressionNode.parse(context);
         if (context.equalsAny(0, "SEQUAL", "SNOTEQUAL", "SLESS", "SLESSEQUAL", "SGREAT", "SGREATEQUAL")) {

@@ -1,12 +1,14 @@
 package enshud.s4.compiler;
 
 public class WhileNode extends StmtNode {
-	ExpressionNode expressionNode;
-	CompoundStatementNode compoundStatementNode;
+	private int labelCount;
+	private ExpressionNode expressionNode;
+	private CompoundStatementNode compoundStatementNode;
 
 	@Override
 	public void parse(Context context) throws SyntaxException {
-		setLine(context.checkTerminalSymbol("SWHILE").getLineCount());
+		this.setLine(context.getLineCount());
+		context.checkTerminalSymbol("SWHILE");
         this.expressionNode = new ExpressionNode();
         this.expressionNode.parse(context);
         context.checkTerminalSymbol("SDO");
@@ -19,6 +21,14 @@ public class WhileNode extends StmtNode {
 		visitor.visit(this);
 	}
 
+	public void setLabelCount(int labelCount) {
+		this.labelCount = labelCount;
+	}
+
+	public int getLabelCount() {
+		return this.labelCount;
+	}
+
 	public ExpressionNode getExpressionNode() {
 		return this.expressionNode;
 	}
@@ -26,5 +36,4 @@ public class WhileNode extends StmtNode {
 	public CompoundStatementNode getCompoundStatementNode() {
 		return this.compoundStatementNode;
 	}
-
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Stack;
  
 public class AstChecker extends Visitor {
+    private int charCount;
+    private int ifWhileCount;
     private TypeEnum currentType;
     private int currentValue;
     private String currentSubProgramName;
@@ -17,6 +19,8 @@ public class AstChecker extends Visitor {
     private Stack<HashMap<String, Variable>> variableList;
     
     public AstChecker() {
+        this.charCount = 0;
+        this.ifWhileCount = 0;
         this.currentType = null;
         this.minValue = 0;
         this.maxValue = 0;
@@ -34,8 +38,8 @@ public class AstChecker extends Visitor {
         this.variableList.push(new HashMap<>());
         programNode.getBlockNode().accept(this);
         programNode.getCompoundStatementNode().accept(this);
-        programNode.setVariableList(new ArrayList<>(this.variableList.pop().values()));
-        programNode.setSubProgramList(new ArrayList<>(this.subProgramList.values()));
+        programNode.setVariableList(this.variableList.pop());
+        programNode.setSubProgramList(this.subProgramList);
 
         // for (Variable variable : programNode.getVariableList()) {
         //     System.out.println(variable.getName() + " " + variable.getType() + " " + variable.getAddress() + " " + variable.getSize() + " " + variable.getOffset());
@@ -230,6 +234,7 @@ public class AstChecker extends Visitor {
     }
 
     public void visit(IfNode ifNode) throws SemanticException {
+        ifNode.setLabelCount(this.ifWhileCount++);
         ifNode.getExpressionNode().accept(this);
         if (!this.currentType.isBoolean()) {
             throw new SemanticException(ifNode.getLine());
@@ -240,6 +245,7 @@ public class AstChecker extends Visitor {
     }
 
     public void visit(WhileNode whileNode) throws SemanticException {
+        whileNode.setLabelCount(this.ifWhileCount++);
         whileNode.getExpressionNode().accept(this);
         if (!this.currentType.isBoolean()) {
             throw new SemanticException(whileNode.getLine());
@@ -268,13 +274,7 @@ public class AstChecker extends Visitor {
  
     
     public void visit(VariableNode variableNode) throws SemanticException {
-        PureVariableNode pureVariableNode = variableNode.getPureVariableNode();
-        IndexedVariableNode indexedVariableNode = variableNode.getIndexedVariableNode();
-        if (pureVariableNode != null) {
-            pureVariableNode.accept(this);
-        } else {
-            indexedVariableNode.accept(this);
-        }
+        variableNode.getVariableNode().accept(this);
     }
  
     
@@ -350,6 +350,7 @@ public class AstChecker extends Visitor {
             }
             relationalOperatorNode.accept(this);
         }
+        expressionNode.setType(this.currentType);
     }
  
     
@@ -372,6 +373,7 @@ public class AstChecker extends Visitor {
                 throw new SemanticException(additiveOperatorNodes.get(i).getToken().getLineCount());
             }
         }
+        simpleExpressionNode.setType(this.currentType);
     }
  
     
@@ -388,6 +390,7 @@ public class AstChecker extends Visitor {
                 throw new SemanticException(multiplicativeOperatorNodes.get(i).getToken().getLineCount());
             }
         }
+        termNode.setType(this.currentType);
     }
  
     
@@ -408,6 +411,7 @@ public class AstChecker extends Visitor {
                 throw new SemanticException(factorNode.getToken().getLineCount());
             }
         }
+        factorNode.setType(this.currentType);
     }
  
 	
@@ -459,6 +463,7 @@ public class AstChecker extends Visitor {
         if (constant.getTokenName().equals("SCONSTANT")) {
             this.currentType = TypeEnum.INTEGER;
         } else if (constant.getTokenName().equals("SSTRING")) {
+            constantNode.setLabel("CHAR" + this.charCount++);
             this.currentType = TypeEnum.CHAR;
         } else {
             this.currentType = TypeEnum.BOOLEAN;

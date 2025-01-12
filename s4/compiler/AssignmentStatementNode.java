@@ -10,9 +10,10 @@ public class AssignmentStatementNode extends StmtNode {
     }
 
     public void parse(Context context) throws SyntaxException {
+        this.setLine(context.getLineCount());
         this.leftHandSideNode = new LeftHandSideNode();
         this.leftHandSideNode.parse(context);
-        this.setLine(context.checkTerminalSymbol("SASSIGN").getLineCount());
+        context.checkTerminalSymbol("SASSIGN");
         this.expressionNode = new ExpressionNode();
         this.expressionNode.parse(context);
     }

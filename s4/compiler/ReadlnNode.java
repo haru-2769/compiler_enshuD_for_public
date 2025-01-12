@@ -12,7 +12,8 @@ public class ReadlnNode extends StmtNode {
 
 	@Override
 	public void parse(Context context) throws SyntaxException {	
-		this.setLine(context.checkTerminalSymbol("SREADLN").getLineCount());
+		this.setLine(context.getLineCount());
+		context.checkTerminalSymbol("SREADLN");
 		if (context.equalsAny(0, "SLPAREN")) {
 			VariableNode variableNode;
 			context.checkTerminalSymbol("SLPAREN");

@@ -3,7 +3,7 @@ package enshud.s4.compiler;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TermNode extends AstNode {
+public class TermNode extends ExprNode {
     private FactorNode leftFactorNode;
     private MultiplicativeOperatorNode multiplicativeOperatorNode;
     private FactorNode FactorNode;
@@ -19,6 +19,7 @@ public class TermNode extends AstNode {
     }
 
     public void parse(Context context) throws SyntaxException {
+        this.setLine(context.getLineCount());
         this.leftFactorNode = new FactorNode();
         this.leftFactorNode.parse(context);
         while (context.equalsAny(0, "SSTAR", "SDIVD", "SMOD", "SAND")) {

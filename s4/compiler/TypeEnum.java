@@ -8,12 +8,16 @@ public enum TypeEnum {
     ARRAY_OF_CHAR,
     ARRAY_OF_BOOLEAN;
 
-    public boolean isBoolean() {
-        return this == BOOLEAN;
-    }
-
     public boolean isInteger() {
         return this == INTEGER;
+    }
+
+    public boolean isChar() {
+        return this == CHAR;
+    }
+    
+    public boolean isBoolean() {
+        return this == BOOLEAN;
     }
 
     public boolean isArray() {

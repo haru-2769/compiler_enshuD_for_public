@@ -1,6 +1,6 @@
 package enshud.s4.compiler;
 
-public class FactorNode extends AstNode{
+public class FactorNode extends ExprNode{
     private VariableNode variableNode;
     private ConstantNode constantNode;
     private ExpressionNode expressionNode;
@@ -16,6 +16,7 @@ public class FactorNode extends AstNode{
     }
 
     public void parse(Context context) throws SyntaxException {
+        this.setLine(context.getLineCount());
         if (context.equalsAny(0, "SIDENTIFIER")) {
             this.variableNode = new VariableNode();
             this.variableNode.parse(context);

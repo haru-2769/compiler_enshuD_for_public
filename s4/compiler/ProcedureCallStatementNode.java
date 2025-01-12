@@ -13,9 +13,9 @@ public class ProcedureCallStatementNode extends StmtNode {
     }
 
     public void parse(Context context) throws SyntaxException {
+        this.setLine(context.getLineCount());
         this.procedureNameNode = new ProcedureNameNode();
         this.procedureNameNode.parse(context);
-        this.setLine(this.procedureNameNode.getToken().getLineCount());
         if (context.equalsAny(0, "SLPAREN")) {
             ExpressionNode expressionNode;
             context.checkTerminalSymbol("SLPAREN");

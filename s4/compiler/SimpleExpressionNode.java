@@ -3,7 +3,7 @@ package enshud.s4.compiler;
 import java.util.List;
 import java.util.ArrayList;
 
-public class SimpleExpressionNode extends AstNode {
+public class SimpleExpressionNode extends ExprNode {
     private SignNode signNode;
     private TermNode leftTermNode;
     private AdditiveOperatorNode additiveOperatorNode;
@@ -21,6 +21,7 @@ public class SimpleExpressionNode extends AstNode {
     }
 
     public void parse(Context context) throws SyntaxException {
+        this.setLine(context.getLineCount());
         if (context.equalsAny(0, "SPLUS", "SMINUS")) {
             this.signNode = new SignNode();
             this.signNode.parse(context);

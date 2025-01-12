@@ -2,6 +2,7 @@ package enshud.s4.compiler;
 
 public class ConstantNode extends ExprNode {
     private Token token;
+    private String label;
     
     public ConstantNode() throws SyntaxException {
         this.token = null;
@@ -9,8 +10,8 @@ public class ConstantNode extends ExprNode {
     
     @Override
     public void parse(Context context) throws SyntaxException {
+        this.setLine(context.getLineCount());
         this.token = context.checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE");
-        this.setLine(this.token.getLineCount());
         if (this.token.getTokenName().equals("SCONSTANT")) {
             this.setType(TypeEnum.INTEGER);
         } else if (this.token.getTokenName().equals("SSTRING")) {
@@ -27,5 +28,13 @@ public class ConstantNode extends ExprNode {
 
     public Token getToken() {
         return this.token;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

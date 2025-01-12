@@ -1,13 +1,13 @@
 package enshud.s4.compiler;
 
-import java.util.List;
+import java.util.HashMap;
 
 public class ProgramNode extends AstNode {
     private Token programName;
     private BlockNode blockNode;
     private CompoundStatementNode compoundStatementNode;
-    private List<Variable> variableList;
-    private List<SubProgram> subProgramList;
+    private HashMap<String, Variable> variableList;
+    private HashMap<String, SubProgram> subProgramList;
 
     public ProgramNode() throws SyntaxException {
         this.programName = null;
@@ -41,19 +41,19 @@ public class ProgramNode extends AstNode {
         return this.compoundStatementNode;
     }
 
-    public List<Variable> getVariableList() {
+    public HashMap<String, Variable> getVariableList() {
         return this.variableList;
     }
 
-    public List<SubProgram> getSubProgramList() {
+    public HashMap<String, SubProgram> getSubProgramList() {
         return this.subProgramList;
     }
 
-    public void setVariableList(List<Variable> variables) {
+    public void setVariableList(HashMap<String, Variable> variables) {
         this.variableList = variables;
     }
 
-    public void setSubProgramList(List<SubProgram> subPrograms) {
+    public void setSubProgramList(HashMap<String, SubProgram> subPrograms) {
         this.subProgramList = subPrograms;
     }
     

@@ -1,30 +1,24 @@
 package enshud.s4.compiler;
 
 public class VariableNode extends AstNode {
-    private IndexedVariableNode indexedVariableNode;
-    private PureVariableNode pureVariableNode;
+    private AstNode variableNode;
 
     public VariableNode() throws SyntaxException {
-        this.indexedVariableNode = null;
-        this.pureVariableNode = null;
+        this.variableNode = null;
     }
 
     public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(1, "SLBRACKET")) {
-            this.indexedVariableNode = new IndexedVariableNode();
-            this.indexedVariableNode.parse(context);
+            this.variableNode = new IndexedVariableNode();
+            this.variableNode.parse(context);
         } else {
-            this.pureVariableNode = new PureVariableNode();
-            this.pureVariableNode.parse(context);
+            this.variableNode = new PureVariableNode();
+            this.variableNode.parse(context);
         }
     }
 
-    public IndexedVariableNode getIndexedVariableNode() {
-        return this.indexedVariableNode;
-    }
-
-    public PureVariableNode getPureVariableNode() {
-        return this.pureVariableNode;
+    public AstNode getVariableNode() {
+        return this.variableNode;
     }
 
     public void accept(Visitor visitor) throws SemanticException {

@@ -12,7 +12,8 @@ public class WritelnNode extends StmtNode {
 
     @Override
     public void parse(Context context) throws SyntaxException {
-        setLine(context.checkTerminalSymbol("SWRITELN").getLineCount());
+        this.setLine(context.getLineCount());
+        context.checkTerminalSymbol("SWRITELN");
         if (context.equalsAny(0, "SLPAREN")) {
             ExpressionNode  expressionNode;
             context.checkTerminalSymbol("SLPAREN");
