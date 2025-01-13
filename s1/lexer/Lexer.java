@@ -13,7 +13,7 @@ public class Lexer {
 	 */
 	public static void main(final String[] args) {
 		// normalの確認
-		System.out.println(new Lexer().run("data/tmp/test.pas", "tmp/test.ts"));
+		System.out.println(new Lexer().run("tmp/test.pas", "tmp/test.ts"));
 	}
 
 	/**

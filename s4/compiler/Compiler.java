@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import enshud.casl.CaslSimulator;
+import enshud.s1.lexer.Lexer;
 
 public class Compiler {
 	
@@ -16,10 +17,11 @@ public class Compiler {
 	 */
 	public static void main(final String[] args) {
 		// Compilerを実行してcasを生成する
-		System.out.println(new Compiler().run("data/ts/normal03.ts", "tmp/out.cas"));
+		System.out.println(new Lexer().run("tmp/test.pas", "tmp/test.ts"));
+		System.out.println(new Compiler().run("data/ts/normal01.ts", "lib/out.cas"));
 
 		// 上記casを，CASLアセンブラ & COMETシミュレータで実行する
-		CaslSimulator.run("tmp/out.cas", "tmp/out.ans");
+//		CaslSimulator.run("tmp/out.cas", "tmp/out.ans");
 	}
 
 	/**

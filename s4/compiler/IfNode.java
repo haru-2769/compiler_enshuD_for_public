@@ -5,7 +5,6 @@ import java.util.List;
 
 
 public class IfNode extends StmtNode {
-	private int labelCount;
 	private ExpressionNode expressionNode;
 	private List<CompoundStatementNode> compoundStatementNodes;
 
@@ -35,14 +34,6 @@ public class IfNode extends StmtNode {
 	@Override
 	public void accept(Visitor visitor) throws SemanticException {
 		visitor.visit(this);
-	}
-
-	public void setLabelCount(int labelCount) {
-		this.labelCount = labelCount;
-	}
-
-	public int getLabelCount() {
-		return this.labelCount;
 	}
 
 	public ExpressionNode getExpressionNode() {

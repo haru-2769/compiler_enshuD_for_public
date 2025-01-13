@@ -7,7 +7,6 @@ import java.util.Stack;
  
 public class AstChecker extends Visitor {
     private int charCount;
-    private int ifWhileCount;
     private TypeEnum currentType;
     private int currentValue;
     private String currentSubProgramName;
@@ -20,7 +19,6 @@ public class AstChecker extends Visitor {
     
     public AstChecker() {
         this.charCount = 0;
-        this.ifWhileCount = 0;
         this.currentType = null;
         this.minValue = 0;
         this.maxValue = 0;
@@ -234,7 +232,6 @@ public class AstChecker extends Visitor {
     }
 
     public void visit(IfNode ifNode) throws SemanticException {
-        ifNode.setLabelCount(this.ifWhileCount++);
         ifNode.getExpressionNode().accept(this);
         if (!this.currentType.isBoolean()) {
             throw new SemanticException(ifNode.getLine());
@@ -245,7 +242,6 @@ public class AstChecker extends Visitor {
     }
 
     public void visit(WhileNode whileNode) throws SemanticException {
-        whileNode.setLabelCount(this.ifWhileCount++);
         whileNode.getExpressionNode().accept(this);
         if (!this.currentType.isBoolean()) {
             throw new SemanticException(whileNode.getLine());

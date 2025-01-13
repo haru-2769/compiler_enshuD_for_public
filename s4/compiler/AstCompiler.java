@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class AstCompiler extends Visitor {
-	private int currentIfWhileCount;
+	private int ifCount;
+	private int whileCount;
+	private int booleanCount;
 	private int procCount;
 	private int defineStorage;
 	private int currentAdress;
@@ -17,6 +19,9 @@ public class AstCompiler extends Visitor {
 	private List<String> caslCode;
 
     public AstCompiler() {
+		this.ifCount = 0;
+		this.whileCount = 0;
+		this.booleanCount = 0;
 		this.procCount = 0;
         this.defineStorage = 0;
 		this.labelList = new ArrayList<>();
@@ -158,43 +163,33 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(IfNode ifNode) throws SemanticException {
-		int ifCount = ifNode.getLabelCount();
-		this.currentIfWhileCount = ifCount;
+		int count = this.ifCount++;
 		ifNode.getExpressionNode().accept(this);
-		this.caslCode.add("TRUE" + this.currentIfWhileCount + "\tNOP");
-		this.caslCode.add("\tLD\tGR1, =#FFFF");
-		this.caslCode.add("BOTH" + this.currentIfWhileCount + "\tNOP");
-		this.caslCode.add("\tPUSH\t0, GR1");
 		this.caslCode.add("\tPOP\tGR1");
-		this.caslCode.add("\tCPA\tGR1, =#0000");
-		this.caslCode.add("\tJZE\tELSE" + ifCount);
+		this.caslCode.add("\tCPA\tGR1, =#0000"); //TODO
+		this.caslCode.add("\tJZE\tELSE" + count);
 		ifNode.getCompoundStatementNodes().get(0).accept(this);
 		if (ifNode.getCompoundStatementNodes().size() > 1) {
-			this.caslCode.add("\tJUMP\tENDIF" + ifCount);
-			this.caslCode.add("ELSE" + ifCount + "\tNOP");
+			this.caslCode.add("\tJUMP\tENDIF" + count);
+			this.caslCode.add("ELSE" + count + "\tNOP");
 			ifNode.getCompoundStatementNodes().get(1).accept(this);
-			this.caslCode.add("ENDIF" + ifCount + "\tNOP");
+			this.caslCode.add("ENDIF" + count + "\tNOP");
 		} else {
-			this.caslCode.add("ELSE" + ifCount + "\tNOP");
+			this.caslCode.add("ELSE" + count + "\tNOP");
 		}
 	}
 
 	@Override
 	public void visit(WhileNode whileNode) throws SemanticException {
-		int WhileCount = whileNode.getLabelCount();
-		this.currentIfWhileCount = WhileCount;
-		this.caslCode.add("LOOP" + WhileCount +"\tNOP");
+		int count = this.whileCount++;
+		this.caslCode.add("LOOP" + count +"\tNOP");
 		whileNode.getExpressionNode().accept(this);
-		this.caslCode.add("TRUE" + this.currentIfWhileCount + "\tNOP");
-		this.caslCode.add("\tLD\tGR1, =#FFFF");
-		this.caslCode.add("BOTH" + this.currentIfWhileCount + "\tNOP");
-		this.caslCode.add("\tPUSH\t0, GR1");
 		this.caslCode.add("\tPOP\tGR1");
 		this.caslCode.add("\tCPL\tGR1, =#0000");
-		this.caslCode.add("\tJZE\tENDLP" + WhileCount);
+		this.caslCode.add("\tJZE\tENDLP" + count);
 		whileNode.getCompoundStatementNode().accept(this);
-		this.caslCode.add("\tJUMP\tLOOP" + WhileCount);
-		this.caslCode.add("ENDLP" + WhileCount + "\tNOP");
+		this.caslCode.add("\tJUMP\tLOOP" + count);
+		this.caslCode.add("ENDLP" + count + "\tNOP");
 	}
 
 	@Override
@@ -239,7 +234,6 @@ public class AstCompiler extends Visitor {
 	@Override
 	public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
 		this.caslCode.add("\tCALL\tPROC" + this.procCount++);
-		this.caslCode.add("\tRET");
 	}
 
 
@@ -256,7 +250,14 @@ public class AstCompiler extends Visitor {
 				this.caslCode.add("\tCPA\tGR1, GR2");
 			}
             relationalOperatorNode.accept(this);
-        }
+			if (expressionNode.getType().isBoolean()) {
+				int count = this.booleanCount++;		
+				this.caslCode.add("TRUE" + count + "\tNOP");
+				this.caslCode.add("\tLD\tGR1, =#FFFF");
+				this.caslCode.add("BOTH" + count + "\tNOP");
+				this.caslCode.add("\tPUSH\t0, GR1");
+			}
+		}
 	}
  
 	@Override
@@ -308,24 +309,25 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(RelationalOperatorNode relationalOperatorNode) throws SemanticException {
+		int count = this.booleanCount;
 		Token relationalOperator = relationalOperatorNode.getToken();
 		if (relationalOperator.getTokenName().equals("SEQUAL")) {
-			this.caslCode.add("\tJZE\tTRUE" + this.currentIfWhileCount);
+			this.caslCode.add("\tJZE\tTRUE" + count);
 		} else if (relationalOperator.getTokenName().equals("SNOTEQUAL")) {
-			this.caslCode.add("\tJNZ\tTRUE" + this.currentIfWhileCount);
+			this.caslCode.add("\tJNZ\tTRUE" + count);
 		} else if (relationalOperator.getTokenName().equals("SLESS")) {
-			this.caslCode.add("\tJMI\tTRUE" + this.currentIfWhileCount);
+			this.caslCode.add("\tJMI\tTRUE" + count);
 		} else if (relationalOperator.getTokenName().equals("SLESSEQUAL")) {
-			this.caslCode.add("\tJMI\tTRUE" + this.currentIfWhileCount);
-			this.caslCode.add("\tJZE\tTRUE" + this.currentIfWhileCount);
-		} else if (relationalOperator.getTokenName().equals("SGREATER")) {
-			this.caslCode.add("\tJPL\tTRUE" + this.currentIfWhileCount);
+			this.caslCode.add("\tJMI\tTRUE" + count);
+			this.caslCode.add("\tJZE\tTRUE" + count);
+		} else if (relationalOperator.getTokenName().equals("SGREAT")) {
+			this.caslCode.add("\tJPL\tTRUE" + count);
 		} else {
-			this.caslCode.add("\tJPL\tTRUE" + this.currentIfWhileCount);
-			this.caslCode.add("\tJZE\tTRUE" + this.currentIfWhileCount);
+			this.caslCode.add("\tJPL\tTRUE" + count);
+			this.caslCode.add("\tJZE\tTRUE" + count);
 		}
 		this.caslCode.add("\tLD\tGR1, =#0000");
-		this.caslCode.add("\tJUMP\tBOTH" + this.currentIfWhileCount);
+		this.caslCode.add("\tJUMP\tBOTH" + count);
 	}
 
 	@Override
@@ -338,7 +340,7 @@ public class AstCompiler extends Visitor {
 		} else if (additiveOperator.getTokenName().equals("SMINUS")) {
 			this.caslCode.add("\tSUBA\tGR1, GR2");
 		} else {
-			//TODO
+			this.caslCode.add("\tOR\tGR1, GR2");
 		}
 		this.caslCode.add("\tPUSH\t0, GR1");
 	}
@@ -350,12 +352,17 @@ public class AstCompiler extends Visitor {
 		this.caslCode.add("\tPOP\tGR1");
 		if (multiplicativeOperator.getTokenName().equals("SSTAR")) {
 			this.caslCode.add("\tCALL\tMULT");
+			this.caslCode.add("\tPUSH\t0, GR2");
 		} else if (multiplicativeOperator.getTokenName().equals("SDIVD")) {
 			this.caslCode.add("\tCALL\tDIV");
+			this.caslCode.add("\tPUSH\t0, GR2");
+		} else if (multiplicativeOperator.getTokenName().equals("SMOD")) {
+			this.caslCode.add("\tCALL\tDIV");
+			this.caslCode.add("\tPUSH\t0, GR1");
 		} else {
-			//TODO
+			this.caslCode.add("\tAND\tGR1, GR2");
+			this.caslCode.add("\tPUSH\t0, GR1");
 		}
-		this.caslCode.add("\tPUSH\t0, GR2");
 	}
 
 	@Override

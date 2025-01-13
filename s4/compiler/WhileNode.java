@@ -1,7 +1,6 @@
 package enshud.s4.compiler;
 
 public class WhileNode extends StmtNode {
-	private int labelCount;
 	private ExpressionNode expressionNode;
 	private CompoundStatementNode compoundStatementNode;
 
@@ -19,14 +18,6 @@ public class WhileNode extends StmtNode {
 	@Override
 	public void accept(Visitor visitor) throws SemanticException {
 		visitor.visit(this);
-	}
-
-	public void setLabelCount(int labelCount) {
-		this.labelCount = labelCount;
-	}
-
-	public int getLabelCount() {
-		return this.labelCount;
 	}
 
 	public ExpressionNode getExpressionNode() {
