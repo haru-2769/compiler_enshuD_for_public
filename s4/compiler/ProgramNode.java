@@ -50,11 +50,11 @@ public class ProgramNode extends AstNode {
     }
 
     public void setVariableList(HashMap<String, Variable> variables) {
-        this.variableList = variables;
+        this.variableList = new HashMap<>(variables);
     }
 
     public void setSubProgramList(HashMap<String, SubProgram> subPrograms) {
-        this.subProgramList = subPrograms;
+        this.subProgramList = new HashMap<>(subPrograms);
     }
     
     public void accept(Visitor visitor) throws SemanticException {

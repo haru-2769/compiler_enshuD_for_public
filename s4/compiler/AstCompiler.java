@@ -8,11 +8,10 @@ public class AstCompiler extends Visitor {
 	private int ifCount;
 	private int whileCount;
 	private int booleanCount;
-	private int procCount;
 	private int defineStorage;
-	private int currentAdress;
 	private Variable currentVariable;
 	private HashMap<String, Variable> variableList;
+	private HashMap<String, SubProgram> subProgramList;
 	private List<String> labelList;
 	private List<String> defineConstantList;
 	private List<String> caslCode;
@@ -21,7 +20,6 @@ public class AstCompiler extends Visitor {
 		this.ifCount = 0;
 		this.whileCount = 0;
 		this.booleanCount = 0;
-		this.procCount = 0;
         this.defineStorage = 0;
 		this.labelList = new ArrayList<>();
 		this.defineConstantList = new ArrayList<>();
@@ -39,9 +37,10 @@ public class AstCompiler extends Visitor {
 	@Override
 	public void visit(ProgramNode programNode) throws SemanticException {
 		this.variableList = programNode.getVariableList();
-		for (Variable variable : this.variableList.values()) {
-			this.defineStorage += variable.getSize();
-		}
+		this.subProgramList = programNode.getSubProgramList();
+		// for (Variable variable : this.variableList.values()) {
+		// 	this.defineStorage += variable.getSize();
+		// }
 		this.caslCode.add("CASL\tSTART\tBEGIN");
 		this.caslCode.add("BEGIN\tLAD\tGR6,0");
 		this.caslCode.add("\tLAD\tGR7, LIBBUF");
@@ -82,6 +81,10 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(VariableNameSequenceNode variableNameSequenceNode) throws SemanticException {
+		for (VariableNameNode variableNameNode : variableNameSequenceNode.getVariableNameNodes()) {
+			variableNameNode.accept(this);
+			this.defineStorage += this.currentVariable.getSize();
+		}
 	}
 
 	@Override
@@ -124,15 +127,28 @@ public class AstCompiler extends Visitor {
 	}
 
 	@Override
-	public void visit(SubProgramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException {
+	public void visit(SubProgramDeclarationSequenceNode subProgramDeclarationSequenceNode) throws SemanticException {
+		for (SubProgramDeclarationNode subProgramDeclarationNode : subProgramDeclarationSequenceNode.getSubProgramDeclarationNodes()) {
+			subProgramDeclarationNode.accept(this);
+			this.caslCode.add("\tRET");
+		}
 	}
 
 	@Override
-	public void visit(SubProgramDeclarationNode subprogramDeclarationNode) throws SemanticException {
+	public void visit(SubProgramDeclarationNode subProgramDeclarationNode) throws SemanticException {
+		subProgramDeclarationNode.getSubProgramHeadNode().accept(this);
+		subProgramDeclarationNode.getVariableDeclarationNode().accept(this);
+		subProgramDeclarationNode.getCompoundStatementNode().accept(this);
 	}
 
 	@Override
-	public void visit(SubProgramHeadNode subprogramHeadNode) throws SemanticException {
+	public void visit(SubProgramHeadNode subProgramHeadNode) throws SemanticException {
+		String procedureName = subProgramHeadNode.getProcedureNameNode().getToken().getLexical();
+		this.variableList = this.subProgramList.get(procedureName).getVariableList();
+		this.caslCode.add(this.subProgramList.get(procedureName).getLabel() + "\tNOP");
+		this.caslCode.add("\tLD\tGR1, GR8");
+		this.caslCode.add("\tADDA\tGR1, =" + this.subProgramList.get(procedureName).getArgumentList().size());
+		subProgramHeadNode.getFormalParameterNode().accept(this);
 	}
 
 	@Override
@@ -141,18 +157,30 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(FormalParameterNode formalParameterNode) throws SemanticException {
+		FormalParameterSequenceNode formalParameterSequenceNode = formalParameterNode.getFormalParameterSequenceNode();
+		if (formalParameterSequenceNode != null) {
+			formalParameterSequenceNode.accept(this);
+		}
 	}
 
 	@Override
 	public void visit(FormalParameterSequenceNode formalParameterSequenceNode) throws SemanticException {
+		for (FormalParameterNameSequenceNode formalParameterNameSequenceNode : formalParameterSequenceNode.getFormalParameterNameSequenceNodes()) {
+			formalParameterNameSequenceNode.accept(this);
+		}
 	}
 
 	@Override
 	public void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException {
+		for (FormalParameterNameNode formalParameterNameNode : formalParameterNameSequenceNode.getFormalParameterNameNodes()) {
+			formalParameterNameNode.accept(this);
+			this.defineStorage += this.currentVariable.getSize();
+		}
 	}
 
 	@Override
 	public void visit(FormalParameterNameNode formalParameterNameNode) throws SemanticException {
+		this.currentVariable = this.variableList.get(formalParameterNameNode.getToken().getLexical());
 	}
 
 	@Override
@@ -221,8 +249,8 @@ public class AstCompiler extends Visitor {
 	@Override
 	public void visit(PureVariableNode pureVariableNode) throws SemanticException {
 		pureVariableNode.getVariableNameNode().accept(this);
-		this.currentAdress = this.currentVariable.getAddress();
-		this.caslCode.add("\tLAD\tGR2, " + this.currentAdress);
+		int variableAdress = this.currentVariable.getAddress();
+		this.caslCode.add("\tLD\tGR2, =" + variableAdress);
 	}
 
 	@Override
@@ -241,8 +269,11 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
-		this.caslCode.add("\tCALL\tPROC" + this.procCount++);
-		//TODO
+		String procedureName = procedureCallStatementNode.getProcedureNameNode().getToken().getLexical();
+		for (ExpressionNode expressionNode : procedureCallStatementNode.getExpressionNodes()) {
+			expressionNode.accept(this);
+		}
+		this.caslCode.add("\tCALL\t" + this.subProgramList.get(procedureName).getLabel());
 	}
 
 
@@ -405,8 +436,7 @@ public class AstCompiler extends Visitor {
 			this.caslCode.add("\tPUSH\t" + token.getLexical());
 		} else {
 			if (token.getLexical().length() > 3) {
-				this.caslCode.add("\tLD\tGR1, =" + (token.getLexical().length()-2));
-				this.caslCode.add("\tPUSH\t0, GR1");
+				this.caslCode.add("\tPUSH\t" + (token.getLexical().length()-2));
 				this.caslCode.add("\tLAD\tGR2, " + constantNode.getLabel());
 				this.caslCode.add("\tPUSH\t0, GR2");
 				this.labelList.add(constantNode.getLabel());

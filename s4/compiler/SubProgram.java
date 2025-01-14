@@ -1,33 +1,34 @@
 package enshud.s4.compiler;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class SubProgram {
-    private String name;
-    private List<TypeEnum> argumentList;
-    private List<Variable> variableList;
+    private String label;
+    private LinkedHashMap<String, Variable> argumentList;
+    private HashMap<String, Variable> variableList;
 
-    public SubProgram(String name) {
-        this.name = name;
+    public SubProgram(int count) {
+        this.label = "PROC" + count;
     }
     
-    public void setArgumentType(List<TypeEnum> argumentList) {
-    	this.argumentList = argumentList;
+    public void setArgumentList(LinkedHashMap<String, Variable> argumentList) {
+    	this.argumentList = new LinkedHashMap<>(argumentList);
     }
 
-    public void setVariableList(List<Variable> variableList) {
-    	this.variableList = variableList;
+    public void setVariableList(HashMap<String, Variable> variableList) {
+    	this.variableList = new HashMap<>(variableList);
     }
     
-    public String getName() {
-        return this.name;
+    public String getLabel() {
+        return this.label;
     }
 
-    public List<TypeEnum> getArgumentList() {
+    public LinkedHashMap<String, Variable> getArgumentList() {
         return this.argumentList;
     }
 
-    public List<Variable> getVariableList() {
+    public HashMap<String, Variable> getVariableList() {
         return this.variableList;
     }
 }
