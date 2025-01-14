@@ -3,14 +3,16 @@ package enshud.s4.compiler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 public class AstCompiler extends Visitor {
 	private int ifCount;
 	private int whileCount;
 	private int booleanCount;
 	private int defineStorage;
+	private int argumentStorage;
 	private Variable currentVariable;
-	private HashMap<String, Variable> variableList;
+	private Stack<HashMap<String, Variable>> variableLists;
 	private HashMap<String, SubProgram> subProgramList;
 	private List<String> labelList;
 	private List<String> defineConstantList;
@@ -21,6 +23,7 @@ public class AstCompiler extends Visitor {
 		this.whileCount = 0;
 		this.booleanCount = 0;
         this.defineStorage = 0;
+		this.variableLists = new Stack<>();
 		this.labelList = new ArrayList<>();
 		this.defineConstantList = new ArrayList<>();
 		this.caslCode = new ArrayList<>();
@@ -36,7 +39,7 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(ProgramNode programNode) throws SemanticException {
-		this.variableList = programNode.getVariableList();
+		this.variableLists.push(programNode.getVariableList());
 		this.subProgramList = programNode.getSubProgramList();
 		// for (Variable variable : this.variableList.values()) {
 		// 	this.defineStorage += variable.getSize();
@@ -53,6 +56,7 @@ public class AstCompiler extends Visitor {
 		}
 		this.caslCode.add("LIBBUF\tDS\t256");
 		this.caslCode.add("\tEND");
+		this.variableLists.pop();
 	}
 
 	@Override
@@ -89,7 +93,14 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(VariableNameNode variableNameNode) throws SemanticException {
-		this.currentVariable = this.variableList.get(variableNameNode.getToken().getLexical());
+		System.out.println(variableLists.size());
+		for (int i = variableLists.size() - 1; i >= 0; i--) {
+            HashMap<String, Variable> scope = variableLists.get(i);
+            if (scope.containsKey(variableNameNode.getToken().getLexical())) {
+                this.currentVariable = scope.get(variableNameNode.getToken().getLexical());
+                return;
+            }
+        }
 	}
 
 	@Override
@@ -139,12 +150,13 @@ public class AstCompiler extends Visitor {
 		subProgramDeclarationNode.getSubProgramHeadNode().accept(this);
 		subProgramDeclarationNode.getVariableDeclarationNode().accept(this);
 		subProgramDeclarationNode.getCompoundStatementNode().accept(this);
+		this.variableLists.pop();
 	}
 
 	@Override
 	public void visit(SubProgramHeadNode subProgramHeadNode) throws SemanticException {
 		String procedureName = subProgramHeadNode.getProcedureNameNode().getToken().getLexical();
-		this.variableList = this.subProgramList.get(procedureName).getVariableList();
+		this.variableLists.push(this.subProgramList.get(procedureName).getVariableList());
 		this.caslCode.add(this.subProgramList.get(procedureName).getLabel() + "\tNOP");
 		this.caslCode.add("\tLD\tGR1, GR8");
 		this.caslCode.add("\tADDA\tGR1, =" + this.subProgramList.get(procedureName).getArgumentList().size());
@@ -165,22 +177,37 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(FormalParameterSequenceNode formalParameterSequenceNode) throws SemanticException {
+		this.argumentStorage = 0;
 		for (FormalParameterNameSequenceNode formalParameterNameSequenceNode : formalParameterSequenceNode.getFormalParameterNameSequenceNodes()) {
 			formalParameterNameSequenceNode.accept(this);
 		}
+		this.caslCode.add("\tLD\tGR1, 0, GR8");
+		this.caslCode.add("\tADDA\tGR8, =" + this.argumentStorage);
+		this.caslCode.add("\tST\tGR1, 0, GR8");
 	}
 
 	@Override
 	public void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException {
 		for (FormalParameterNameNode formalParameterNameNode : formalParameterNameSequenceNode.getFormalParameterNameNodes()) {
 			formalParameterNameNode.accept(this);
+			this.argumentStorage += this.currentVariable.getSize();
 			this.defineStorage += this.currentVariable.getSize();
+			this.caslCode.add("\tLD\tGR2, 0, GR1");
+			this.caslCode.add("\tLD\tGR3, =" + this.currentVariable.getAddress());
+			this.caslCode.add("\tST\tGR2, VAR, GR3");
+			this.caslCode.add("\tSUBA\tGR1, =1");
 		}
 	}
 
 	@Override
 	public void visit(FormalParameterNameNode formalParameterNameNode) throws SemanticException {
-		this.currentVariable = this.variableList.get(formalParameterNameNode.getToken().getLexical());
+		for (int i = variableLists.size() - 1; i >= 0; i--) {
+            HashMap<String, Variable> scope = variableLists.get(i);
+            if (scope.containsKey(formalParameterNameNode.getToken().getLexical())) {
+                this.currentVariable = scope.get(formalParameterNameNode.getToken().getLexical());
+                return;
+            }
+        }
 	}
 
 	@Override
