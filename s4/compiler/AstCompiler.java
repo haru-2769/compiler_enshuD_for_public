@@ -93,7 +93,6 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(VariableNameNode variableNameNode) throws SemanticException {
-		System.out.println(variableLists.size());
 		for (int i = variableLists.size() - 1; i >= 0; i--) {
             HashMap<String, Variable> scope = variableLists.get(i);
             if (scope.containsKey(variableNameNode.getToken().getLexical())) {
