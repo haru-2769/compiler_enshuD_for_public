@@ -459,8 +459,13 @@ public class AstChecker extends Visitor {
         if (constant.getTokenName().equals("SCONSTANT")) {
             this.currentType = TypeEnum.INTEGER;
         } else if (constant.getTokenName().equals("SSTRING")) {
-            constantNode.setLabel("CHAR" + this.charCount++);
-            this.currentType = TypeEnum.CHAR;
+            if (constant.getLexical().length() > 3) {
+                constantNode.setLabel("CHAR" + this.charCount++);
+                this.currentType = TypeEnum.ARRAY_OF_CHAR;
+            } else {
+                constantNode.setLabel("CHAR" + this.charCount++);
+                this.currentType = TypeEnum.CHAR;
+            }
         } else {
             this.currentType = TypeEnum.BOOLEAN;
         }   
