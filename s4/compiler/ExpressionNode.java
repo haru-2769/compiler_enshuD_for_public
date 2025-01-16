@@ -11,6 +11,7 @@ public class ExpressionNode extends ExprNode {
         this.rightSimpleExpressionNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.setLine(context.getLineCount());
         this.leftSimpleExpressionNode = new SimpleExpressionNode();
@@ -35,8 +36,8 @@ public class ExpressionNode extends ExprNode {
         return this.rightSimpleExpressionNode;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

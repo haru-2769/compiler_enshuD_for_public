@@ -17,7 +17,6 @@ public abstract class Visitor {
     public abstract void visit(SubProgramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException;
     public abstract void visit(SubProgramDeclarationNode subprogramDeclarationNode) throws SemanticException;
     public abstract void visit(SubProgramHeadNode subprogramHeadNode) throws SemanticException;
-    public abstract void visit(ProcedureNameNode procedureNameNode) throws SemanticException;
     public abstract void visit(FormalParameterNode formalParameterNode) throws SemanticException;
     public abstract void visit(FormalParameterSequenceNode formalParameterSequenceNode) throws SemanticException;
     public abstract void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException;

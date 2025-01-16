@@ -11,6 +11,7 @@ public class ArrayTypeNode extends AstNode {
         this.standardTypeNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         context.checkTerminalSymbol("SARRAY");
         context.checkTerminalSymbol("SLBRACKET");
@@ -37,6 +38,7 @@ public class ArrayTypeNode extends AstNode {
         return this.standardTypeNode;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

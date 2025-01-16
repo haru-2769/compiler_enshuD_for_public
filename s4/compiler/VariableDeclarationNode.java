@@ -7,6 +7,7 @@ public class VariableDeclarationNode extends AstNode {
         this.variableDeclarationSequenceNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
     	if (context.equalsAny(0, "SVAR")) {
     		context.checkTerminalSymbol("SVAR");
@@ -20,6 +21,7 @@ public class VariableDeclarationNode extends AstNode {
         return this.variableDeclarationSequenceNode;
     }
 
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

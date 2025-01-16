@@ -8,6 +8,7 @@ public class VariableNode extends ExprNode {
         this.variableNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(1, "SLBRACKET")) {
             this.variableNode = new IndexedVariableNode();
@@ -30,6 +31,7 @@ public class VariableNode extends ExprNode {
         return this.variableNode;
     }
 
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

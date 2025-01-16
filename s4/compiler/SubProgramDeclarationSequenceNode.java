@@ -4,19 +4,19 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class SubProgramDeclarationSequenceNode extends AstNode {
-    private SubProgramDeclarationNode subProgramDeclarationNode;
     private List<SubProgramDeclarationNode> subProgramDeclarationNodes;
 
     public SubProgramDeclarationSequenceNode() throws SyntaxException {
-        this.subProgramDeclarationNode = null;
         this.subProgramDeclarationNodes = new ArrayList<>();
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
+        SubProgramDeclarationNode subProgramDeclarationNode;
         while (context.equalsAny(0, "SPROCEDURE")) {
-            this.subProgramDeclarationNode = new SubProgramDeclarationNode();
-            this.subProgramDeclarationNodes.add(this.subProgramDeclarationNode);
-            this.subProgramDeclarationNode.parse(context);
+            subProgramDeclarationNode = new SubProgramDeclarationNode();
+            this.subProgramDeclarationNodes.add(subProgramDeclarationNode);
+            subProgramDeclarationNode.parse(context);
             context.checkTerminalSymbol("SSEMICOLON");
         }
     }
@@ -25,8 +25,8 @@ public class SubProgramDeclarationSequenceNode extends AstNode {
         return this.subProgramDeclarationNodes;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

@@ -4,35 +4,32 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class FormalParameterSequenceNode extends AstNode{
-    FormalParameterNameSequenceNode formalParameterNameSequenceNode;
-    StandardTypeNode standardTypeNode;
     private List<FormalParameterNameSequenceNode> formalParameterNameSequenceNodes;
     private List<StandardTypeNode> standardTypeNodes;
 
     public FormalParameterSequenceNode() throws SyntaxException {
-        this.formalParameterNameSequenceNode = null;
-        this.standardTypeNode = null;
         this.formalParameterNameSequenceNodes = new ArrayList<>();
         this.standardTypeNodes = new ArrayList<>();
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
-        this.formalParameterNameSequenceNode = new FormalParameterNameSequenceNode();
-        this.formalParameterNameSequenceNodes.add(this.formalParameterNameSequenceNode);
-        this.formalParameterNameSequenceNode.parse(context);
+        FormalParameterNameSequenceNode formalParameterNameSequenceNode = new FormalParameterNameSequenceNode();
+        this.formalParameterNameSequenceNodes.add(formalParameterNameSequenceNode);
+        formalParameterNameSequenceNode.parse(context);
         context.checkTerminalSymbol("SCOLON");
-        this.standardTypeNode = new StandardTypeNode();
-        this.standardTypeNodes.add(this.standardTypeNode);
-        this.standardTypeNode.parse(context);
+        StandardTypeNode standardTypeNode = new StandardTypeNode();
+        this.standardTypeNodes.add(standardTypeNode);
+        standardTypeNode.parse(context);
         while (context.equalsAny(0, "SSEMICOLON")) {
             context.checkTerminalSymbol("SSEMICOLON");
-            this.formalParameterNameSequenceNode = new FormalParameterNameSequenceNode();
-            this.formalParameterNameSequenceNodes.add(this.formalParameterNameSequenceNode);
-            this.formalParameterNameSequenceNode.parse(context);
+            formalParameterNameSequenceNode = new FormalParameterNameSequenceNode();
+            this.formalParameterNameSequenceNodes.add(formalParameterNameSequenceNode);
+            formalParameterNameSequenceNode.parse(context);
             context.checkTerminalSymbol("SCOLON");
-            this.standardTypeNode = new StandardTypeNode();
-            this.standardTypeNodes.add(this.standardTypeNode);
-            this.standardTypeNode.parse(context);
+            standardTypeNode = new StandardTypeNode();
+            this.standardTypeNodes.add(standardTypeNode);
+            standardTypeNode.parse(context);
         }
     }
 
@@ -44,6 +41,7 @@ public class FormalParameterSequenceNode extends AstNode{
         return this.standardTypeNodes;
     }
 
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

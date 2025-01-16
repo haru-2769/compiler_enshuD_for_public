@@ -4,27 +4,26 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class VariableDeclarationSequenceNode extends AstNode {
-    private VariableNameSequenceNode variableNameSequenceNode;
-    private TypeNode typeNode;
     private List<VariableNameSequenceNode> variableNameSequenceNodes;
     private List<TypeNode> typeNodes;
 
     public VariableDeclarationSequenceNode() throws SyntaxException {
-        this.variableNameSequenceNode = null;
-        this.typeNode = null;
         this.variableNameSequenceNodes = new ArrayList<>();
         this.typeNodes = new ArrayList<>();
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
+        VariableNameSequenceNode variableNameSequenceNode;
+        TypeNode typeNode;
         do {
-            this.variableNameSequenceNode = new VariableNameSequenceNode();
-            this.variableNameSequenceNodes.add(this.variableNameSequenceNode);
-            this.variableNameSequenceNode.parse(context);
+            variableNameSequenceNode = new VariableNameSequenceNode();
+            this.variableNameSequenceNodes.add(variableNameSequenceNode);
+            variableNameSequenceNode.parse(context);
             context.checkTerminalSymbol("SCOLON");
-            this.typeNode = new TypeNode();
-            this.typeNodes.add(this.typeNode);
-            this.typeNode.parse(context);
+            typeNode = new TypeNode();
+            this.typeNodes.add(typeNode);
+            typeNode.parse(context);
             context.checkTerminalSymbol("SSEMICOLON");
         } while (context.equalsAny(0, "SIDENTIFIER"));
     }
@@ -37,8 +36,8 @@ public class VariableDeclarationSequenceNode extends AstNode {
         return this.typeNodes;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

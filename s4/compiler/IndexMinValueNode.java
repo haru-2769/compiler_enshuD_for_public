@@ -7,6 +7,7 @@ public class IndexMinValueNode extends AstNode {
         this.integerNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.integerNode = new IntegerNode();
         this.integerNode.parse(context);
@@ -16,8 +17,8 @@ public class IndexMinValueNode extends AstNode {
         return this.integerNode;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

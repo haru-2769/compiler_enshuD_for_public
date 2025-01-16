@@ -7,6 +7,7 @@ public class LeftHandSideNode extends AstNode {
         this.variableNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.variableNode = new VariableNode();
         this.variableNode.parse(context);
@@ -16,8 +17,8 @@ public class LeftHandSideNode extends AstNode {
         return this.variableNode;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

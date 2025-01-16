@@ -31,12 +31,12 @@ public class WritelnNode extends StmtNode {
         }
     }
 
+    public List<ExpressionNode> getExpressionNodes() {
+        return this.expressionNodes;
+    }
+    
     @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
-    }
-
-    public List<ExpressionNode> getExpressionNodes() {
-        return this.expressionNodes;
     }
 }

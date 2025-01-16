@@ -6,20 +6,17 @@ import java.util.ArrayList;
 public class SimpleExpressionNode extends ExprNode {
     private SignNode signNode;
     private TermNode leftTermNode;
-    private AdditiveOperatorNode additiveOperatorNode;
-    private TermNode termNode;
     private List<AdditiveOperatorNode> additiveOperatorNodes;
     private List<TermNode> termNodes;
 
     public SimpleExpressionNode() throws SyntaxException {
         this.signNode = null;
         this.leftTermNode = null;
-        this.additiveOperatorNode = null;
-        this.termNode = null;
         this.additiveOperatorNodes = new ArrayList<>();
         this.termNodes = new ArrayList<>();
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.setLine(context.getLineCount());
         if (context.equalsAny(0, "SPLUS", "SMINUS")) {
@@ -28,13 +25,14 @@ public class SimpleExpressionNode extends ExprNode {
         }
         this.leftTermNode = new TermNode();
         this.leftTermNode.parse(context);
+        AdditiveOperatorNode additiveOperatorNode;
         while (context.equalsAny(0, "SPLUS", "SMINUS", "SOR")) {
-            this.additiveOperatorNode = new AdditiveOperatorNode();
-            this.additiveOperatorNodes.add(this.additiveOperatorNode);
-            this.additiveOperatorNode.parse(context);
-            this.termNode = new TermNode();
-            this.termNodes.add(this.termNode);
-            this.termNode.parse(context);
+            additiveOperatorNode = new AdditiveOperatorNode();
+            this.additiveOperatorNodes.add(additiveOperatorNode);
+            additiveOperatorNode.parse(context);
+            TermNode termNode = new TermNode();
+            this.termNodes.add(termNode);
+            termNode.parse(context);
         }
     }
 
@@ -54,8 +52,8 @@ public class SimpleExpressionNode extends ExprNode {
         return this.termNodes;
     }
 
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

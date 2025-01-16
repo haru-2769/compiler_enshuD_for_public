@@ -7,6 +7,7 @@ public class StatementNode extends AstNode{
         this.astNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SIDENTIFIER")) {
             if (context.equalsAny(1, "SASSIGN", "SLBRACKET")) {
@@ -38,6 +39,7 @@ public class StatementNode extends AstNode{
         return this.astNode;
     }
 
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

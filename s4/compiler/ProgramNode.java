@@ -3,21 +3,20 @@ package enshud.s4.compiler;
 import java.util.HashMap;
 
 public class ProgramNode extends AstNode {
-    private Token programName;
     private BlockNode blockNode;
     private CompoundStatementNode compoundStatementNode;
     private HashMap<String, Variable> variableList;
     private HashMap<String, SubProgram> subProgramList;
 
     public ProgramNode() throws SyntaxException {
-        this.programName = null;
         this.blockNode = null;
         this.compoundStatementNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
     	context.checkTerminalSymbol("SPROGRAM");
-        this.programName = context.checkTerminalSymbol("SIDENTIFIER");
+        this.token = context.checkTerminalSymbol("SIDENTIFIER");
     	context.checkTerminalSymbol("SSEMICOLON");
         this.blockNode = new BlockNode();
         this.blockNode.parse(context);
@@ -28,10 +27,6 @@ public class ProgramNode extends AstNode {
             throw new SyntaxException(context.getTokenList().get(context.getIndex()-1));
         }
     };
-
-    public Token getProgramName() {
-        return this.programName;
-    }
 
     public BlockNode getBlockNode() {
         return this.blockNode;
@@ -57,8 +52,8 @@ public class ProgramNode extends AstNode {
         this.subProgramList = new HashMap<>(subPrograms);
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

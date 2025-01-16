@@ -9,6 +9,7 @@ public class AssignmentStatementNode extends StmtNode {
         this.expressionNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.setLine(context.getLineCount());
         this.leftHandSideNode = new LeftHandSideNode();
@@ -26,8 +27,8 @@ public class AssignmentStatementNode extends StmtNode {
         return this.expressionNode;
     }
 
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

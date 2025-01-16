@@ -7,6 +7,7 @@ public class PureVariableNode extends AstNode{
         this.variableNameNode = null;
     }
     
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.variableNameNode = new VariableNameNode();
         this.variableNameNode.parse(context);
@@ -16,6 +17,7 @@ public class PureVariableNode extends AstNode{
         return this.variableNameNode;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

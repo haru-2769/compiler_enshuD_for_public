@@ -10,6 +10,7 @@ public class CompoundStatementNode extends AstNode {
         this.statementNodes = new ArrayList<>();
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         context.checkTerminalSymbol("SBEGIN");
         StatementNode statementNode;
@@ -21,12 +22,13 @@ public class CompoundStatementNode extends AstNode {
         } while (context.equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN", "SIF", "SWHILE"));
         context.checkTerminalSymbol("SEND");
     }
-
-    public void accept(Visitor visitor) throws SemanticException {
-        visitor.visit(this);
-    }
-
+    
     public List<StatementNode> getStatementNodes() {
         return this.statementNodes;
+    }
+
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

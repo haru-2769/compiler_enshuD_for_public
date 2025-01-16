@@ -9,6 +9,7 @@ public class BlockNode extends AstNode {
         this.subProgramDeclarationSequenceNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.variableDeclarationNode = new VariableDeclarationNode();
         this.variableDeclarationNode.parse(context);
@@ -24,6 +25,7 @@ public class BlockNode extends AstNode {
         return this.subProgramDeclarationSequenceNode;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

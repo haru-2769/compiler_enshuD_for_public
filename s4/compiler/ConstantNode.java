@@ -1,12 +1,7 @@
 package enshud.s4.compiler;
 
 public class ConstantNode extends ExprNode {
-    private Token token;
     private String label;
-    
-    public ConstantNode() throws SyntaxException {
-        this.token = null;
-    }
     
     @Override
     public void parse(Context context) throws SyntaxException {
@@ -21,20 +16,16 @@ public class ConstantNode extends ExprNode {
         }
     }
 
-    @Override
-    public void accept(Visitor visitor) throws SemanticException {
-        visitor.visit(this);
-    }
-
-    public Token getToken() {
-        return this.token;
-    }
-
     public String getLabel() {
         return this.label;
     }
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

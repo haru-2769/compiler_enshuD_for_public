@@ -6,18 +6,17 @@ import java.util.List;
 public class TermNode extends ExprNode {
     private FactorNode leftFactorNode;
     private MultiplicativeOperatorNode multiplicativeOperatorNode;
-    private FactorNode FactorNode;
     private List<MultiplicativeOperatorNode> multiplicativeOperatorNodes;
     private List<FactorNode> factorNodes;
 
     public TermNode() throws SyntaxException {
         this.leftFactorNode = null;
         this.multiplicativeOperatorNode = null;
-        this.FactorNode = null;
         this.factorNodes = new ArrayList<FactorNode>();
         this.multiplicativeOperatorNodes = new ArrayList<MultiplicativeOperatorNode>();
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.setLine(context.getLineCount());
         this.leftFactorNode = new FactorNode();
@@ -26,9 +25,9 @@ public class TermNode extends ExprNode {
             this.multiplicativeOperatorNode = new MultiplicativeOperatorNode();
             this.multiplicativeOperatorNodes.add(this.multiplicativeOperatorNode);
             this.multiplicativeOperatorNode.parse(context);
-            this.FactorNode = new FactorNode();
-            this.factorNodes.add(this.FactorNode);
-            this.FactorNode.parse(context);
+            FactorNode factorNode = new FactorNode();
+            this.factorNodes.add(factorNode);
+            factorNode.parse(context);
         }
     }
 
@@ -44,8 +43,8 @@ public class TermNode extends ExprNode {
         return this.multiplicativeOperatorNodes;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

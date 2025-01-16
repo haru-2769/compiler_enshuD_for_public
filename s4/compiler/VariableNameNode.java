@@ -1,20 +1,12 @@
 package enshud.s4.compiler;
 
 public class VariableNameNode extends AstNode {
-    private Token token;
-
-    public VariableNameNode() throws SyntaxException {
-        this.token = null;
-    }
-    
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.token = context.checkTerminalSymbol("SIDENTIFIER");
     }
-
-    public Token getToken() {
-        return this.token;
-    }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }

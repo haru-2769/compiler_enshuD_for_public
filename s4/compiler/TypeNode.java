@@ -9,6 +9,7 @@ public class TypeNode extends AstNode {
         this.arrayTypeNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SINTEGER", "SCHAR", "SBOOLEAN")) {
             standardTypeNode = new StandardTypeNode();
@@ -27,8 +28,8 @@ public class TypeNode extends AstNode {
         return arrayTypeNode;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

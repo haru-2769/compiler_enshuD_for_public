@@ -2,13 +2,12 @@ package enshud.s4.compiler;
 
 public class IntegerNode extends AstNode {
     private SignNode signNode;
-    private Token token;
 
     public IntegerNode() throws SyntaxException {
         this.signNode = null;
-        this.token = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SPLUS", "SMINUS")) {
             this.signNode = new SignNode();
@@ -20,13 +19,9 @@ public class IntegerNode extends AstNode {
     public SignNode getSignNode() {
         return this.signNode;
     }
-
-    public Token getToken() {
-        return this.token;
-    }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

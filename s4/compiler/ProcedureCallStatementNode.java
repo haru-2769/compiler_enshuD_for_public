@@ -5,18 +5,16 @@ import java.util.List;
 
 public class ProcedureCallStatementNode extends StmtNode {
     private boolean isGlobal;
-    private ProcedureNameNode procedureNameNode;
     private List<ExpressionNode> expressionNodes;
 
     public ProcedureCallStatementNode() throws SyntaxException {
-        this.procedureNameNode = null;
         this.expressionNodes = new ArrayList<ExpressionNode>();
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.setLine(context.getLineCount());
-        this.procedureNameNode = new ProcedureNameNode();
-        this.procedureNameNode.parse(context);
+        this.token =context.checkTerminalSymbol("SIDENTIFIER");
         if (context.equalsAny(0, "SLPAREN")) {
             ExpressionNode expressionNode;
             context.checkTerminalSymbol("SLPAREN");
@@ -42,16 +40,12 @@ public class ProcedureCallStatementNode extends StmtNode {
         return this.isGlobal;
     }
 
-    public ProcedureNameNode getProcedureNameNode() {
-        return this.procedureNameNode;
-    }
-
     public List<ExpressionNode> getExpressionNodes() {
         return this.expressionNodes;
     }
 
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

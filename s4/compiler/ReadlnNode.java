@@ -31,12 +31,12 @@ public class ReadlnNode extends StmtNode {
 		}
 	}
 
+	public List<VariableNode> getVariableNodes() {
+		return this.variableNodes;
+	}
+
 	@Override
 	public void accept(Visitor visitor) throws SemanticException {
 		visitor.visit(this);
-	}
-
-	public List<VariableNode> getVariableNodes() {
-		return this.variableNodes;
 	}
 }

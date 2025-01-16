@@ -35,7 +35,7 @@ public class AstChecker extends Visitor {
     public void start(ProgramNode programNode) throws SemanticException {
         visit(programNode);
     }
-
+@Override
     public void visit(ProgramNode programNode) throws SemanticException {
         this.variableList.push(new HashMap<>());
         programNode.getBlockNode().accept(this);
@@ -43,7 +43,7 @@ public class AstChecker extends Visitor {
         programNode.setVariableList(this.variableList.pop());
         programNode.setSubProgramList(this.subProgramList);
     }
- 
+ @Override
     public void visit(BlockNode blockNode) throws SemanticException {
         this.isGlobal = true;
         this.address = 0;
@@ -52,14 +52,14 @@ public class AstChecker extends Visitor {
         blockNode.getSubProgramDeclarationSequenceNode().accept(this);
     }
  
-    
+    @Override
     public void visit(VariableDeclarationNode variableDeclarationNode) throws SemanticException {
         if (variableDeclarationNode.getVariableDeclarationSequenceNode() != null) {
             variableDeclarationNode.getVariableDeclarationSequenceNode().accept(this);
         }
     }
  
-    
+    @Override
     public void visit(VariableDeclarationSequenceNode variableDeclarationSequenceNode) throws SemanticException {
         List<VariableNameSequenceNode> variableNameSequenceNodes = variableDeclarationSequenceNode.getVariableNameSequenceNodes();
         List<TypeNode> typeNodes = variableDeclarationSequenceNode.getTypeNodes();
@@ -69,7 +69,7 @@ public class AstChecker extends Visitor {
         }
     }
  
-    
+    @Override
     public void visit(VariableNameSequenceNode variableNameSequenceNode) throws SemanticException {
         HashMap<String, Variable> currentScope = variableList.peek();
         List<VariableNameNode> variableNameNodes = variableNameSequenceNode.getVariableNameNodes();
@@ -89,7 +89,7 @@ public class AstChecker extends Visitor {
 	public void visit(VariableNameNode variableNameNode) throws SemanticException {
 	}
  
-    
+    @Override
     public void visit(TypeNode typeNode) throws SemanticException {
         StandardTypeNode standardTypeNode = typeNode.getStandardTypeNode();
         ArrayTypeNode arrayTypeNode = typeNode.getArrayTypeNode();
@@ -111,7 +111,7 @@ public class AstChecker extends Visitor {
         }
 	}
  
-    
+    @Override
     public void visit(ArrayTypeNode arrayTypeNode) throws SemanticException {
         arrayTypeNode.getIndexMinValueNode().accept(this);
         arrayTypeNode.getIndexMaxValueNode().accept(this);
@@ -125,19 +125,19 @@ public class AstChecker extends Visitor {
         }
     }
  
-    
+    @Override
     public void visit(IndexMinValueNode indexMinValueNode) throws SemanticException {
         indexMinValueNode.getIntegerNode().accept(this);
         this.minValue = this.currentValue;
     }
  
-    
+    @Override
     public void visit(IndexMaxValueNode indexMaxValueNode) throws SemanticException {
         indexMaxValueNode.getIntegerNode().accept(this);
         this.maxValue = this.currentValue;
     }
  
-    
+    @Override
     public void visit(IntegerNode integerNode) throws SemanticException {
         SignNode signNode = integerNode.getSignNode();
         if (signNode == null || signNode.getToken().getTokenName().equals("SPLUS")) {
@@ -151,14 +151,14 @@ public class AstChecker extends Visitor {
 	public void visit(SignNode signNode) throws SemanticException {
 	}
  
-    
+    @Override
     public void visit(SubProgramDeclarationSequenceNode subProgramDeclarationSequenceNode) throws SemanticException {
         for (SubProgramDeclarationNode subProgramDeclarationNode : subProgramDeclarationSequenceNode.getSubProgramDeclarationNodes()) {
             subProgramDeclarationNode.accept(this);
         }
     }
  
-    
+    @Override
     public void visit(SubProgramDeclarationNode subProgramDeclarationNode) throws SemanticException {
         this.variableList.push(new LinkedHashMap<>());
         this.address = 0;
@@ -168,9 +168,9 @@ public class AstChecker extends Visitor {
         subProgramList.get(currentSubProgramName).setVariableList(this.variableList.pop());
     }
  
-    
+    @Override
     public void visit(SubProgramHeadNode subProgramHeadNode) throws SemanticException {
-        Token procedureName = subProgramHeadNode.getProcedureNameNode().getToken();
+        Token procedureName = subProgramHeadNode.getToken();
         currentSubProgramName = procedureName.getLexical();
         SubProgram subProgram = new SubProgram(this.subProgramCount++);
         if (subProgramList.put(currentSubProgramName, subProgram) != null /*|| currentSubProgramName.equals(programName)*/) {
@@ -180,11 +180,7 @@ public class AstChecker extends Visitor {
         subProgram.setArgumentList((LinkedHashMap<String, Variable>) variableList.peek());
     }
  
-	
-	public void visit(ProcedureNameNode procedureNameNode) throws SemanticException {
-	}
- 
-    
+    @Override
     public void visit(FormalParameterNode formalParameterNode) throws SemanticException {
         FormalParameterSequenceNode formalParameterSequenceNode = formalParameterNode.getFormalParameterSequenceNode();
         if (formalParameterSequenceNode != null) {
@@ -192,7 +188,7 @@ public class AstChecker extends Visitor {
         }
     }
  
-    
+    @Override
     public void visit(FormalParameterSequenceNode formalParameterSequenceNode) throws SemanticException {
         List<FormalParameterNameSequenceNode> formalParameterNameSequenceNodes = formalParameterSequenceNode.getFormalParameterNameSequenceNodes();
         List<StandardTypeNode> standardTypeNodes = formalParameterSequenceNode.getStandardTypeNodes();
@@ -202,7 +198,7 @@ public class AstChecker extends Visitor {
         }
     }
  
-    
+    @Override
     public void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException {
         LinkedHashMap<String, Variable> currentScope = (LinkedHashMap<String, Variable>) variableList.peek();
         List<FormalParameterNameNode> formalParameterNameNodes = formalParameterNameSequenceNode.getFormalParameterNameNodes();
@@ -220,18 +216,19 @@ public class AstChecker extends Visitor {
 	public void visit(FormalParameterNameNode formalParameterNameNode) throws SemanticException {
 	}
  
-    
+    @Override
     public void visit(CompoundStatementNode compoundStatementNode) throws SemanticException {
         for (StatementNode statementNode : compoundStatementNode.getStatementNodes()) {
             statementNode.accept(this);
         }
     }
  
-    
+    @Override
     public void visit(StatementNode statementNode) throws SemanticException {
         statementNode.getAstNode().accept(this);
     }
 
+    @Override
     public void visit(IfNode ifNode) throws SemanticException {
         ifNode.getExpressionNode().accept(this);
         if (!this.currentType.isBoolean()) {
@@ -241,7 +238,7 @@ public class AstChecker extends Visitor {
             compoundStatementNode.accept(this);
         }
     }
-
+@Override
     public void visit(WhileNode whileNode) throws SemanticException {
         whileNode.getExpressionNode().accept(this);
         if (!this.currentType.isBoolean()) {
@@ -250,7 +247,7 @@ public class AstChecker extends Visitor {
         whileNode.getCompoundStatementNode().accept(this);
     }
  
-    
+    @Override
     public void visit(AssignmentStatementNode assignmentStatementNode) throws SemanticException {
         assignmentStatementNode.getLeftHandSideNode().accept(this);
         TypeEnum leftHandSideType = this.currentType;
@@ -264,20 +261,20 @@ public class AstChecker extends Visitor {
         }
     }
  
-    
+    @Override
     public void visit(LeftHandSideNode leftHandSideNode) throws SemanticException {
         this.isRightValue = false;
         leftHandSideNode.getVariableNode().accept(this);
     }
  
-    
+    @Override
     public void visit(VariableNode variableNode) throws SemanticException {
         variableNode.setIsRightValue(this.isRightValue);
         variableNode.getVariableNode().accept(this);
         variableNode.setType(this.currentType);
     }
  
-    
+    @Override
     public void visit(PureVariableNode pureVariableNode) throws SemanticException {
         Token variableName = pureVariableNode.getVariableNameNode().getToken();
         for (int i = variableList.size() - 1; i >= 0; i--) {
@@ -290,7 +287,7 @@ public class AstChecker extends Visitor {
         throw new SemanticException(variableName.getLineCount());
     }
  
-    
+    @Override
     public void visit(IndexedVariableNode indexedVariableNode) throws SemanticException {
         Token variableName = indexedVariableNode.getVariableNameNode().getToken();
         for (int i = variableList.size() - 1; i >= 0; i--) {
@@ -313,15 +310,15 @@ public class AstChecker extends Visitor {
         throw new SemanticException(variableName.getLineCount());
     }
  
-    
+    @Override
     public void visit(IndexNode indexNode) throws SemanticException {
         indexNode.getExpressionNode().accept(this);
     }
  
-    
+    @Override
     public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
         procedureCallStatementNode.setGlobal(isGlobal);
-        Token procedureName = procedureCallStatementNode.getProcedureNameNode().getToken();
+        Token procedureName = procedureCallStatementNode.getToken();
         if (!subProgramList.containsKey(procedureName.getLexical())) {
             throw new SemanticException(procedureName.getLineCount());
         }
@@ -340,7 +337,7 @@ public class AstChecker extends Visitor {
     }
 
  
-    
+    @Override
     public void visit(ExpressionNode expressionNode) throws SemanticException {
         this.isRightValue = true;
         expressionNode.getLeftSimpleExpressionNode().accept(this);
@@ -360,7 +357,7 @@ public class AstChecker extends Visitor {
         expressionNode.setType(this.currentType);
     }
  
-    
+    @Override
     public void visit(SimpleExpressionNode simpleExpressionNode) throws SemanticException {
         SignNode signNode = simpleExpressionNode.getSignNode();
         simpleExpressionNode.getLeftTermNode().accept(this);
@@ -383,7 +380,7 @@ public class AstChecker extends Visitor {
         simpleExpressionNode.setType(this.currentType);
     }
  
-    
+    @Override
     public void visit(TermNode termNode) throws SemanticException {
         termNode.getLeftFactorNode().accept(this);
         List<MultiplicativeOperatorNode> multiplicativeOperatorNodes = termNode.getMultiplicativeOperatorNodes();
@@ -400,20 +397,11 @@ public class AstChecker extends Visitor {
         termNode.setType(this.currentType);
     }
  
-    
+    @Override
     public void visit(FactorNode factorNode) throws SemanticException {
-        VariableNode variableNode = factorNode.getVariableNode();
-        ConstantNode constantNode = factorNode.getConstantNode();
-        ExpressionNode expressionNode = factorNode.getExpressionNode();
-        FactorNode factorNode2 = factorNode.getFactorNode();
-        if (variableNode != null) {
-            variableNode.accept(this);
-        } else if (constantNode != null) {
-            constantNode.accept(this);
-        } else if (expressionNode != null) {
-            expressionNode.accept(this);
-        } else {
-            factorNode2.accept(this);
+        AstNode astNode = factorNode.getAstNode();
+        astNode.accept(this);
+        if (astNode instanceof FactorNode) {
             if (!this.currentType.isBoolean()) {
                 throw new SemanticException(factorNode.getToken().getLineCount());
             }
@@ -446,7 +434,7 @@ public class AstChecker extends Visitor {
         }
 	}
  
-    
+    @Override
     public void visit(ReadlnNode readlnNode) throws SemanticException {
         this.isRightValue = false;
         for (VariableNode variableNode : readlnNode.getVariableNodes()) {
@@ -456,7 +444,7 @@ public class AstChecker extends Visitor {
             }
         }
     }
-
+@Override
     public void visit(WritelnNode writelnNode) throws SemanticException {
         for (ExpressionNode expressionNode : writelnNode.getExpressionNodes()) {
             expressionNode.accept(this);

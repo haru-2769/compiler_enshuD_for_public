@@ -31,16 +31,16 @@ public class IfNode extends StmtNode {
 		}
 	}
 
-	@Override
-	public void accept(Visitor visitor) throws SemanticException {
-		visitor.visit(this);
-	}
-
 	public ExpressionNode getExpressionNode() {
 		return this.expressionNode;
 	}
 
 	public List<CompoundStatementNode> getCompoundStatementNodes() {
 		return this.compoundStatementNodes;
+	}
+
+	@Override
+	public void accept(Visitor visitor) throws SemanticException {
+		visitor.visit(this);
 	}
 }

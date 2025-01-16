@@ -145,7 +145,7 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(SubProgramDeclarationNode subProgramDeclarationNode) throws SemanticException {
-		SubProgram subProgram = this.subProgramList.get(subProgramDeclarationNode.getSubProgramHeadNode().getProcedureNameNode().getToken().getLexical());
+		SubProgram subProgram = this.subProgramList.get(subProgramDeclarationNode.getSubProgramHeadNode().getToken().getLexical());
 		this.variableLists.push(subProgram.getVariableList());
 		this.defineStorage = 0;
 		for (Variable variable : this.variableLists.peek().values()) {
@@ -169,10 +169,6 @@ public class AstCompiler extends Visitor {
 	@Override
 	public void visit(SubProgramHeadNode subProgramHeadNode) throws SemanticException {
 		subProgramHeadNode.getFormalParameterNode().accept(this);
-	}
-
-	@Override
-	public void visit(ProcedureNameNode procedureNameNode) throws SemanticException {
 	}
 
 	@Override
@@ -311,7 +307,7 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
-		SubProgram subProgram = this.subProgramList.get(procedureCallStatementNode.getProcedureNameNode().getToken().getLexical());
+		SubProgram subProgram = this.subProgramList.get(procedureCallStatementNode.getToken().getLexical());
 		for (ExpressionNode expressionNode : procedureCallStatementNode.getExpressionNodes()) {
 			expressionNode.accept(this);
 		}
@@ -372,18 +368,9 @@ public class AstCompiler extends Visitor {
  
 	@Override
 	public void visit(FactorNode factorNode) throws SemanticException {
-        VariableNode variableNode = factorNode.getVariableNode();
-        ConstantNode constantNode = factorNode.getConstantNode();
-        ExpressionNode expressionNode = factorNode.getExpressionNode();
-        FactorNode factorNode2 = factorNode.getFactorNode();
-        if (variableNode != null) {
-            variableNode.accept(this);
-        } else if (constantNode != null) {
-            constantNode.accept(this);
-        } else if (expressionNode != null) {
-            expressionNode.accept(this);
-        } else {
-            factorNode2.accept(this);
+        AstNode astNode = factorNode.getAstNode();
+		astNode.accept(this);
+		if (astNode instanceof FactorNode) {
 			this.caslCode.add("\tPOP\tGR1");
 			this.caslCode.add("\tXOR\tGR1, =#FFFF");
 			this.caslCode.add("\tPUSH\t0, GR1");

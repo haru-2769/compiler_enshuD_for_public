@@ -11,6 +11,7 @@ public class SubProgramDeclarationNode extends AstNode {
         this.compoundStatementNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.subProgramHeadNode = new SubProgramHeadNode();
         this.subProgramHeadNode.parse(context);
@@ -32,8 +33,8 @@ public class SubProgramDeclarationNode extends AstNode {
         return this.compoundStatementNode;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }

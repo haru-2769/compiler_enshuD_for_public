@@ -9,6 +9,7 @@ public class IndexedVariableNode extends AstNode {
         this.indexNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.variableNameNode = new VariableNameNode();
         this.variableNameNode.parse(context);
@@ -26,8 +27,8 @@ public class IndexedVariableNode extends AstNode {
         return this.indexNode;
     }
     
+    @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);
     }
-
 }
