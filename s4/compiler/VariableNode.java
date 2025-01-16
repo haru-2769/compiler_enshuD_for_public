@@ -2,6 +2,7 @@ package enshud.s4.compiler;
 
 public class VariableNode extends AstNode {
     private AstNode variableNode;
+    private boolean isRightValue;
 
     public VariableNode() throws SyntaxException {
         this.variableNode = null;
@@ -15,6 +16,14 @@ public class VariableNode extends AstNode {
             this.variableNode = new PureVariableNode();
             this.variableNode.parse(context);
         }
+    }
+
+    public void setIsRightValue(boolean isRightValue) {
+        this.isRightValue = isRightValue;
+    }
+    
+    public boolean isRightValue() {
+        return this.isRightValue;
     }
 
     public AstNode getVariableNode() {

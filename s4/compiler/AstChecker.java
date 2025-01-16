@@ -15,6 +15,8 @@ public class AstChecker extends Visitor {
     private int minValue;
     private int maxValue;
     private int address;
+    private boolean isGlobal;
+    private boolean isRightValue;
     private List<TypeEnum> variableTypes;
     private HashMap<String, SubProgram> subProgramList;
     private Stack<HashMap<String, Variable>> variableList;
@@ -25,7 +27,6 @@ public class AstChecker extends Visitor {
         this.currentType = null;
         this.minValue = 0;
         this.maxValue = 0;
-        this.address = 0;
         this.variableTypes = new ArrayList<>();
         this.subProgramList = new HashMap<>();
         this.variableList = new Stack<>();
@@ -41,14 +42,13 @@ public class AstChecker extends Visitor {
         programNode.getCompoundStatementNode().accept(this);
         programNode.setVariableList(this.variableList.pop());
         programNode.setSubProgramList(this.subProgramList);
-
-        // for (Variable variable : programNode.getVariableList()) {
-        //     System.out.println(variable.getName() + " " + variable.getType() + " " + variable.getAddress() + " " + variable.getSize() + " " + variable.getOffset());
-        // }
     }
  
     public void visit(BlockNode blockNode) throws SemanticException {
+        this.isGlobal = true;
+        this.address = 0;
         blockNode.getVariableDeclarationNode().accept(this);
+        this.isGlobal = false;
         blockNode.getSubProgramDeclarationSequenceNode().accept(this);
     }
  
@@ -76,7 +76,7 @@ public class AstChecker extends Visitor {
         int size = Math.max(1, this.maxValue-this.minValue+1);
         for (VariableNameNode variableNameNode : variableNameNodes) {
             Token variableName = variableNameNode.getToken();
-            if (currentScope.put(variableName.getLexical(), new Variable(variableName.getLexical(), this.currentType, this.address, size, this.minValue)) != null || /*variableName.getLexical().equals(programName) ||*/ subProgramList.containsKey(variableName.getLexical())) {//
+            if (currentScope.put(variableName.getLexical(), new Variable(variableName.getLexical(), this.currentType, this.address, size, this.minValue, this.isGlobal)) != null || /*variableName.getLexical().equals(programName) ||*/ subProgramList.containsKey(variableName.getLexical())) {//
                 throw new SemanticException(variableName.getLineCount());
             }
             this.address += size;
@@ -161,6 +161,7 @@ public class AstChecker extends Visitor {
     
     public void visit(SubProgramDeclarationNode subProgramDeclarationNode) throws SemanticException {
         this.variableList.push(new LinkedHashMap<>());
+        this.address = 0;
         subProgramDeclarationNode.getSubProgramHeadNode().accept(this);
         subProgramDeclarationNode.getVariableDeclarationNode().accept(this);
         subProgramDeclarationNode.getCompoundStatementNode().accept(this);
@@ -210,7 +211,7 @@ public class AstChecker extends Visitor {
             if (currentScope.containsKey(formalParameterName.getLexical()) || /*formalParameterName.getLexical().equals(programName) ||*/ subProgramList.containsKey(formalParameterName.getLexical())) {
                 throw new SemanticException(formalParameterName.getLineCount());
             }
-            currentScope.put(formalParameterName.getLexical(), new Variable(formalParameterName.getLexical(), this.currentType, this.address, 1, 0));
+            currentScope.put(formalParameterName.getLexical(), new Variable(formalParameterName.getLexical(), this.currentType, this.address, 1, 0, false));
             this.address++;
         }
     }
@@ -265,11 +266,13 @@ public class AstChecker extends Visitor {
  
     
     public void visit(LeftHandSideNode leftHandSideNode) throws SemanticException {
+        this.isRightValue = false;
         leftHandSideNode.getVariableNode().accept(this);
     }
  
     
     public void visit(VariableNode variableNode) throws SemanticException {
+        variableNode.setIsRightValue(this.isRightValue);
         variableNode.getVariableNode().accept(this);
     }
  
@@ -316,6 +319,7 @@ public class AstChecker extends Visitor {
  
     
     public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
+        procedureCallStatementNode.setGlobal(isGlobal);
         Token procedureName = procedureCallStatementNode.getProcedureNameNode().getToken();
         if (!subProgramList.containsKey(procedureName.getLexical())) {
             throw new SemanticException(procedureName.getLineCount());
@@ -337,6 +341,7 @@ public class AstChecker extends Visitor {
  
     
     public void visit(ExpressionNode expressionNode) throws SemanticException {
+        this.isRightValue = true;
         expressionNode.getLeftSimpleExpressionNode().accept(this);
         RelationalOperatorNode relationalOperatorNode = expressionNode.getRelationalOperatorNode();
         if (relationalOperatorNode != null) {

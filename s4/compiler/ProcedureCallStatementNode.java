@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProcedureCallStatementNode extends StmtNode {
+    private boolean isGlobal;
     private ProcedureNameNode procedureNameNode;
     private List<ExpressionNode> expressionNodes;
 
@@ -31,6 +32,14 @@ public class ProcedureCallStatementNode extends StmtNode {
             }
             context.checkTerminalSymbol("SRPAREN");
         }
+    }
+
+    public void setGlobal(boolean isGlobal) {
+        this.isGlobal = isGlobal;
+    }
+
+    public boolean isGlobal() {
+        return this.isGlobal;
     }
 
     public ProcedureNameNode getProcedureNameNode() {

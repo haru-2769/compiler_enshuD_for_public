@@ -41,15 +41,16 @@ public class AstCompiler extends Visitor {
 	public void visit(ProgramNode programNode) throws SemanticException {
 		this.variableLists.push(programNode.getVariableList());
 		this.subProgramList = programNode.getSubProgramList();
-		// for (Variable variable : this.variableList.values()) {
-		// 	this.defineStorage += variable.getSize();
-		// }
 		this.caslCode.add("CASL\tSTART\tBEGIN");
 		this.caslCode.add("BEGIN\tLAD\tGR6,0");
 		this.caslCode.add("\tLAD\tGR7, LIBBUF");
 		programNode.getCompoundStatementNode().accept(this);
 		this.caslCode.add("\tRET");
 		programNode.getBlockNode().accept(this);
+		this.defineStorage = 0;
+		for (Variable variable : this.variableLists.peek().values()) {
+			this.defineStorage += variable.getSize();
+		}
 		this.caslCode.add("VAR\tDS\t" + this.defineStorage);
 		for (int i = 0; i < this.labelList.size(); i++) {
 			this.caslCode.add(this.labelList.get(i) + "\tDC\t" + this.defineConstantList.get(i));
@@ -61,7 +62,7 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(BlockNode blockNode) throws SemanticException {
-		blockNode.getVariableDeclarationNode().accept(this); //TODO
+		blockNode.getVariableDeclarationNode().accept(this);
 		blockNode.getSubProgramDeclarationSequenceNode().accept(this);
 	}
 
@@ -87,7 +88,6 @@ public class AstCompiler extends Visitor {
 	public void visit(VariableNameSequenceNode variableNameSequenceNode) throws SemanticException {
 		for (VariableNameNode variableNameNode : variableNameSequenceNode.getVariableNameNodes()) {
 			variableNameNode.accept(this);
-			this.defineStorage += this.currentVariable.getSize();
 		}
 	}
 
@@ -140,25 +140,34 @@ public class AstCompiler extends Visitor {
 	public void visit(SubProgramDeclarationSequenceNode subProgramDeclarationSequenceNode) throws SemanticException {
 		for (SubProgramDeclarationNode subProgramDeclarationNode : subProgramDeclarationSequenceNode.getSubProgramDeclarationNodes()) {
 			subProgramDeclarationNode.accept(this);
-			this.caslCode.add("\tRET");
 		}
 	}
 
 	@Override
 	public void visit(SubProgramDeclarationNode subProgramDeclarationNode) throws SemanticException {
+		SubProgram subProgram = this.subProgramList.get(subProgramDeclarationNode.getSubProgramHeadNode().getProcedureNameNode().getToken().getLexical());
+		this.variableLists.push(subProgram.getVariableList());
+		this.defineStorage = 0;
+		for (Variable variable : this.variableLists.peek().values()) {
+			this.defineStorage += variable.getSize();
+		}
+		this.argumentStorage = 0;
+		for (Variable variable : subProgram.getArgumentList().values()) {
+			this.argumentStorage += variable.getSize();
+		}
+		this.caslCode.add(subProgram.getLabel() + "\tNOP");
+		this.caslCode.add("\tSUBL\tGR8, =" + this.defineStorage);
+		this.caslCode.add("\tLD\tGR5, GR8");
 		subProgramDeclarationNode.getSubProgramHeadNode().accept(this);
 		subProgramDeclarationNode.getVariableDeclarationNode().accept(this);
 		subProgramDeclarationNode.getCompoundStatementNode().accept(this);
+		this.caslCode.add("\tADDL\tGR8, =" + this.defineStorage);
+		this.caslCode.add("\tRET");
 		this.variableLists.pop();
 	}
 
 	@Override
 	public void visit(SubProgramHeadNode subProgramHeadNode) throws SemanticException {
-		String procedureName = subProgramHeadNode.getProcedureNameNode().getToken().getLexical();
-		this.variableLists.push(this.subProgramList.get(procedureName).getVariableList());
-		this.caslCode.add(this.subProgramList.get(procedureName).getLabel() + "\tNOP");
-		this.caslCode.add("\tLD\tGR1, GR8");
-		this.caslCode.add("\tADDA\tGR1, =" + this.subProgramList.get(procedureName).getArgumentList().size());
 		subProgramHeadNode.getFormalParameterNode().accept(this);
 	}
 
@@ -176,25 +185,21 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(FormalParameterSequenceNode formalParameterSequenceNode) throws SemanticException {
-		this.argumentStorage = 0;
 		for (FormalParameterNameSequenceNode formalParameterNameSequenceNode : formalParameterSequenceNode.getFormalParameterNameSequenceNodes()) {
 			formalParameterNameSequenceNode.accept(this);
 		}
-		this.caslCode.add("\tLD\tGR1, 0, GR8");
-		this.caslCode.add("\tADDA\tGR8, =" + this.argumentStorage);
-		this.caslCode.add("\tST\tGR1, 0, GR8");
 	}
 
 	@Override
 	public void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException {
 		for (FormalParameterNameNode formalParameterNameNode : formalParameterNameSequenceNode.getFormalParameterNameNodes()) {
 			formalParameterNameNode.accept(this);
-			this.argumentStorage += this.currentVariable.getSize();
-			this.defineStorage += this.currentVariable.getSize();
-			this.caslCode.add("\tLD\tGR2, 0, GR1");
+			this.caslCode.add("\tLD\tGR2, =" + (this.defineStorage + this.argumentStorage - this.currentVariable.getAddress()));
+			this.caslCode.add("\tADDL\tGR2, GR5");
+			this.caslCode.add("\tLD\tGR2, 0, GR2");
 			this.caslCode.add("\tLD\tGR3, =" + this.currentVariable.getAddress());
-			this.caslCode.add("\tST\tGR2, VAR, GR3");
-			this.caslCode.add("\tSUBA\tGR1, =1");
+			this.caslCode.add("\tADDL\tGR3, GR5");
+			this.caslCode.add("\tST\tGR2, 0, GR3");
 		}
 	}
 
@@ -226,7 +231,7 @@ public class AstCompiler extends Visitor {
 		int count = this.ifCount++;
 		ifNode.getExpressionNode().accept(this);
 		this.caslCode.add("\tPOP\tGR1");
-		this.caslCode.add("\tCPA\tGR1, =#0000"); //TODO
+		this.caslCode.add("\tCPA\tGR1, =#0000");
 		this.caslCode.add("\tJZE\tELSE" + count);
 		ifNode.getCompoundStatementNodes().get(0).accept(this);
 		if (ifNode.getCompoundStatementNodes().size() == 2) {
@@ -245,7 +250,7 @@ public class AstCompiler extends Visitor {
 		this.caslCode.add("LOOP" + count +"\tNOP");
 		whileNode.getExpressionNode().accept(this);
 		this.caslCode.add("\tPOP\tGR1");
-		this.caslCode.add("\tCPL\tGR1, =#0000"); //TODO
+		this.caslCode.add("\tCPL\tGR1, =#0000");
 		this.caslCode.add("\tJZE\tENDLP" + count);
 		whileNode.getCompoundStatementNode().accept(this);
 		this.caslCode.add("\tJUMP\tLOOP" + count);
@@ -257,35 +262,41 @@ public class AstCompiler extends Visitor {
 		assignmentStatementNode.getExpressionNode().accept(this);
 		assignmentStatementNode.getLeftHandSideNode().accept(this);
 		this.caslCode.add("\tPOP\tGR1");
-		this.caslCode.add("\tST\tGR1, VAR, GR2");
+		this.caslCode.add("\tST\tGR1, 0, GR2");
 	}
 
 	@Override
 	public void visit(LeftHandSideNode leftHandSideNode) throws SemanticException {
-		leftHandSideNode.getVariableNode().getVariableNode().accept(this);
+		leftHandSideNode.getVariableNode().accept(this);
 	}
 
 	@Override
 	public void visit(VariableNode variableNode) throws SemanticException {
 		variableNode.getVariableNode().accept(this);
-		this.caslCode.add("\tLD\tGR1, VAR, GR2");
-		this.caslCode.add("\tPUSH\t0, GR1");
+		if (this.currentVariable.isGlobal()) {
+			this.caslCode.add("\tLAD\tGR1, VAR");
+			this.caslCode.add("\tADDL\tGR2, GR1");
+		} else {
+			this.caslCode.add("\tADDL\tGR2, GR5");
+		}
+		if (variableNode.isRightValue()) {
+			this.caslCode.add("\tLD\tGR1, 0, GR2");
+			this.caslCode.add("\tPUSH\t0, GR1");
+		}
 	}
 
 	@Override
 	public void visit(PureVariableNode pureVariableNode) throws SemanticException {
 		pureVariableNode.getVariableNameNode().accept(this);
-		int variableAdress = this.currentVariable.getAddress();
-		this.caslCode.add("\tLD\tGR2, =" + variableAdress);
+		this.caslCode.add("\tLD\tGR2, =" + this.currentVariable.getAddress());
 	}
 
 	@Override
 	public void visit(IndexedVariableNode indexedVariableNode) throws SemanticException {
 		indexedVariableNode.getIndexNode().accept(this);
 		indexedVariableNode.getVariableNameNode().accept(this);
-		int variableAdress = this.currentVariable.getAddress();
 		this.caslCode.add("\tPOP\tGR2");
-		this.caslCode.add("\tADDA\tGR2, =" + (variableAdress-1));
+		this.caslCode.add("\tADDA\tGR2, =" + (this.currentVariable.getAddress()-this.currentVariable.getOffset()));
 	}
 
 	@Override
@@ -295,14 +306,18 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
-		String procedureName = procedureCallStatementNode.getProcedureNameNode().getToken().getLexical();
+		SubProgram subProgram = this.subProgramList.get(procedureCallStatementNode.getProcedureNameNode().getToken().getLexical());
 		for (ExpressionNode expressionNode : procedureCallStatementNode.getExpressionNodes()) {
 			expressionNode.accept(this);
 		}
-		this.caslCode.add("\tCALL\t" + this.subProgramList.get(procedureName).getLabel());
+		this.caslCode.add("\tCALL\t" + subProgram.getLabel());
+		this.caslCode.add("\tADDL\tGR8, =" + subProgram.getArgumentList().size());
+		if (!procedureCallStatementNode.isGlobal()) {
+			this.caslCode.add("\tLD\tGR5, GR8");
+		}
 	}
 
-
+	@Override
 	public void visit(ExpressionNode expressionNode) throws SemanticException {
 		expressionNode.getLeftSimpleExpressionNode().accept(this);
         RelationalOperatorNode relationalOperatorNode = expressionNode.getRelationalOperatorNode();
