@@ -280,8 +280,13 @@ public class AstCompiler extends Visitor {
 			this.caslCode.add("\tADDL\tGR2, GR5");
 		}
 		if (variableNode.isRightValue()) {
-			this.caslCode.add("\tLD\tGR1, 0, GR2");
-			this.caslCode.add("\tPUSH\t0, GR1");
+			if (!variableNode.getType().isArray()) {
+				this.caslCode.add("\tLD\tGR1, 0, GR2");
+				this.caslCode.add("\tPUSH\t0, GR1");
+			} else {
+				this.caslCode.add("\tPUSH\t" + this.currentVariable.getSize());
+				this.caslCode.add("\tPUSH\t0, GR2");
+			}
 		}
 	}
 
@@ -445,8 +450,20 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(ReadlnNode readlnNode) throws SemanticException {
-		// TODO 自動生成されたメソッド・スタブ
-		
+		for (VariableNode variableNode : readlnNode.getVariableNodes()) {
+			variableNode.accept(this);
+			if (variableNode.getType().isChar()) {
+				this.caslCode.add("\tCALL\tRDCH");
+			} else if (variableNode.getType().isInteger()) {
+				this.caslCode.add("\tCALL\tRDINT");
+			} else {
+				this.caslCode.add("\tLD\tGR1, =" + this.currentVariable.getSize());
+				this.caslCode.add("\tCALL\tRDSTR");
+			}
+		}
+		if (readlnNode.getVariableNodes().size() == 0) {
+			this.caslCode.add("\tCALL\tRDLN");
+		}
 	}
 
 	@Override

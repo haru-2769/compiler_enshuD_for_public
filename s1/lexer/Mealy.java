@@ -48,7 +48,7 @@ public class Mealy {
         this.map.put("or", new ArrayList<String>(Arrays.asList("SOR", "15")));
         this.map.put("procedure", new ArrayList<String>(Arrays.asList("SPROCEDURE", "16")));
         this.map.put("program", new ArrayList<String>(Arrays.asList("SPROGRAM", "17")));
-        this.map.put("readln", new ArrayList<String>(Arrays.asList("READLN", "18")));
+        this.map.put("readln", new ArrayList<String>(Arrays.asList("SREADLN", "18")));
         this.map.put("then", new ArrayList<String>(Arrays.asList("STHEN", "19")));
         this.map.put("true", new ArrayList<String>(Arrays.asList("STRUE", "20")));
         this.map.put("var", new ArrayList<String>(Arrays.asList("SVAR", "21")));

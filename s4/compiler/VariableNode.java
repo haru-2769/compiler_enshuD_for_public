@@ -1,6 +1,6 @@
 package enshud.s4.compiler;
 
-public class VariableNode extends AstNode {
+public class VariableNode extends ExprNode {
     private AstNode variableNode;
     private boolean isRightValue;
 

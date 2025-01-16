@@ -274,6 +274,7 @@ public class AstChecker extends Visitor {
     public void visit(VariableNode variableNode) throws SemanticException {
         variableNode.setIsRightValue(this.isRightValue);
         variableNode.getVariableNode().accept(this);
+        variableNode.setType(this.currentType);
     }
  
     
@@ -447,6 +448,7 @@ public class AstChecker extends Visitor {
  
     
     public void visit(ReadlnNode readlnNode) throws SemanticException {
+        this.isRightValue = false;
         for (VariableNode variableNode : readlnNode.getVariableNodes()) {
             variableNode.accept(this);
             if (currentType.isArgument()) {
