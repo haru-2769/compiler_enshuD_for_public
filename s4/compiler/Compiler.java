@@ -17,7 +17,7 @@ public class Compiler {
 	 */
 	public static void main(final String[] args) {
 		// Compilerを実行してcasを生成する
-		System.out.println(new Lexer().run("data/pas/normal02.pas", "lib/out.ts"));
+		System.out.println(new Lexer().run("data/pas/normal11.pas", "lib/out.ts"));
 		System.out.println(new Compiler().run("lib/out.ts", "lib/out.cas"));
 
 		// 上記casを，CASLアセンブラ & COMETシミュレータで実行する
@@ -58,7 +58,7 @@ public class Compiler {
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			return ex.getMessage();
 		} catch (final SemanticException ex) {
 			return ex.getMessage();

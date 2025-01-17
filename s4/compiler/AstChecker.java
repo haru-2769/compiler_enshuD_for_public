@@ -20,6 +20,8 @@ public class AstChecker extends Visitor {
     private List<TypeEnum> variableTypes;
     private HashMap<String, SubProgram> subProgramList;
     private Stack<HashMap<String, Variable>> variableList;
+    private HashMap<String, Token> unassignedWarningList;
+    private HashMap<String, Token> globalUnassignedWarningList;
     
     public AstChecker() {
         this.charCount = 0;
@@ -30,12 +32,25 @@ public class AstChecker extends Visitor {
         this.variableTypes = new ArrayList<>();
         this.subProgramList = new HashMap<>();
         this.variableList = new Stack<>();
+        this.unassignedWarningList = new LinkedHashMap<>();
+        this.globalUnassignedWarningList = new LinkedHashMap<>();
+    }
+
+    private void printUnassignedWarning() {
+        for (Token token : unassignedWarningList.values()) {
+            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : " + token.getLineCount());
+        }
+        for (Token token : globalUnassignedWarningList.values()) {
+            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : " + token.getLineCount());
+        }
     }
 
     public void start(ProgramNode programNode) throws SemanticException {
         visit(programNode);
+        printUnassignedWarning();
     }
-@Override
+
+    @Override
     public void visit(ProgramNode programNode) throws SemanticException {
         this.variableList.push(new HashMap<>());
         programNode.getBlockNode().accept(this);
@@ -43,13 +58,15 @@ public class AstChecker extends Visitor {
         programNode.setVariableList(this.variableList.pop());
         programNode.setSubProgramList(this.subProgramList);
     }
- @Override
+
+    @Override
     public void visit(BlockNode blockNode) throws SemanticException {
         this.isGlobal = true;
         this.address = 0;
         blockNode.getVariableDeclarationNode().accept(this);
         this.isGlobal = false;
         blockNode.getSubProgramDeclarationSequenceNode().accept(this);
+        this.isGlobal = true;
     }
  
     @Override
@@ -85,7 +102,7 @@ public class AstChecker extends Visitor {
         this.maxValue = 0;
     }
  
-	
+	@Override
 	public void visit(VariableNameNode variableNameNode) throws SemanticException {
 	}
  
@@ -100,7 +117,7 @@ public class AstChecker extends Visitor {
         }
     }
  
-	
+	@Override
 	public void visit(StandardTypeNode standardTypeNode) throws SemanticException {
         if (standardTypeNode.getToken().getTokenName().equals("SINTEGER")) {
             this.currentType = TypeEnum.INTEGER;
@@ -147,7 +164,7 @@ public class AstChecker extends Visitor {
         }
     }
  
-	
+	@Override
 	public void visit(SignNode signNode) throws SemanticException {
 	}
  
@@ -207,12 +224,12 @@ public class AstChecker extends Visitor {
             if (currentScope.containsKey(formalParameterName.getLexical()) || /*formalParameterName.getLexical().equals(programName) ||*/ subProgramList.containsKey(formalParameterName.getLexical())) {
                 throw new SemanticException(formalParameterName.getLineCount());
             }
-            currentScope.put(formalParameterName.getLexical(), new Variable(formalParameterName.getLexical(), this.currentType, this.address, 1, 0, false));
+            currentScope.put(formalParameterName.getLexical(), new Variable(formalParameterName.getLexical(), this.currentType, this.address, 1, 0, false ,true));
             this.address++;
         }
     }
  
-	
+	@Override
 	public void visit(FormalParameterNameNode formalParameterNameNode) throws SemanticException {
 	}
  
@@ -238,7 +255,8 @@ public class AstChecker extends Visitor {
             compoundStatementNode.accept(this);
         }
     }
-@Override
+
+    @Override
     public void visit(WhileNode whileNode) throws SemanticException {
         whileNode.getExpressionNode().accept(this);
         if (!this.currentType.isBoolean()) {
@@ -280,7 +298,20 @@ public class AstChecker extends Visitor {
         for (int i = variableList.size() - 1; i >= 0; i--) {
             HashMap<String, Variable> scope = variableList.get(i);
             if (scope.containsKey(variableName.getLexical())) {
-                this.currentType = scope.get(variableName.getLexical()).getType();
+                Variable variable = scope.get(variableName.getLexical());
+                if (this.isRightValue) {
+                    variable.setReferenced();
+                    if (!variable.isAssigned()) {
+                        if (variable.isGlobal() && !this.isGlobal) {
+                            this.globalUnassignedWarningList.putIfAbsent(variableName.getLexical(), variableName);
+                        } else {
+                            this.unassignedWarningList.putIfAbsent(variableName.getLexical(), variableName);
+                        }
+                    }
+                } else {
+                    variable.setAssigned();
+                }
+                this.currentType = variable.getType();
                 return;
             }
         }
@@ -293,7 +324,20 @@ public class AstChecker extends Visitor {
         for (int i = variableList.size() - 1; i >= 0; i--) {
             HashMap<String, Variable> scope = variableList.get(i);
             if (scope.containsKey(variableName.getLexical())) {
-                TypeEnum type = scope.get(variableName.getLexical()).getType();
+                Variable variable = scope.get(variableName.getLexical());
+                if (this.isRightValue) {
+                    variable.setReferenced();
+                    if (!variable.isAssigned()) {
+                        if (variable.isGlobal() && !this.isGlobal) {
+                            this.globalUnassignedWarningList.putIfAbsent(variableName.getLexical(), variableName);
+                        } else {
+                            this.unassignedWarningList.putIfAbsent(variableName.getLexical(), variableName);
+                        }
+                    }
+                } else {
+                    variable.setAssigned();
+                }
+                TypeEnum type = variable.getType();
                 indexedVariableNode.getIndexNode().accept(this);
                 if (!this.currentType.isInteger()) {
                     throw new SemanticException(variableName.getLineCount());
@@ -317,6 +361,13 @@ public class AstChecker extends Visitor {
  
     @Override
     public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
+        if (isGlobal) {
+            for (Variable variable : variableList.peek().values()) {
+                if (variable.isAssigned) {
+                    this.globalUnassignedWarningList.remove(variable.getName());
+                }
+            }
+        }
         procedureCallStatementNode.setGlobal(isGlobal);
         Token procedureName = procedureCallStatementNode.getToken();
         if (!subProgramList.containsKey(procedureName.getLexical())) {
@@ -409,12 +460,12 @@ public class AstChecker extends Visitor {
         factorNode.setType(this.currentType);
     }
  
-	
+	@Override
 	public void visit(RelationalOperatorNode relationalOperatorNode) throws SemanticException {
         this.currentType = TypeEnum.BOOLEAN;
 	}
  
-	
+	@Override
 	public void visit(AdditiveOperatorNode additiveOperatorNode) throws SemanticException {
         Token dditiveOperator = additiveOperatorNode.getToken();
         if (dditiveOperator.getTokenName().equals("SPLUS") || dditiveOperator.getTokenName().equals("SMINUS")) {
@@ -424,7 +475,7 @@ public class AstChecker extends Visitor {
         }
 	}
  
-	
+    @Override
 	public void visit(MultiplicativeOperatorNode multiplicativeOperatorNode) throws SemanticException {
         Token multiplicativeOperator = multiplicativeOperatorNode.getToken();
         if (multiplicativeOperator.getTokenName().equals("SAND")) {
@@ -444,7 +495,8 @@ public class AstChecker extends Visitor {
             }
         }
     }
-@Override
+
+    @Override
     public void visit(WritelnNode writelnNode) throws SemanticException {
         for (ExpressionNode expressionNode : writelnNode.getExpressionNodes()) {
             expressionNode.accept(this);
@@ -454,6 +506,7 @@ public class AstChecker extends Visitor {
         }
     }
 	
+    @Override
 	public void visit(ConstantNode constantNode) throws SemanticException {
         Token constant = constantNode.getToken();
         if (constant.getTokenName().equals("SCONSTANT")) {

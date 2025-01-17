@@ -7,6 +7,7 @@ public class Variable {
     int size;
     int offset;
     boolean isGlobal;
+    boolean isAssigned = false;
     boolean isReferenced = false;
 
     public Variable(String name, TypeEnum type, int address, int size, int offset, boolean isGlobal) {
@@ -18,8 +19,22 @@ public class Variable {
         this.isGlobal = isGlobal;
    }
 
-   public void setReferenced() {
+   public Variable(String name, TypeEnum type, int address, int size, int offset, boolean isGlobal, boolean isAssigned) {
+        this.name = name;
+        this.type = type;
+        this.address = address;
+        this.size = size;
+        this.offset = offset;
+        this.isGlobal = isGlobal;
+        this.isAssigned = isAssigned;
+    }
+
+    public void setReferenced() {
         isReferenced = true;
+    }
+
+    public void setAssigned() {
+        isAssigned = true;
     }
 
     public String getName() {
@@ -48,5 +63,9 @@ public class Variable {
 
     public boolean isReferenced() {
         return isReferenced;
+    }
+
+    public boolean isAssigned() {
+        return isAssigned;
     }
 }
