@@ -38,10 +38,10 @@ public class AstChecker extends Visitor {
 
     private void printUnassignedWarning() {
         for (Token token : unassignedWarningList.values()) {
-            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : " + token.getLineCount());
+            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : line" + token.getLineCount());
         }
         for (Token token : globalUnassignedWarningList.values()) {
-            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : " + token.getLineCount());
+            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : line" + token.getLineCount());
         }
     }
 
