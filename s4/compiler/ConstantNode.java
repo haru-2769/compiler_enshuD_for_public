@@ -1,7 +1,6 @@
 package enshud.s4.compiler;
 
 public class ConstantNode extends ExprNode {
-    private String label;
     
     @Override
     public void parse(Context context) throws SyntaxException {
@@ -14,14 +13,6 @@ public class ConstantNode extends ExprNode {
         } else {
             this.setType(TypeEnum.BOOLEAN);
         }
-    }
-
-    public String getLabel() {
-        return this.label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     @Override

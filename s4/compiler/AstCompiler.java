@@ -9,6 +9,7 @@ public class AstCompiler extends Visitor {
 	private int ifCount;
 	private int whileCount;
 	private int booleanCount;
+	private int stringCount;
 	private int defineStorage;
 	private int argumentStorage;
 	private Variable currentVariable;
@@ -22,6 +23,7 @@ public class AstCompiler extends Visitor {
 		this.ifCount = 0;
 		this.whileCount = 0;
 		this.booleanCount = 0;
+		this.stringCount = 0;
         this.defineStorage = 0;
 		this.variableLists = new Stack<>();
 		this.labelList = new ArrayList<>();
@@ -192,10 +194,10 @@ public class AstCompiler extends Visitor {
 			formalParameterNameNode.accept(this);
 			this.caslCode.add("\tLD\tGR2, =" + (this.defineStorage + this.argumentStorage - this.currentVariable.getAddress()));
 			this.caslCode.add("\tADDL\tGR2, GR5");
-			this.caslCode.add("\tLD\tGR2, 0, GR2");
-			this.caslCode.add("\tLD\tGR3, =" + this.currentVariable.getAddress());
-			this.caslCode.add("\tADDL\tGR3, GR5");
-			this.caslCode.add("\tST\tGR2, 0, GR3");
+			this.caslCode.add("\tLD\tGR1, 0, GR2");
+			this.caslCode.add("\tLD\tGR2, =" + this.currentVariable.getAddress());
+			this.caslCode.add("\tADDL\tGR2, GR5");
+			this.caslCode.add("\tST\tGR1, 0, GR2");
 		}
 	}
 
@@ -332,11 +334,6 @@ public class AstCompiler extends Visitor {
 				this.caslCode.add("\tCPA\tGR1, GR2");
 			}
             relationalOperatorNode.accept(this);
-			int count = this.booleanCount++;		
-			this.caslCode.add("TRUE" + count + "\tNOP");
-			this.caslCode.add("\tLD\tGR1, =#FFFF");
-			this.caslCode.add("BOTH" + count + "\tNOP");
-			this.caslCode.add("\tPUSH\t0, GR1");
 		}
 	}
  
@@ -379,7 +376,7 @@ public class AstCompiler extends Visitor {
 
 	@Override
 	public void visit(RelationalOperatorNode relationalOperatorNode) throws SemanticException {
-		int count = this.booleanCount;
+		int count = this.booleanCount++;
 		Token relationalOperator = relationalOperatorNode.getToken();
 		if (relationalOperator.getTokenName().equals("SEQUAL")) {
 			this.caslCode.add("\tJZE\tTRUE" + count);
@@ -398,6 +395,10 @@ public class AstCompiler extends Visitor {
 		}
 		this.caslCode.add("\tLD\tGR1, =#0000");
 		this.caslCode.add("\tJUMP\tBOTH" + count);
+		this.caslCode.add("TRUE" + count + "\tNOP");
+		this.caslCode.add("\tLD\tGR1, =#FFFF");
+		this.caslCode.add("BOTH" + count + "\tNOP");
+		this.caslCode.add("\tPUSH\t0, GR1");
 	}
 
 	@Override
@@ -482,9 +483,9 @@ public class AstCompiler extends Visitor {
 		} else {
 			if (token.getLexical().length() > 3) {
 				this.caslCode.add("\tPUSH\t" + (token.getLexical().length()-2));
-				this.caslCode.add("\tLAD\tGR2, " + constantNode.getLabel());
+				this.caslCode.add("\tLAD\tGR2, CHAR" + this.stringCount);
 				this.caslCode.add("\tPUSH\t0, GR2");
-				this.labelList.add(constantNode.getLabel());
+				this.labelList.add("CHAR" + this.stringCount++);
 				this.defineConstantList.add(token.getLexical());
 			} else {
 				this.caslCode.add("\tLD\tGR1, =" + token.getLexical());

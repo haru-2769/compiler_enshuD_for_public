@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.Stack;
  
 public class AstChecker extends Visitor {
-    private int charCount;
     private int subProgramCount;
     private TypeEnum currentType;
     private int currentValue;
@@ -24,7 +23,6 @@ public class AstChecker extends Visitor {
     private HashMap<String, Token> globalUnassignedWarningList;
     
     public AstChecker() {
-        this.charCount = 0;
         this.subProgramCount = 0;
         this.currentType = null;
         this.minValue = 0;
@@ -189,7 +187,7 @@ public class AstChecker extends Visitor {
     public void visit(SubProgramHeadNode subProgramHeadNode) throws SemanticException {
         Token procedureName = subProgramHeadNode.getToken();
         currentSubProgramName = procedureName.getLexical();
-        SubProgram subProgram = new SubProgram(this.subProgramCount++);
+        SubProgram subProgram = new SubProgram(currentSubProgramName, this.subProgramCount++);
         if (subProgramList.put(currentSubProgramName, subProgram) != null /*|| currentSubProgramName.equals(programName)*/) {
             throw new SemanticException(procedureName.getLineCount());
         }
@@ -513,7 +511,6 @@ public class AstChecker extends Visitor {
             this.currentType = TypeEnum.INTEGER;
         } else if (constant.getTokenName().equals("SSTRING")) {
             if (constant.getLexical().length() > 3) {
-                constantNode.setLabel("CHAR" + this.charCount++);
                 this.currentType = TypeEnum.ARRAY_OF_CHAR;
             } else {
                 this.currentType = TypeEnum.CHAR;

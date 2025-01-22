@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class SubProgram {
+    private String name;
     private String label;
     private LinkedHashMap<String, Variable> argumentList;
     private HashMap<String, Variable> variableList;
 
-    public SubProgram(int count) {
+    public SubProgram(String name, int count) {
+        this.name = name;
         this.label = "PROC" + count;
     }
     
@@ -18,6 +20,10 @@ public class SubProgram {
 
     public void setVariableList(HashMap<String, Variable> variableList) {
     	this.variableList = new HashMap<>(variableList);
+    }
+
+    public String getName() {
+        return this.name;
     }
     
     public String getLabel() {
