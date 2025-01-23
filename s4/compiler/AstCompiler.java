@@ -131,9 +131,9 @@ public class AstCompiler extends Visitor {
 	@Override
 	public void visit(SignNode signNode) throws SemanticException {
 		if (signNode.getToken().getTokenName().equals("SMINUS")) {
-			this.caslCode.add("\tPOP\tGR2");
-			this.caslCode.add("\tLD\tGR1, =0");
-			this.caslCode.add("\tSUBA\tGR1, GR2");
+			this.caslCode.add("\tPOP\tGR1");
+			this.caslCode.add("\tXOR\tGR1, =#FFFF");
+			this.caslCode.add("\tADDA\tGR1, =#0001");
 			this.caslCode.add("\tPUSH\t0, GR1");
 		}
 	}
@@ -229,7 +229,7 @@ public class AstCompiler extends Visitor {
 		int count = this.ifCount++;
 		ifNode.getExpressionNode().accept(this);
 		this.caslCode.add("\tPOP\tGR1");
-		this.caslCode.add("\tCPA\tGR1, =#0000");
+		this.caslCode.add("\tCPL\tGR1, =#0000");
 		this.caslCode.add("\tJZE\tELSE" + count);
 		ifNode.getCompoundStatementNodes().get(0).accept(this);
 		if (ifNode.getCompoundStatementNodes().size() == 2) {
@@ -483,8 +483,8 @@ public class AstCompiler extends Visitor {
 		} else {
 			if (token.getLexical().length() > 3) {
 				this.caslCode.add("\tPUSH\t" + (token.getLexical().length()-2));
-				this.caslCode.add("\tLAD\tGR2, CHAR" + this.stringCount);
-				this.caslCode.add("\tPUSH\t0, GR2");
+				this.caslCode.add("\tLAD\tGR1, CHAR" + this.stringCount);
+				this.caslCode.add("\tPUSH\t0, GR1");
 				this.labelList.add("CHAR" + this.stringCount++);
 				this.defineConstantList.add(token.getLexical());
 			} else {

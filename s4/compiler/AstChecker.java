@@ -21,6 +21,7 @@ public class AstChecker extends Visitor {
     private Stack<HashMap<String, Variable>> variableList;
     private HashMap<String, Token> unassignedWarningList;
     private HashMap<String, Token> globalUnassignedWarningList;
+    private List<String> usedSubProgramList;
     
     public AstChecker() {
         this.subProgramCount = 0;
@@ -32,14 +33,15 @@ public class AstChecker extends Visitor {
         this.variableList = new Stack<>();
         this.unassignedWarningList = new LinkedHashMap<>();
         this.globalUnassignedWarningList = new LinkedHashMap<>();
+        this.usedSubProgramList = new ArrayList<>();
     }
 
     private void printUnassignedWarning() {
         for (Token token : unassignedWarningList.values()) {
-            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : line" + token.getLineCount());
+            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : line " + token.getLineCount());
         }
         for (Token token : globalUnassignedWarningList.values()) {
-            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : line" + token.getLineCount());
+            System.out.println("Warning: Variable " + token.getLexical() + " is used before being assigned : line " + token.getLineCount());
         }
     }
 
@@ -359,15 +361,18 @@ public class AstChecker extends Visitor {
  
     @Override
     public void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException {
+        procedureCallStatementNode.setGlobal(isGlobal);
+        Token procedureName = procedureCallStatementNode.getToken();
         if (isGlobal) {
-            for (Variable variable : variableList.peek().values()) {
-                if (variable.isAssigned) {
-                    this.globalUnassignedWarningList.remove(variable.getName());
+            if (!this.usedSubProgramList.contains(procedureName.getLexical())) {
+                this.usedSubProgramList.add(procedureName.getLexical());                
+                for (Variable variable : variableList.peek().values()) {
+                    if (variable.isAssigned) {
+                        this.globalUnassignedWarningList.remove(variable.getName());
+                    }
                 }
             }
         }
-        procedureCallStatementNode.setGlobal(isGlobal);
-        Token procedureName = procedureCallStatementNode.getToken();
         if (!subProgramList.containsKey(procedureName.getLexical())) {
             throw new SemanticException(procedureName.getLineCount());
         }
