@@ -6,66 +6,73 @@ public class Variable {
     int address;
     int size;
     int offset;
+    int line;
     boolean isGlobal;
     boolean isAssigned = false;
     boolean isReferenced = false;
 
-    public Variable(String name, TypeEnum type, int address, int size, int offset, boolean isGlobal) {
+    public Variable(String name, TypeEnum type, int address, int size, int offset, int line, boolean isGlobal) {
         this.name = name;
         this.type = type;
         this.address = address;
         this.size = size;
         this.offset = offset;
+        this.line = line;
         this.isGlobal = isGlobal;
    }
 
-   public Variable(String name, TypeEnum type, int address, int size, int offset, boolean isGlobal, boolean isAssigned) {
+   public Variable(String name, TypeEnum type, int address, int size, int offset, int line, boolean isGlobal, boolean isAssigned) {
         this.name = name;
         this.type = type;
         this.address = address;
         this.size = size;
         this.offset = offset;
+        this.line = line;
         this.isGlobal = isGlobal;
         this.isAssigned = isAssigned;
     }
 
     public void setReferenced() {
-        isReferenced = true;
+        this.isReferenced = true;
     }
 
     public void setAssigned() {
-        isAssigned = true;
+        this.isAssigned = true;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public TypeEnum getType() {
-        return type;
+        return this.type;
     }
 
     public int getAddress() {
-        return address;
+        return this.address;
     }
 
     public int getSize() {
-        return size;
+        return this.size;
     }
 
     public int getOffset() {
-        return offset;
+        return this.offset;
+    }
+
+    public int getLine() {
+        return this.line;
     }
 
     public boolean isGlobal() {
-        return isGlobal;
+        return this.isGlobal;
     }
 
     public boolean isReferenced() {
-        return isReferenced;
+        return this.isReferenced;
     }
 
     public boolean isAssigned() {
-        return isAssigned;
+        return this.isAssigned;
     }
 }

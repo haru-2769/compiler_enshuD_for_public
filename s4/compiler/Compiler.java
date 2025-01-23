@@ -17,7 +17,7 @@ public class Compiler {
 	 */
 	public static void main(final String[] args) {
 		// Compilerを実行してcasを生成する
-		System.out.println(new Lexer().run("data/test/s4/test05.pas", "lib/out.ts"));
+		System.out.println(new Lexer().run("data/test/s4/test08.pas", "lib/out.ts"));
 		System.out.println(new Compiler().run("lib/out.ts", "lib/out.cas"));
 
 		// 上記casを，CASLアセンブラ & COMETシミュレータで実行する
