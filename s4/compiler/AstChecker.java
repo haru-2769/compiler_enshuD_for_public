@@ -98,7 +98,7 @@ public class AstChecker extends Visitor {
         int size = Math.max(1, this.maxValue-this.minValue+1);
         for (VariableNameNode variableNameNode : variableNameNodes) {
             Token variableName = variableNameNode.getToken();
-            if (currentScope.put(variableName.getLexical(), new Variable(variableName.getLexical(), this.currentType, this.address, size, this.minValue, Integer.parseInt(variableName.getLineCount()), this.isGlobal)) != null || /*variableName.getLexical().equals(programName) ||*/ subProgramList.containsKey(variableName.getLexical())) {//
+            if (currentScope.put(variableName.getLexical(), new Variable(variableName.getLexical(), this.currentType, this.address, size, this.minValue, variableName.getLineCount(), this.isGlobal)) != null || /*variableName.getLexical().equals(programName) ||*/ subProgramList.containsKey(variableName.getLexical())) {//
                 throw new SemanticException(variableName.getLineCount());
             }
             this.address += size;
@@ -234,7 +234,7 @@ public class AstChecker extends Visitor {
             if (currentScope.containsKey(formalParameterName.getLexical()) || /*formalParameterName.getLexical().equals(programName) ||*/ subProgramList.containsKey(formalParameterName.getLexical())) {
                 throw new SemanticException(formalParameterName.getLineCount());
             }
-            currentScope.put(formalParameterName.getLexical(), new Variable(formalParameterName.getLexical(), this.currentType, this.address, 1, 0, Integer.parseInt(formalParameterName.getLineCount()), false ,true));
+            currentScope.put(formalParameterName.getLexical(), new Variable(formalParameterName.getLexical(), this.currentType, this.address, 1, 0, formalParameterName.getLineCount(), false ,true));
             this.address++;
         }
     }

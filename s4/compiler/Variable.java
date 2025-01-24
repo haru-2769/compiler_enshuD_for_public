@@ -6,12 +6,12 @@ public class Variable {
     int address;
     int size;
     int offset;
-    int line;
+    String line;
     boolean isGlobal;
     boolean isAssigned = false;
     boolean isReferenced = false;
 
-    public Variable(String name, TypeEnum type, int address, int size, int offset, int line, boolean isGlobal) {
+    public Variable(String name, TypeEnum type, int address, int size, int offset, String line, boolean isGlobal) {
         this.name = name;
         this.type = type;
         this.address = address;
@@ -21,7 +21,7 @@ public class Variable {
         this.isGlobal = isGlobal;
    }
 
-   public Variable(String name, TypeEnum type, int address, int size, int offset, int line, boolean isGlobal, boolean isAssigned) {
+   public Variable(String name, TypeEnum type, int address, int size, int offset, String line, boolean isGlobal, boolean isAssigned) {
         this.name = name;
         this.type = type;
         this.address = address;
@@ -60,7 +60,7 @@ public class Variable {
         return this.offset;
     }
 
-    public int getLine() {
+    public String getLine() {
         return this.line;
     }
 
