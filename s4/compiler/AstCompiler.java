@@ -20,26 +20,26 @@ public class AstCompiler extends Visitor {
 	private List<String> labelList;
 	private List<String> defineConstantList;
 	private List<String> caslCode;
-
-    public AstCompiler() {
+	
+	public AstCompiler() {
 		this.ifCount = 0;
 		this.whileCount = 0;
 		this.booleanCount = 0;
 		this.stringCount = 0;
-        this.defineStorage = 0;
+		this.defineStorage = 0;
 		this.variableLists = new Stack<>();
 		this.labelList = new ArrayList<>();
 		this.defineConstantList = new ArrayList<>();
 		this.caslCode = new ArrayList<>();
-    }
+	}
+	
+	public void start(ProgramNode programNode) throws SemanticException {
+		visit(programNode);
+	}
 
-    public void start(ProgramNode programNode) throws SemanticException {
-        visit(programNode);
-    }
-
-    public List<String> getCaslCode() {
-        return this.caslCode;
-    }
+	public List<String> getCaslCode() {
+		return this.caslCode;
+	}
 
 	@Override
 	public void visit(ProgramNode programNode) throws SemanticException {
@@ -356,24 +356,24 @@ public class AstCompiler extends Visitor {
  
 	@Override
 	public void visit(TermNode termNode) throws SemanticException {
-        termNode.getLeftFactorNode().accept(this);
-        List<MultiplicativeOperatorNode> multiplicativeOperatorNodes = termNode.getMultiplicativeOperatorNodes();
-        List<FactorNode> factorNodes = termNode.getFactorNodes();
-        for (int i = 0; i < multiplicativeOperatorNodes.size(); i++) {
-            factorNodes.get(i).accept(this);
-            multiplicativeOperatorNodes.get(i).accept(this);
-        }
+	        termNode.getLeftFactorNode().accept(this);
+	        List<MultiplicativeOperatorNode> multiplicativeOperatorNodes = termNode.getMultiplicativeOperatorNodes();
+	        List<FactorNode> factorNodes = termNode.getFactorNodes();
+	        for (int i = 0; i < multiplicativeOperatorNodes.size(); i++) {
+	            factorNodes.get(i).accept(this);
+	            multiplicativeOperatorNodes.get(i).accept(this);
+	        }
 	}
  
 	@Override
 	public void visit(FactorNode factorNode) throws SemanticException {
-        AstNode astNode = factorNode.getAstNode();
-		astNode.accept(this);
-		if (astNode instanceof FactorNode) {
-			this.caslCode.add("\tPOP\tGR1");
-			this.caslCode.add("\tXOR\tGR1, =#FFFF");
-			this.caslCode.add("\tPUSH\t0, GR1");
-        }
+	        AstNode astNode = factorNode.getAstNode();
+			astNode.accept(this);
+			if (astNode instanceof FactorNode) {
+				this.caslCode.add("\tPOP\tGR1");
+				this.caslCode.add("\tXOR\tGR1, =#FFFF");
+				this.caslCode.add("\tPUSH\t0, GR1");
+	        }
 	}
 
 	@Override
