@@ -1,15 +1,17 @@
 package enshud.s2.parser;
 
-public class AssignmentStatementNode extends AstNode {
+public class AssignmentStatementNode extends StmtNode {
     private LeftHandSideNode leftHandSideNode;
     private ExpressionNode expressionNode;
 
-    public AssignmentStatementNode() {
+    public AssignmentStatementNode() throws SyntaxException {
         this.leftHandSideNode = null;
         this.expressionNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
+        this.setLine(context.getLineCount());
         this.leftHandSideNode = new LeftHandSideNode();
         this.leftHandSideNode.parse(context);
         context.checkTerminalSymbol("SASSIGN");
@@ -23,5 +25,10 @@ public class AssignmentStatementNode extends AstNode {
 
     public ExpressionNode getExpressionNode() {
         return this.expressionNode;
+    }
+
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

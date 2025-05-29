@@ -3,10 +3,11 @@ package enshud.s2.parser;
 public class FormalParameterNode extends AstNode {
     private FormalParameterSequenceNode formalParameterSequenceNode;
 
-    public FormalParameterNode() {
+    public FormalParameterNode() throws SyntaxException {
         this.formalParameterSequenceNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SLPAREN")) {
             context.checkTerminalSymbol("SLPAREN");
@@ -18,5 +19,10 @@ public class FormalParameterNode extends AstNode {
 
     public FormalParameterSequenceNode getFormalParameterSequenceNode() {
         return this.formalParameterSequenceNode;
+    }
+
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

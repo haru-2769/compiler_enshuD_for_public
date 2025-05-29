@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
+import enshud.s2.parser.*;
+
 public class AstCompiler extends Visitor {
 	private int ifCount;
 	private int whileCount;

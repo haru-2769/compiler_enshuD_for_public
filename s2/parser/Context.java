@@ -44,4 +44,8 @@ public class Context {
 		}
 		return false;
 	}
+
+	public String getLineCount() {
+		return this.tokenList.get(this.index).getLineCount();
+	}
 }

@@ -1,17 +1,22 @@
 package enshud.s2.parser;
 
-public class ConstantNode extends AstNode {
-    private Token token;
+public class ConstantNode extends ExprNode {
     
-    public ConstantNode() {
-        this.token = null;
-    }
-    
+    @Override
     public void parse(Context context) throws SyntaxException {
+        this.setLine(context.getLineCount());
         this.token = context.checkTerminalSymbol("SCONSTANT", "SSTRING", "STRUE", "SFALSE");
+        if (this.token.getTokenName().equals("SCONSTANT")) {
+            this.setType(TypeEnum.INTEGER);
+        } else if (this.token.getTokenName().equals("SSTRING")) {
+            this.setType(TypeEnum.CHAR);
+        } else {
+            this.setType(TypeEnum.BOOLEAN);
+        }
     }
 
-    public Token getToken() {
-        return this.token;
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

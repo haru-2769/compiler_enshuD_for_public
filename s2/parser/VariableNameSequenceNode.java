@@ -4,27 +4,31 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class VariableNameSequenceNode extends AstNode {
-    private VariableNameNode variableNameNode;
     private List<VariableNameNode> variableNameNodes;
 
-    public VariableNameSequenceNode() {
-        this.variableNameNode = null;
+    public VariableNameSequenceNode() throws SyntaxException {
         this.variableNameNodes = new ArrayList<>();
     }
     
+    @Override
     public void parse(Context context) throws SyntaxException {
-        this.variableNameNode = new VariableNameNode();
-        this.variableNameNodes.add(this.variableNameNode);
-        this.variableNameNode.parse(context);
+        VariableNameNode variableNameNode = new VariableNameNode();
+        this.variableNameNodes.add(variableNameNode);
+        variableNameNode.parse(context);
         while (context.equalsAny(0, "SCOMMA")) {
             context.checkTerminalSymbol("SCOMMA");
-            this.variableNameNode = new VariableNameNode();
-            this.variableNameNodes.add(this.variableNameNode);
-            this.variableNameNode.parse(context);
+            variableNameNode = new VariableNameNode();
+            this.variableNameNodes.add(variableNameNode);
+            variableNameNode.parse(context);
         }
     }
 
     public List<VariableNameNode> getVariableNameNodes() {
         return this.variableNameNodes;
+    }
+    
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

@@ -3,10 +3,11 @@ package enshud.s2.parser;
 public class VariableDeclarationNode extends AstNode {
     private VariableDeclarationSequenceNode variableDeclarationSequenceNode;
 
-    public VariableDeclarationNode() {
+    public VariableDeclarationNode() throws SyntaxException {
         this.variableDeclarationSequenceNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
     	if (context.equalsAny(0, "SVAR")) {
     		context.checkTerminalSymbol("SVAR");
@@ -18,5 +19,10 @@ public class VariableDeclarationNode extends AstNode {
 
     public VariableDeclarationSequenceNode getVariableDeclarationSequenceNode() {
         return this.variableDeclarationSequenceNode;
+    }
+
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

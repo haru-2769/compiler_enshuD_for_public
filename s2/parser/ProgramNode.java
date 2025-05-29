@@ -1,20 +1,22 @@
 package enshud.s2.parser;
 
+import java.util.HashMap;
+
 public class ProgramNode extends AstNode {
-    private ProgramNameNode programNameNode;
     private BlockNode blockNode;
     private CompoundStatementNode compoundStatementNode;
+    private HashMap<String, Variable> variableList;
+    private HashMap<String, SubProgram> subProgramList;
 
-    public ProgramNode() {
-        this.programNameNode = null;
+    public ProgramNode() throws SyntaxException {
         this.blockNode = null;
         this.compoundStatementNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
     	context.checkTerminalSymbol("SPROGRAM");
-        this.programNameNode = new ProgramNameNode();
-        this.programNameNode.parse(context);
+        this.token = context.checkTerminalSymbol("SIDENTIFIER");
     	context.checkTerminalSymbol("SSEMICOLON");
         this.blockNode = new BlockNode();
         this.blockNode.parse(context);
@@ -26,15 +28,32 @@ public class ProgramNode extends AstNode {
         }
     };
 
-    public ProgramNameNode getProgramNameNode() {
-        return this.programNameNode;
-    }
-
     public BlockNode getBlockNode() {
         return this.blockNode;
     }
 
     public CompoundStatementNode getCompoundStatementNode() {
         return this.compoundStatementNode;
+    }
+
+    public HashMap<String, Variable> getVariableList() {
+        return this.variableList;
+    }
+
+    public HashMap<String, SubProgram> getSubProgramList() {
+        return this.subProgramList;
+    }
+
+    public void setVariableList(HashMap<String, Variable> variables) {
+        this.variableList = new HashMap<>(variables);
+    }
+
+    public void setSubProgramList(HashMap<String, SubProgram> subPrograms) {
+        this.subProgramList = new HashMap<>(subPrograms);
+    }
+    
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

@@ -1,22 +1,21 @@
 package enshud.s2.parser;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
-public class ProcedureCallStatementNode extends StmtNode {
-    private boolean isGlobal;
-    private List<ExpressionNode> expressionNodes;
+public class WritelnNode extends StmtNode {
+    final private List<ExpressionNode> expressionNodes;
 
-    public ProcedureCallStatementNode() throws SyntaxException {
-        this.expressionNodes = new ArrayList<ExpressionNode>();
+    public WritelnNode() {
+        this.expressionNodes = new ArrayList<>();
     }
 
     @Override
     public void parse(Context context) throws SyntaxException {
         this.setLine(context.getLineCount());
-        this.token =context.checkTerminalSymbol("SIDENTIFIER");
+        context.checkTerminalSymbol("SWRITELN");
         if (context.equalsAny(0, "SLPAREN")) {
-            ExpressionNode expressionNode;
+            ExpressionNode  expressionNode;
             context.checkTerminalSymbol("SLPAREN");
             while (true) {
                 expressionNode = new ExpressionNode();
@@ -32,18 +31,10 @@ public class ProcedureCallStatementNode extends StmtNode {
         }
     }
 
-    public void setGlobal(boolean isGlobal) {
-        this.isGlobal = isGlobal;
-    }
-
-    public boolean isGlobal() {
-        return this.isGlobal;
-    }
-
     public List<ExpressionNode> getExpressionNodes() {
         return this.expressionNodes;
     }
-
+    
     @Override
     public void accept(Visitor visitor) throws SemanticException {
         visitor.visit(this);

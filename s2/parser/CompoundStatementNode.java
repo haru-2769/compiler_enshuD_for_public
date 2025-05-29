@@ -1,20 +1,34 @@
 package enshud.s2.parser;
 
-public class CompoundStatementNode extends AstNode {
-    private StatementSequenceNode statementSequenceNode;
+import java.util.ArrayList;
+import java.util.List;
 
-    public CompoundStatementNode() {
-        this.statementSequenceNode = null;
+public class CompoundStatementNode extends AstNode {
+    private List<StatementNode> statementNodes;
+
+    public CompoundStatementNode() throws SyntaxException {
+        this.statementNodes = new ArrayList<>();
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         context.checkTerminalSymbol("SBEGIN");
-        this.statementSequenceNode = new StatementSequenceNode();
-        this.statementSequenceNode.parse(context);
+        StatementNode statementNode;
+        do {
+            statementNode = new StatementNode();
+            statementNode.parse(context);
+            this.statementNodes.add(statementNode);
+            context.checkTerminalSymbol("SSEMICOLON");
+        } while (context.equalsAny(0, "SIDENTIFIER", "SREADLN", "SWRITELN", "SBEGIN", "SIF", "SWHILE"));
         context.checkTerminalSymbol("SEND");
     }
+    
+    public List<StatementNode> getStatementNodes() {
+        return this.statementNodes;
+    }
 
-    public StatementSequenceNode getStatementSequenceNode() {
-        return this.statementSequenceNode;
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

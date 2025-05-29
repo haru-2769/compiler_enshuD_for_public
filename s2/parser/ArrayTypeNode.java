@@ -5,12 +5,13 @@ public class ArrayTypeNode extends AstNode {
     private IndexMaxValueNode indexMaxValueNode;
     private StandardTypeNode standardTypeNode;
 
-    public ArrayTypeNode() {
+    public ArrayTypeNode() throws SyntaxException {
         this.indexMinValueNode = null;
         this.indexMaxValueNode = null;
         this.standardTypeNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         context.checkTerminalSymbol("SARRAY");
         context.checkTerminalSymbol("SLBRACKET");
@@ -35,5 +36,10 @@ public class ArrayTypeNode extends AstNode {
 
     public StandardTypeNode getStandardTypeNode() {
         return this.standardTypeNode;
+    }
+    
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

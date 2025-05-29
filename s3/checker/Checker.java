@@ -6,6 +6,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import enshud.s2.parser.Token;
+import enshud.s2.parser.Context;
+import enshud.s2.parser.ProgramNode;
+import enshud.s2.parser.SyntaxException;
+import enshud.s2.parser.SemanticException;
+
 public class Checker {
 	private List<Token> tokenList;
 	/**
@@ -44,7 +50,6 @@ public class Checker {
 			ProgramNode programNode = new ProgramNode();
 			programNode.parse(new Context(tokenList));
 			programNode.accept(new AstChecker());
-			// programNode.accept(new AstPrinter());
 		} catch (IOException ex) {
 			return "File not found"; 
 		} catch (final SyntaxException ex) {

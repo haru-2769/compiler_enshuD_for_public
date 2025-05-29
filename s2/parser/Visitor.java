@@ -1,0 +1,45 @@
+package enshud.s2.parser;
+
+public abstract class Visitor {
+    public abstract void visit(ProgramNode programNode) throws SemanticException;
+    public abstract void visit(BlockNode blockNode) throws SemanticException;
+    public abstract void visit(VariableDeclarationNode variableDeclarationNode) throws SemanticException;
+    public abstract void visit(VariableDeclarationSequenceNode variableDeclarationSequenceNode) throws SemanticException;
+    public abstract void visit(VariableNameSequenceNode variableNameSequenceNode) throws SemanticException;
+    public abstract void visit(VariableNameNode variableNameNode) throws SemanticException;
+    public abstract void visit(TypeNode typeNode) throws SemanticException;
+    public abstract void visit(StandardTypeNode standardTypeNode) throws SemanticException;
+    public abstract void visit(ArrayTypeNode arrayTypeNode) throws SemanticException;
+    public abstract void visit(IndexMinValueNode indexMinValueNode) throws SemanticException;
+    public abstract void visit(IndexMaxValueNode indexMaxValueNode) throws SemanticException;
+    public abstract void visit(IntegerNode integerNode) throws SemanticException;
+    public abstract void visit(SignNode signNode) throws SemanticException;
+    public abstract void visit(SubProgramDeclarationSequenceNode subprogramDeclarationSequenceNode) throws SemanticException;
+    public abstract void visit(SubProgramDeclarationNode subprogramDeclarationNode) throws SemanticException;
+    public abstract void visit(SubProgramHeadNode subprogramHeadNode) throws SemanticException;
+    public abstract void visit(FormalParameterNode formalParameterNode) throws SemanticException;
+    public abstract void visit(FormalParameterSequenceNode formalParameterSequenceNode) throws SemanticException;
+    public abstract void visit(FormalParameterNameSequenceNode formalParameterNameSequenceNode) throws SemanticException;
+    public abstract void visit(FormalParameterNameNode formalParameterNameNode) throws SemanticException;
+    public abstract void visit(CompoundStatementNode compoundStatementNode) throws SemanticException;
+    public abstract void visit(StatementNode statementNode) throws SemanticException;
+    public abstract void visit(AssignmentStatementNode assignmentStatementNode) throws SemanticException;
+    public abstract void visit(IfNode ifNode) throws SemanticException;
+    public abstract void visit(WhileNode whileNode) throws SemanticException;
+    public abstract void visit(LeftHandSideNode leftHandSideNode) throws SemanticException;
+    public abstract void visit(VariableNode variableNode) throws SemanticException;
+    public abstract void visit(PureVariableNode pureVariableNode) throws SemanticException;
+    public abstract void visit(IndexedVariableNode indexedVariableNode) throws SemanticException;
+    public abstract void visit(IndexNode indexNode) throws SemanticException;
+    public abstract void visit(ProcedureCallStatementNode procedureCallStatementNode) throws SemanticException;
+    public abstract void visit(ExpressionNode expressionNode) throws SemanticException;
+    public abstract void visit(SimpleExpressionNode simpleExpressionNode) throws SemanticException;
+    public abstract void visit(TermNode termNode) throws SemanticException;
+    public abstract void visit(FactorNode factorNode) throws SemanticException;
+    public abstract void visit(RelationalOperatorNode relationalOperatorNode) throws SemanticException;
+    public abstract void visit(AdditiveOperatorNode additiveOperatorNode) throws SemanticException;
+    public abstract void visit(MultiplicativeOperatorNode multiplicativeOperatorNode) throws SemanticException;
+    public abstract void visit(ReadlnNode readlnNode) throws SemanticException;
+    public abstract void visit(WritelnNode writelnNode) throws SemanticException;
+    public abstract void visit(ConstantNode constantNode) throws SemanticException;
+}

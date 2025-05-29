@@ -1,17 +1,13 @@
 package enshud.s2.parser;
 
 public class AdditiveOperatorNode extends AstNode {
-    private Token token;
-    
-    public AdditiveOperatorNode() {
-        this.token = null;
-    }
-
+    @Override
     public void parse(Context context) throws SyntaxException {
         this.token = context.checkTerminalSymbol("SPLUS", "SMINUS", "SOR");
     }
-
-    public Token getToken() {
-        return this.token;
+    
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

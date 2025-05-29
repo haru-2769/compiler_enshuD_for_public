@@ -4,11 +4,12 @@ public class TypeNode extends AstNode {
     private StandardTypeNode standardTypeNode;
     private ArrayTypeNode arrayTypeNode;
 
-    public TypeNode() {
+    public TypeNode() throws SyntaxException {
         this.standardTypeNode = null;
         this.arrayTypeNode = null;
     }
 
+    @Override
     public void parse(Context context) throws SyntaxException {
         if (context.equalsAny(0, "SINTEGER", "SCHAR", "SBOOLEAN")) {
             standardTypeNode = new StandardTypeNode();
@@ -25,5 +26,10 @@ public class TypeNode extends AstNode {
 
     public ArrayTypeNode getArrayTypeNode() {
         return arrayTypeNode;
+    }
+    
+    @Override
+    public void accept(Visitor visitor) throws SemanticException {
+        visitor.visit(this);
     }
 }

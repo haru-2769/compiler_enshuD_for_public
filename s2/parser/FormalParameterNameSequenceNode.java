@@ -7,10 +7,11 @@ public class FormalParameterNameSequenceNode extends AstNode{
 	private FormalParameterNameNode formalParameterNameNode;
 	private List<FormalParameterNameNode> formalParameterNameNodes;
 
-	public FormalParameterNameSequenceNode() {
+	public FormalParameterNameSequenceNode() throws SyntaxException {
 		this.formalParameterNameNodes = new ArrayList<>();
 	}
 	
+    @Override
 	public void parse(Context context) throws SyntaxException {
 		this.formalParameterNameNode = new FormalParameterNameNode();
 		this.formalParameterNameNodes.add(this.formalParameterNameNode);
@@ -25,5 +26,10 @@ public class FormalParameterNameSequenceNode extends AstNode{
 
 	public List<FormalParameterNameNode> getFormalParameterNameNodes() {
 		return this.formalParameterNameNodes;
+	}
+
+    @Override
+	public void accept(Visitor visitor) throws SemanticException {
+		visitor.visit(this);
 	}
 }
